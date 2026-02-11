@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sanchan - Shooting Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="480" height="640"></canvas>
+        <div id="ui-overlay">
+            <div id="score-display">SCORE: <span id="score">0</span></div>
+            <div id="lives-display">LIVES: <span id="lives">3</span></div>
+        </div>
+        <div id="start-screen" class="screen">
+            <h1>SANCHAN</h1>
+            <p>SHOOTING GAME</p>
+            <button id="start-btn">START</button>
+            <p class="controls-hint">Arrow Keys / WASD: Move<br>Space: Shoot</p>
+        </div>
+        <div id="gameover-screen" class="screen hidden">
+            <h1>GAME OVER</h1>
+            <p>SCORE: <span id="final-score">0</span></p>
+            <button id="restart-btn">RESTART</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
