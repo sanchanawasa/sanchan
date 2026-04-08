@@ -11,7 +11,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#1a0
 .screen.active{display:block}
 
 /* ===== START SCREEN ===== */
-#start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0a2e,#2d1b4e)}
+#start-screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0a2e,#2d1b4e)}
 .logo{font-size:3em;text-align:center;margin-bottom:10px;text-shadow:0 0 20px #ff69b4}
 .logo-sub{font-size:1.1em;color:#daa520;margin-bottom:30px;text-align:center}
 .start-card{background:rgba(255,255,255,0.1);border:2px solid #ff69b4;border-radius:16px;padding:30px;max-width:400px;width:100%}
@@ -101,8 +101,8 @@ body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#1a0
 .btn-end-battle{display:block;width:calc(100% - 20px);margin:5px 10px;padding:12px;background:linear-gradient(135deg,#8844ff,#ff69b4);border:none;border-radius:10px;color:#fff;font-size:1em;font-weight:bold;cursor:pointer}
 
 /* ===== END SCREENS ===== */
-#win-screen,#lose-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a2010,#1a4030)}
-#lose-screen{background:linear-gradient(135deg,#200a0a,#401a1a)}
+#win-screen.active,#lose-screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a2010,#1a4030)}
+#lose-screen.active{background:linear-gradient(135deg,#200a0a,#401a1a)}
 .end-card{text-align:center;padding:30px;max-width:360px}
 .end-icon{font-size:4em;margin-bottom:15px}
 .end-title{font-size:1.8em;font-weight:bold;margin-bottom:10px}
@@ -371,12 +371,11 @@ function resetGame() {
 }
 
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).style.display = 'flex';
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = '';
+  });
   document.getElementById(id).classList.add('active');
-  if (id !== 'start-screen') {
-    document.getElementById(id).style.display = 'block';
-  }
 }
 
 // ===== 勝敗チェック =====
