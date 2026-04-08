@@ -2,668 +2,802 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>港クエスト 🌊</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#1a0a2e;color:#fff;min-height:100vh}
-.screen{display:none;min-height:100vh;padding:10px}
-.screen.active{display:block}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0a0010;display:flex;flex-direction:column;align-items:center;min-height:100vh;
+  font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;color:#fff;overflow:hidden}
+#wrap{position:relative;width:400px;max-width:100vw}
+#hud{background:rgba(0,0,0,0.85);border-bottom:2px solid #ff69b4;
+  padding:5px 10px;display:flex;justify-content:space-between;align-items:center;width:100%}
+.hud-block{text-align:center;font-size:0.68em;line-height:1.5}
+.hud-val{font-weight:bold;font-size:1.1em;color:#fff}
+.hud-money{color:#ffd700;font-size:1.15em;font-weight:bold}
+#map-canvas{display:block;width:400px;height:380px;cursor:default;touch-action:none}
+#msg-bar{background:rgba(0,0,0,0.8);border-top:1px solid #555;border-bottom:1px solid #555;
+  padding:5px 12px;font-size:0.78em;color:#eee;min-height:28px;width:100%}
+#controls{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;width:100%}
+.dpad{display:grid;grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px 44px;gap:3px}
+.db{background:rgba(255,105,180,0.25);border:2px solid rgba(255,105,180,0.5);
+  border-radius:8px;color:#fff;font-size:1.3em;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;user-select:none;-webkit-user-select:none}
+.db:active,.db.pressed{background:rgba(255,105,180,0.6)}
+#act-btn{padding:10px 18px;background:linear-gradient(135deg,#ff69b4,#daa520);
+  border:none;border-radius:12px;color:#fff;font-size:0.85em;font-weight:bold;
+  cursor:pointer;opacity:0;transition:opacity 0.2s;pointer-events:none;white-space:nowrap}
+#act-btn.show{opacity:1;pointer-events:auto}
 
-/* ===== START SCREEN ===== */
-#start-screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0a2e,#2d1b4e)}
-.logo{font-size:3em;text-align:center;margin-bottom:10px;text-shadow:0 0 20px #ff69b4}
-.logo-sub{font-size:1.1em;color:#daa520;margin-bottom:30px;text-align:center}
-.start-card{background:rgba(255,255,255,0.1);border:2px solid #ff69b4;border-radius:16px;padding:30px;max-width:400px;width:100%}
-.start-card h2{text-align:center;margin-bottom:20px;color:#ff69b4}
-.start-card p{font-size:0.85em;color:#ccc;margin-bottom:20px;line-height:1.6}
-.name-input{width:100%;padding:12px;border:2px solid #ff69b4;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff;font-size:1.1em;text-align:center;margin-bottom:15px}
-.name-input::placeholder{color:#888}
-.btn-start{width:100%;padding:15px;background:linear-gradient(135deg,#ff69b4,#daa520);border:none;border-radius:10px;color:#fff;font-size:1.2em;font-weight:bold;cursor:pointer;transition:transform 0.1s}
-.btn-start:hover{transform:scale(1.03)}
+/* ===== BATTLE OVERLAY ===== */
+#battle{display:none;position:fixed;inset:0;background:rgba(0,0,10,0.95);
+  z-index:200;flex-direction:column;align-items:center;overflow-y:auto;padding:10px}
+#battle.active{display:flex}
+.bt-head{text-align:center;padding:8px;color:#cc88ff;font-size:1em;font-weight:bold}
+.bt-oji{background:rgba(136,68,255,0.15);border:2px solid #8844ff;border-radius:14px;
+  padding:14px;text-align:center;width:100%;max-width:380px;margin-bottom:8px}
+.bt-oji-icon{font-size:2.2em}
+.bt-oji-name{color:#cc88ff;font-weight:bold;margin:4px 0}
+.bt-oji-sub{font-size:0.72em;color:#aaa}
+.mbar-wrap{margin-top:8px}
+.mbar-lbl{font-size:0.72em;color:#aaa;margin-bottom:3px}
+.mbar-bg{background:#333;border-radius:6px;height:12px;overflow:hidden}
+.mbar-fill{background:linear-gradient(90deg,#ff69b4,#ff4488);height:100%;border-radius:6px;transition:width 0.4s}
+.mbar-val{font-size:0.8em;color:#ff69b4;margin-top:2px}
+.bt-mp{background:rgba(68,136,255,0.1);border:1px solid #4488ff;border-radius:10px;
+  padding:7px 12px;width:100%;max-width:380px;margin-bottom:6px}
+.bt-mp-lbl{font-size:0.72em;color:#88aaff}
+.bt-mp-bg{background:#333;border-radius:4px;height:8px;margin-top:3px;overflow:hidden}
+.bt-mp-bar{background:linear-gradient(90deg,#4488ff,#88ccff);height:100%;border-radius:4px;transition:width 0.3s}
+.bt-log{background:rgba(0,0,0,0.5);border:1px solid #444;border-radius:10px;
+  padding:8px 10px;width:100%;max-width:380px;height:90px;overflow-y:auto;margin-bottom:6px;font-size:0.76em}
+.bl{padding:2px 0;color:#ddd}.bl.g{color:#88ff88}.bl.b{color:#ff6666}.bl.o{color:#cc88ff;font-style:italic}
+.bt-pay{text-align:center;font-size:0.82em;color:#daa520;padding:3px;margin-bottom:4px}
+.bt-rnd{text-align:center;font-size:0.75em;color:#aaa;margin-bottom:6px}
+.sk-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:380px;margin-bottom:8px}
+.sk{background:rgba(136,68,255,0.15);border:1px solid #8844ff;border-radius:10px;
+  padding:9px 6px;cursor:pointer;text-align:center;color:#fff;transition:all 0.15s}
+.sk:hover:not(:disabled){background:rgba(136,68,255,0.35)}
+.sk:disabled{opacity:0.3;cursor:not-allowed}
+.sk-nm{font-size:0.83em;font-weight:bold}
+.sk-mp{font-size:0.68em;color:#88aaff;margin-top:2px}
+.sk-fx{font-size:0.65em;color:#aaa}
 
-/* ===== MAIN SCREEN ===== */
-#main-screen{background:linear-gradient(180deg,#1a0a2e 0%,#0d1b2a 100%)}
-.top-bar{background:rgba(0,0,0,0.5);border-bottom:1px solid #ff69b4;padding:8px 12px}
-.top-bar h1{font-size:1.2em;color:#ff69b4;display:inline}
-.top-bar .goal{float:right;font-size:0.85em;color:#daa520}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
-.stat-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,105,180,0.3);border-radius:10px;padding:8px 12px}
-.stat-label{font-size:0.7em;color:#aaa;margin-bottom:3px}
-.stat-value{font-size:1em;font-weight:bold;color:#fff}
-.bar-wrap{background:#333;border-radius:4px;height:8px;margin-top:4px;overflow:hidden}
-.bar{height:100%;border-radius:4px;transition:width 0.3s}
-.hp-bar{background:linear-gradient(90deg,#ff4444,#ff8888)}
-.mp-bar{background:linear-gradient(90deg,#4488ff,#88ccff)}
-.money-big{text-align:center;padding:10px;background:rgba(218,165,32,0.15);border:1px solid #daa520;border-radius:10px;margin:0 10px}
-.money-big .amount{font-size:1.8em;font-weight:bold;color:#daa520}
-.money-big .progress{font-size:0.75em;color:#aaa;margin-top:2px}
-.progress-bar-wrap{background:#333;border-radius:4px;height:6px;margin-top:6px;overflow:hidden}
-.progress-bar{background:linear-gradient(90deg,#daa520,#ffd700);height:100%;border-radius:4px;transition:width 0.5s}
-
-.section-title{font-size:0.85em;color:#ff69b4;padding:10px 12px 5px;font-weight:bold;letter-spacing:1px}
-.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 10px}
-.action-btn{background:rgba(255,255,255,0.07);border:1px solid rgba(255,105,180,0.4);border-radius:12px;padding:12px 8px;cursor:pointer;text-align:center;transition:all 0.2s;color:#fff}
-.action-btn:hover{background:rgba(255,105,180,0.15);border-color:#ff69b4;transform:translateY(-2px)}
-.action-btn:active{transform:translateY(0)}
-.action-btn .icon{font-size:1.5em}
-.action-btn .name{font-size:0.85em;font-weight:bold;margin:4px 0 2px}
-.action-btn .detail{font-size:0.68em;color:#aaa;line-height:1.4}
-
-.invite-box{margin:0 10px 10px;padding:10px;background:rgba(255,105,180,0.1);border:1px dashed #ff69b4;border-radius:10px;text-align:center}
-.invite-chance{font-size:0.85em;color:#ff69b4}
-.invite-chance span{font-size:1.2em;font-weight:bold}
-
-.log-box{margin:0 10px 10px;background:rgba(0,0,0,0.3);border:1px solid #333;border-radius:10px;padding:10px;max-height:160px;overflow-y:auto}
-.log-entry{font-size:0.8em;color:#ddd;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
-.log-entry:last-child{border-bottom:none}
-.log-entry.highlight{color:#ff69b4}
-.log-entry.money{color:#daa520}
-.log-entry.danger{color:#ff6666}
-.log-entry.level{color:#88ff88}
-
-/* ===== BATTLE SCREEN ===== */
-#battle-screen{background:linear-gradient(135deg,#0d0020,#1a0030)}
-.battle-header{background:rgba(0,0,0,0.5);padding:12px;text-align:center;border-bottom:2px solid #8844ff}
-.battle-header h2{font-size:1.1em;color:#cc88ff}
-.oji-card{margin:10px;background:rgba(136,68,255,0.1);border:2px solid #8844ff;border-radius:14px;padding:15px;text-align:center}
-.oji-icon{font-size:2.5em}
-.oji-name{font-size:1em;font-weight:bold;color:#cc88ff;margin:5px 0}
-.oji-type{font-size:0.75em;color:#aaa}
-.mood-wrap{margin-top:8px}
-.mood-label{font-size:0.75em;color:#aaa;margin-bottom:3px}
-.mood-bar-bg{background:#333;border-radius:6px;height:14px;overflow:hidden}
-.mood-bar-fill{background:linear-gradient(90deg,#ff69b4,#ff4488);height:100%;border-radius:6px;transition:width 0.4s}
-.mood-value{font-size:0.85em;color:#ff69b4;margin-top:3px}
-
-.player-mp{margin:0 10px;background:rgba(68,136,255,0.1);border:1px solid #4488ff;border-radius:10px;padding:8px 12px}
-.player-mp-label{font-size:0.75em;color:#88aaff}
-.player-mp-bar-bg{background:#333;border-radius:4px;height:10px;margin-top:4px;overflow:hidden}
-.player-mp-bar{background:linear-gradient(90deg,#4488ff,#88ccff);height:100%;border-radius:4px;transition:width 0.3s}
-
-.battle-log{margin:8px 10px;background:rgba(0,0,0,0.4);border:1px solid #444;border-radius:10px;padding:10px;height:100px;overflow-y:auto}
-.blog-entry{font-size:0.78em;color:#ddd;padding:2px 0}
-.blog-entry.good{color:#88ff88}
-.blog-entry.bad{color:#ff6666}
-.blog-entry.oji{color:#cc88ff;font-style:italic}
-
-.skills-title{font-size:0.85em;color:#cc88ff;padding:5px 12px;font-weight:bold}
-.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 10px 10px}
-.skill-btn{background:rgba(136,68,255,0.15);border:1px solid #8844ff;border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;color:#fff;transition:all 0.2s}
-.skill-btn:hover:not(:disabled){background:rgba(136,68,255,0.35);transform:scale(1.02)}
-.skill-btn:disabled{opacity:0.35;cursor:not-allowed}
-.skill-btn .sk-name{font-size:0.85em;font-weight:bold}
-.skill-btn .sk-cost{font-size:0.7em;color:#88aaff;margin-top:2px}
-.skill-btn .sk-effect{font-size:0.68em;color:#aaa}
-
-.round-info{text-align:center;padding:6px;font-size:0.8em;color:#aaa}
-.payout-preview{text-align:center;padding:5px;font-size:0.85em;color:#daa520}
-.btn-end-battle{display:block;width:calc(100% - 20px);margin:5px 10px;padding:12px;background:linear-gradient(135deg,#8844ff,#ff69b4);border:none;border-radius:10px;color:#fff;font-size:1em;font-weight:bold;cursor:pointer}
-
-/* ===== END SCREENS ===== */
-#win-screen.active,#lose-screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a2010,#1a4030)}
-#lose-screen.active{background:linear-gradient(135deg,#200a0a,#401a1a)}
-.end-card{text-align:center;padding:30px;max-width:360px}
-.end-icon{font-size:4em;margin-bottom:15px}
-.end-title{font-size:1.8em;font-weight:bold;margin-bottom:10px}
-.end-msg{font-size:0.9em;color:#ccc;line-height:1.6;margin-bottom:20px}
-.end-stats{background:rgba(255,255,255,0.08);border-radius:10px;padding:15px;margin-bottom:20px;text-align:left}
-.end-stats div{font-size:0.85em;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
-.btn-retry{padding:14px 30px;background:linear-gradient(135deg,#ff69b4,#daa520);border:none;border-radius:10px;color:#fff;font-size:1.1em;font-weight:bold;cursor:pointer}
+/* ===== START / END SCREENS ===== */
+#start-screen,#win-screen,#lose-screen{
+  display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0a0020,#1a0030);
+  z-index:300;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+#start-screen.active,#win-screen.active,#lose-screen.active{display:flex}
+.sc-logo{font-size:2.8em;margin-bottom:6px;text-shadow:0 0 20px #ff69b4}
+.sc-sub{color:#daa520;font-size:1em;margin-bottom:24px}
+.sc-card{background:rgba(255,255,255,0.08);border:2px solid #ff69b4;border-radius:16px;
+  padding:24px;max-width:360px;width:100%}
+.sc-card h2{text-align:center;color:#ff69b4;margin-bottom:14px}
+.sc-card p{font-size:0.82em;color:#ccc;line-height:1.7;margin-bottom:16px}
+.name-in{width:100%;padding:11px;border:2px solid #ff69b4;border-radius:8px;
+  background:rgba(255,255,255,0.08);color:#fff;font-size:1.05em;text-align:center;margin-bottom:12px}
+.name-in::placeholder{color:#777}
+.big-btn{width:100%;padding:14px;background:linear-gradient(135deg,#ff69b4,#daa520);
+  border:none;border-radius:10px;color:#fff;font-size:1.1em;font-weight:bold;cursor:pointer}
+.end-icon{font-size:3.5em;margin-bottom:12px}
+.end-title{font-size:1.6em;font-weight:bold;margin-bottom:8px}
+.end-stats{background:rgba(255,255,255,0.07);border-radius:10px;padding:12px;
+  margin:12px 0;text-align:left;font-size:0.83em;width:100%}
+.end-stats div{padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
 </style>
 </head>
 <body>
-
 <!-- START SCREEN -->
-<div id="start-screen" class="screen active">
-  <div class="logo">🌊 港クエスト</div>
-  <div class="logo-sub">〜ギャラ飲みで100万円を目指せ！〜</div>
-  <div class="start-card">
-    <h2>ゲームについて</h2>
+<div id="start-screen" class="active">
+  <div class="sc-logo">🌊 港クエスト</div>
+  <div class="sc-sub">〜ギャラ飲みで100万円を目指せ！〜</div>
+  <div class="sc-card">
+    <h2>NEWGAME</h2>
     <p>
-      🎯 目標：<strong>100万円</strong>を稼ぐ！<br>
-      👧 年齢が若いほど誘われやすい（30歳でゲームオーバー）<br>
-      🍾 ギャラ飲みはRPGバトル形式！スキルを使って<br>　　おじの機嫌を上げてお金をゲット！<br>
-      ⚡ 行動するたびに月日が経つ…戦略が命！
+      🗺 <b>港区マップ</b>を自由に歩き回ろう！<br>
+      🎯 目標：<b>100万円</b>を稼ぐ<br>
+      👔 おじに近づいて声をかけると<b>ギャラ飲みバトル</b>！<br>
+      🏠 建物に入ると色々なアクション<br>
+      ⚡ 行動するたびに月日が経つ…30歳でゲームオーバー
     </p>
-    <input type="text" class="name-input" id="player-name" placeholder="あなたの名前を入力" maxlength="8">
-    <button class="btn-start" onclick="startGame()">スタート！</button>
+    <input type="text" class="name-in" id="player-name" placeholder="あなたの名前を入力" maxlength="8">
+    <button class="big-btn" onclick="startGame()">スタート！</button>
   </div>
-</div>
-
-<!-- MAIN SCREEN -->
-<div id="main-screen" class="screen">
-  <div class="top-bar">
-    <h1>🌊 港クエスト</h1>
-    <span class="goal">目標：1,000,000円</span>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">👤 名前・年齢・Lv</div>
-      <div class="stat-value" id="stat-name">-</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">✨ 魅力</div>
-      <div class="stat-value" id="stat-charm">50</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">❤️ 体力 (HP)</div>
-      <div class="stat-value" id="stat-hp">100/100</div>
-      <div class="bar-wrap"><div class="bar hp-bar" id="hp-bar" style="width:100%"></div></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">⚡ テンション (MP)</div>
-      <div class="stat-value" id="stat-mp">60/60</div>
-      <div class="bar-wrap"><div class="bar mp-bar" id="mp-bar" style="width:100%"></div></div>
-    </div>
-  </div>
-  <div class="money-big">
-    <div class="amount" id="stat-money">0円</div>
-    <div class="progress" id="money-progress">目標まで 1,000,000円</div>
-    <div class="progress-bar-wrap"><div class="progress-bar" id="money-bar" style="width:0%"></div></div>
-  </div>
-  <div class="invite-box">
-    <div class="invite-chance">📩 ギャラ飲み誘われ率：<span id="invite-pct">--%</span></div>
-    <div style="font-size:0.7em;color:#aaa;margin-top:3px">行動後に抽選されます</div>
-  </div>
-
-  <div class="section-title">📍 やること</div>
-  <div class="actions-grid">
-    <button class="action-btn" onclick="doAction('salon')">
-      <div class="icon">💆</div>
-      <div class="name">美容院へ</div>
-      <div class="detail">-5,000円<br>魅力+15 / +1ヶ月</div>
-    </button>
-    <button class="action-btn" onclick="doAction('rest')">
-      <div class="icon">😴</div>
-      <div class="name">ゆっくり休む</div>
-      <div class="detail">HP+40 MP+30<br>+2週間</div>
-    </button>
-    <button class="action-btn" onclick="doAction('sns')">
-      <div class="icon">📱</div>
-      <div class="name">SNS更新</div>
-      <div class="detail">魅力+8<br>+1ヶ月</div>
-    </button>
-    <button class="action-btn" onclick="doAction('work')">
-      <div class="icon">💼</div>
-      <div class="name">バイトする</div>
-      <div class="detail">+20,000円 EXP+10<br>HP-15 / +1ヶ月</div>
-    </button>
-    <button class="action-btn" onclick="doAction('goukon')">
-      <div class="icon">🍻</div>
-      <div class="name">合コン参加</div>
-      <div class="detail">EXP+25 魅力+5<br>HP-20 MP-10 / +2ヶ月</div>
-    </button>
-    <button class="action-btn" onclick="doAction('invest')">
-      <div class="icon">✨</div>
-      <div class="name">自己投資</div>
-      <div class="detail">-15,000円 魅力+25<br>EXP+15 / +2ヶ月</div>
-    </button>
-  </div>
-
-  <div class="log-box" id="main-log"></div>
-</div>
-
-<!-- BATTLE SCREEN -->
-<div id="battle-screen" class="screen">
-  <div class="battle-header">
-    <h2 id="battle-title">⚔️ ギャラ飲みバトル</h2>
-    <div style="font-size:0.75em;color:#aaa" id="round-disp">ラウンド 1 / 3</div>
-  </div>
-  <div class="oji-card">
-    <div class="oji-icon" id="oji-icon">👔</div>
-    <div class="oji-name" id="oji-name">おじ</div>
-    <div class="oji-type" id="oji-type">タイプ</div>
-    <div class="mood-wrap">
-      <div class="mood-label">機嫌 😊</div>
-      <div class="mood-bar-bg"><div class="mood-bar-fill" id="mood-bar" style="width:30%"></div></div>
-      <div class="mood-value" id="mood-val">30 / 80</div>
-    </div>
-  </div>
-  <div class="player-mp">
-    <div class="player-mp-label">⚡ テンション (MP)</div>
-    <div class="player-mp-bar-bg"><div class="player-mp-bar" id="battle-mp-bar" style="width:100%"></div></div>
-    <div style="font-size:0.75em;color:#88aaff;margin-top:2px" id="battle-mp-val">60/60</div>
-  </div>
-  <div class="battle-log" id="battle-log"></div>
-  <div class="payout-preview" id="payout-preview">💰 予想ゲット額：計算中...</div>
-  <div class="skills-title">🎯 スキル選択</div>
-  <div class="skills-grid" id="skills-grid"></div>
-  <div style="height:10px"></div>
 </div>
 
 <!-- WIN SCREEN -->
-<div id="win-screen" class="screen">
-  <div class="end-card">
+<div id="win-screen">
+  <div class="sc-card" style="text-align:center">
     <div class="end-icon">🎉</div>
-    <div class="end-title" style="color:#daa520">おめでとう！</div>
-    <div class="end-msg" id="win-msg">100万円達成！港の女王誕生！</div>
+    <div class="end-title" style="color:#ffd700">おめでとう！</div>
+    <div id="win-msg" style="font-size:0.85em;color:#ccc;margin-bottom:10px"></div>
     <div class="end-stats" id="win-stats"></div>
-    <button class="btn-retry" onclick="resetGame()">もう一度プレイ</button>
+    <button class="big-btn" onclick="resetGame()">もう一度</button>
   </div>
 </div>
 
 <!-- LOSE SCREEN -->
-<div id="lose-screen" class="screen">
-  <div class="end-card">
+<div id="lose-screen">
+  <div class="sc-card" style="text-align:center">
     <div class="end-icon">😢</div>
     <div class="end-title" style="color:#ff6666">ゲームオーバー</div>
-    <div class="end-msg" id="lose-msg">残念...</div>
+    <div id="lose-msg" style="font-size:0.85em;color:#ccc;margin-bottom:10px"></div>
     <div class="end-stats" id="lose-stats"></div>
-    <button class="btn-retry" onclick="resetGame()">もう一度チャレンジ</button>
+    <button class="big-btn" onclick="resetGame()">リトライ</button>
   </div>
 </div>
 
+<!-- MAIN GAME -->
+<div id="wrap">
+  <div id="hud">
+    <div class="hud-block">👤 <span id="h-name" class="hud-val">-</span><br>Lv<span id="h-lv">1</span> / <span id="h-age">20歳</span></div>
+    <div class="hud-block">❤️<span id="h-hp" class="hud-val">100</span> ⚡<span id="h-mp" class="hud-val">60</span></div>
+    <div class="hud-block">✨魅力 <span id="h-charm" class="hud-val">50</span></div>
+    <div class="hud-block">💰 <span id="h-money" class="hud-money">0円</span></div>
+  </div>
+  <canvas id="map-canvas" width="400" height="380"></canvas>
+  <div id="msg-bar">🌊 港区へようこそ！矢印キーか下のボタンで移動</div>
+  <div id="controls">
+    <div class="dpad">
+      <div></div>
+      <div class="db" id="db-up" ontouchstart="dpadStart('up')" ontouchend="dpadEnd('up')">↑</div>
+      <div></div>
+      <div class="db" id="db-left" ontouchstart="dpadStart('left')" ontouchend="dpadEnd('left')">←</div>
+      <div class="db" id="db-center">●</div>
+      <div class="db" id="db-right" ontouchstart="dpadStart('right')" ontouchend="dpadEnd('right')">→</div>
+      <div></div>
+      <div class="db" id="db-down" ontouchstart="dpadStart('down')" ontouchend="dpadEnd('down')">↓</div>
+      <div></div>
+    </div>
+    <button id="act-btn" onclick="doInteract()">話しかける</button>
+  </div>
+</div>
+
+<!-- BATTLE OVERLAY -->
+<div id="battle">
+  <div class="bt-head" id="bt-title">⚔️ ギャラ飲みバトル！</div>
+  <div class="bt-oji">
+    <div class="bt-oji-icon" id="bt-icon">👔</div>
+    <div class="bt-oji-name" id="bt-name">おじ</div>
+    <div class="bt-oji-sub" id="bt-sub">タイプ</div>
+    <div class="mbar-wrap">
+      <div class="mbar-lbl">機嫌 😊</div>
+      <div class="mbar-bg"><div class="mbar-fill" id="mbar" style="width:30%"></div></div>
+      <div class="mbar-val" id="mbar-val">30 / 80</div>
+    </div>
+  </div>
+  <div class="bt-mp">
+    <div class="bt-mp-lbl">⚡ テンション</div>
+    <div class="bt-mp-bg"><div class="bt-mp-bar" id="bt-mp-bar"></div></div>
+    <div style="font-size:0.72em;color:#88aaff;margin-top:2px" id="bt-mp-val"></div>
+  </div>
+  <div class="bt-log" id="bt-log"></div>
+  <div class="bt-pay" id="bt-pay">💰 予想ゲット額：---</div>
+  <div class="bt-rnd" id="bt-rnd">ラウンド 1 / 3</div>
+  <div class="sk-grid" id="sk-grid"></div>
+</div>
 <script>
-// ===== ゲーム定数 =====
-const GOAL = 1000000;
-const AGE_LIMIT = 30;
-const LEVEL_EXP = [0,30,70,130,210,320,460,640,870,1150,9999];
+// ===== CONSTANTS =====
+const TS=32, MAP_W=44, MAP_H=36, VW=400, VH=380;
+const T={RD:0,SW:1,GR:2,WA:3,BL:4}; // road,sidewalk,grass,water,block
+const TILE_C=['#2c2c2c','#3a3a4a','#2a5218','#1a3a6a','#1a1520'];
+const GOAL=1000000, AGE_LIMIT=30;
+const LEVEL_EXP=[0,30,70,130,210,320,460,640,870,1150,9999];
 
-const OJIS = [
-  {icon:'🏢',name:'サラリーマンおじ',type:'平凡なサラリーマン',moodMax:80,walletMin:50000,walletMax:80000,likes:'褒める系'},
-  {icon:'💰',name:'社長おじ',type:'どこかの社長らしい',moodMax:100,walletMin:100000,walletMax:200000,likes:'聞き上手系'},
-  {icon:'🎸',name:'バンドおじ',type:'元バンドマン（自称）',moodMax:70,walletMin:30000,walletMax:60000,likes:'盛り上げ系'},
-  {icon:'👔',name:'政治家おじ',type:'あやしい人脈あり',moodMax:90,walletMin:80000,walletMax:150000,likes:'甘え系'},
-  {icon:'⚓',name:'港のおじ',type:'地元の常連さん',moodMax:60,walletMin:20000,walletMax:40000,likes:'なんでも'},
+// ===== GAME DATA =====
+const OJIS=[
+  {icon:'🏢',name:'サラリーマンおじ',moodMax:80,wMin:50000,wMax:80000},
+  {icon:'💰',name:'社長おじ',moodMax:100,wMin:100000,wMax:200000},
+  {icon:'🎸',name:'バンドおじ',moodMax:70,wMin:30000,wMax:60000},
+  {icon:'👔',name:'政治家おじ',moodMax:90,wMin:80000,wMax:150000},
+  {icon:'⚓',name:'港のおじ',moodMax:60,wMin:20000,wMax:40000},
 ];
-
-const OJI_DIALOGUE = {
-  low: ['うーん...','まあそうだな','次の予定あるんだよね','（スマホをいじる）','ふむ'],
-  mid: ['なかなかいいじゃない','もっと飲もうよ','楽しいね！','君面白いね'],
-  high: ['きみ最高だよ！','また誘っていい？','これ持ってって！','最高の夜だ！'],
+const OJI_SAY={
+  lo:['うーん...','まあそうだな','（スマホをいじる）','次あるんだよね'],
+  mi:['なかなかいいじゃない','もっと飲もうよ','楽しいね！'],
+  hi:['きみ最高だよ！','また誘っていい？','これ持ってって！'],
 };
-
-const SKILLS = [
-  {id:'home',name:'褒める',icon:'⭐',mpCost:8,moodGain:18,minLv:1,desc:'機嫌+18'},
-  {id:'smile',name:'笑顔MAX',icon:'😊',mpCost:12,moodGain:22,minLv:1,desc:'機嫌+22 魅力+3'},
-  {id:'listen',name:'話を聞く',icon:'👂',mpCost:3,moodGain:12,minLv:1,desc:'機嫌+12（低コスト）'},
-  {id:'hype',name:'盛り上げる',icon:'🎉',mpCost:15,moodGain:28,minLv:3,desc:'機嫌+18〜38'},
-  {id:'cute',name:'甘える',icon:'🥺',mpCost:20,moodGain:35,minLv:5,desc:'機嫌+35 HP-5'},
-  {id:'real',name:'本音トーク',icon:'💬',mpCost:25,moodGain:45,minLv:7,desc:'機嫌+45（失敗あり）'},
-  {id:'toast',name:'伝説の乾杯',icon:'🥂',mpCost:40,moodGain:60,minLv:10,desc:'機嫌+60（最強）'},
+const SKILLS=[
+  {id:'home',name:'褒める',icon:'⭐',mp:8,gain:18,lv:1,desc:'機嫌+18'},
+  {id:'smile',name:'笑顔MAX',icon:'😊',mp:12,gain:22,lv:1,desc:'機嫌+22 魅力+3'},
+  {id:'listen',name:'話を聞く',icon:'👂',mp:3,gain:12,lv:1,desc:'機嫌+12（低コスト）'},
+  {id:'hype',name:'盛り上げる',icon:'🎉',mp:15,gain:28,lv:3,desc:'機嫌+18〜38'},
+  {id:'cute',name:'甘える',icon:'🥺',mp:20,gain:35,lv:5,desc:'機嫌+35 HP-5'},
+  {id:'real',name:'本音トーク',icon:'💬',mp:25,gain:45,lv:7,desc:'機嫌+45（失敗あり）'},
+  {id:'toast',name:'伝説の乾杯',icon:'🥂',mp:40,gain:60,lv:10,desc:'機嫌+60（最強）'},
+];
+const BUILDINGS=[
+  {tx:1,ty:1,tw:5,th:3,name:'💆 美容院',col:'#8b1c5e',type:'salon',enter:'美容院に入った！魅力+15（-5,000円）'},
+  {tx:8,ty:1,tw:5,th:3,name:'🍾 六本木BAR',col:'#2a1060',type:'bar',enter:'バーで合コン！EXP+25 魅力+5（-2ヶ月 HP-20）'},
+  {tx:19,ty:1,tw:5,th:3,name:'☕ 青山カフェ',col:'#5c3010',type:'cafe',enter:'カフェで休憩…HP+40 MP+30（+2週間）'},
+  {tx:29,ty:1,tw:5,th:3,name:'🏪 コンビニ',col:'#1a4070',type:'shop',enter:'バイトした！+20,000円 EXP+10（HP-15）'},
+  {tx:36,ty:1,tw:6,th:3,name:'✨ 自己投資',col:'#3a1060',type:'invest',enter:'自己投資！魅力+25 EXP+15（-15,000円 +2ヶ月）'},
+  {tx:1,ty:8,tw:6,th:4,name:'🍜 麻布十番',col:'#6b2010',type:'food',enter:'麻布十番で食事！HP+25 MP+15（+1ヶ月）'},
+  {tx:19,ty:8,tw:8,th:5,name:'🏙️ 六本木ヒルズ',col:'#1c2a3a',type:'hills',enter:'六本木ヒルズに来た！魅力+5 EXP+5'},
+  {tx:10,ty:15,tw:7,th:6,name:'🌿 芝公園',col:'#1a4020',type:'park',enter:'公園でのんびり…HP+50 MP+40（+1ヶ月）'},
+  {tx:36,ty:20,tw:5,th:9,name:'🗼 東京タワー',col:'#8b2200',type:'tower',enter:'東京タワー！魅力+10 EXP+10（+1ヶ月）'},
+  {tx:28,ty:14,tw:6,th:5,name:'🎆 お台場',col:'#0a2040',type:'odaiba',enter:'お台場！魅力+8 HP+20（+1ヶ月）'},
 ];
 
-// ===== ゲーム状態 =====
-let G = {};
+// ===== MAP =====
+let mapTiles=[];
+function buildMap(){
+  mapTiles=Array.from({length:MAP_H},()=>Array(MAP_W).fill(T.SW));
+  // 横道
+  [[5,6],[12,13],[20,21],[27,28],[33,34]].forEach(([r1,r2])=>{
+    for(let x=0;x<MAP_W;x++){mapTiles[r1][x]=T.RD;mapTiles[r2][x]=T.RD;}
+  });
+  // 縦道
+  [[7,8],[16,17],[24,25],[31,32],[38,39]].forEach(([c1,c2])=>{
+    for(let y=0;y<MAP_H;y++){mapTiles[y][c1]=T.RD;mapTiles[y][c2]=T.RD;}
+  });
+  // 芝公園 (草)
+  fillTile(T.GR,9,14,9,8);
+  // 東京湾
+  fillTile(T.WA,35,28,MAP_W-35,MAP_H-28);
+  fillTile(T.WA,0,32,MAP_W,MAP_H-32);
+  // 建物を壁で塗りつぶす
+  BUILDINGS.forEach(b=>{
+    fillTile(T.BL,b.tx,b.ty,b.tw,b.th);
+  });
+}
+function fillTile(t,x,y,w,h){
+  for(let dy=0;dy<h;dy++)for(let dx=0;dx<w;dx++){
+    const nx=x+dx,ny=y+dy;
+    if(ny>=0&&ny<MAP_H&&nx>=0&&nx<MAP_W)mapTiles[ny][nx]=t;
+  }
+}
 
-function initState(name) {
-  return {
-    name: name || 'プレイヤー',
-    ageMonths: 240, // 20歳 = 240ヶ月
-    level: 1,
-    exp: 0,
-    hp: 100, maxHp: 100,
-    mp: 60, maxMp: 60,
-    charm: 50,
-    money: 0,
-    totalEarned: 0,
-    actionsCount: 0,
-    battlesWon: 0,
-    log: [],
-    // バトル状態
-    inBattle: false,
-    battle: null,
+// ===== NPC SYSTEM =====
+const NPC_COLORS=['#4488cc','#cc8833','#44cc88','#cc44cc','#cc8888'];
+let npcs=[];
+const ROAD_SPOTS=[];
+function buildRoadSpots(){
+  ROAD_SPOTS.length=0;
+  for(let y=0;y<MAP_H;y++)for(let x=0;x<MAP_W;x++)
+    if(mapTiles[y][x]===T.RD)ROAD_SPOTS.push({x,y});
+}
+function spawnNPCs(){
+  npcs=[];
+  for(let i=0;i<10;i++){
+    const sp=ROAD_SPOTS[ri(0,ROAD_SPOTS.length-1)];
+    npcs.push({
+      px:sp.x*TS+TS/2,py:sp.y*TS+TS/2,
+      ojiIdx:ri(0,OJIS.length-1),
+      colorIdx:ri(0,NPC_COLORS.length-1),
+      dir:Math.random()*Math.PI*2,
+      spd:0.6+Math.random()*0.4,
+      changeTimer:ri(60,180),
+      idle:false,idleTimer:0,
+    });
+  }
+}
+
+// ===== GAME STATE =====
+let G={}, running=false, inBattle=false, battle=null;
+let keys={}, dpadHeld={};
+let cam={x:0,y:0};
+let player={px:9*TS,py:9*TS,facing:'d',animFrame:0,animTimer:0};
+let nearNPC=null, nearBuilding=null;
+let msgTimeout=null;
+
+function initG(name){
+  return{
+    name:name||'みなと',
+    ageM:240, lv:1, exp:0,
+    hp:100,maxHp:100, mp:60,maxMp:60,
+    charm:50, money:0, battlesWon:0, actCount:0,
   };
 }
 
-// ===== ユーティリティ =====
-function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
-
-function fmtAge(months) {
-  const y = Math.floor(months / 12);
-  const m = months % 12;
-  return m === 0 ? `${y}歳` : `${y}歳${m}ヶ月`;
+// ===== UTILS =====
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function cl(v,a,b){return Math.min(b,Math.max(a,v));}
+function fmtAge(m){const y=Math.floor(m/12),mo=m%12;return mo?`${y}歳${mo}ヶ月`:`${y}歳`;}
+function fmtMoney(n){return n.toLocaleString('ja-JP')+'円';}
+function setMsg(t,ms=0){
+  document.getElementById('msg-bar').textContent=t;
+  if(msgTimeout)clearTimeout(msgTimeout);
+  if(ms>0)msgTimeout=setTimeout(()=>document.getElementById('msg-bar').textContent='',ms);
 }
-
-function fmtMoney(n) {
-  return n.toLocaleString('ja-JP') + '円';
-}
-
-function addLog(msg, type='') {
-  G.log.unshift({msg, type});
-  if (G.log.length > 30) G.log.pop();
-}
-
-function addBattleLog(msg, type='') {
-  const log = document.getElementById('battle-log');
-  const div = document.createElement('div');
-  div.className = 'blog-entry ' + type;
-  div.textContent = msg;
-  log.appendChild(div);
-  log.scrollTop = log.scrollHeight;
-}
-
-// ===== 誘われ率計算 =====
-function inviteChance() {
-  const ageY = G.ageMonths / 12;
-  const base = (AGE_LIMIT - ageY) * 6 + G.level * 10 + G.charm / 4;
-  return clamp(Math.floor(base), 5, 85);
-}
-
-// ===== レベルアップ =====
-function checkLevelUp() {
-  while (G.level < 10 && G.exp >= LEVEL_EXP[G.level]) {
-    G.level++;
-    G.maxHp += 5;
-    G.maxMp += 5;
-    G.hp = Math.min(G.hp + 10, G.maxHp);
-    G.mp = Math.min(G.mp + 10, G.maxMp);
-    addLog(`✨ レベルアップ！ Lv${G.level} になった！HP・MPが増えた！`, 'level');
+function checkLvUp(){
+  while(G.lv<10&&G.exp>=LEVEL_EXP[G.lv]){
+    G.lv++;G.maxHp+=5;G.maxMp+=5;
+    G.hp=Math.min(G.hp+10,G.maxHp);G.mp=Math.min(G.mp+10,G.maxMp);
+    setMsg(`✨ レベルアップ！ Lv${G.lv} になった！`);
   }
 }
-
-// ===== ゲーム開始 =====
-function startGame() {
-  const name = document.getElementById('player-name').value.trim() || 'みなと';
-  G = initState(name);
-  showScreen('main-screen');
-  addLog(`${name}のギャラ飲みライフが始まった！100万円を目指すぞ！`, 'highlight');
-  renderMain();
+function inviteChance(){
+  const ay=G.ageM/12;
+  return cl(Math.floor((AGE_LIMIT-ay)*6+G.lv*10+G.charm/4),5,85);
 }
 
-function resetGame() {
-  G = {};
-  document.getElementById('player-name').value = '';
-  document.getElementById('battle-log').innerHTML = '';
-  showScreen('start-screen');
+// ===== INPUT =====
+window.addEventListener('keydown',e=>{
+  keys[e.key]=true;
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();doInteract();}
+});
+window.addEventListener('keyup',e=>{keys[e.key]=false;});
+function dpadStart(d){dpadHeld[d]=true;document.getElementById('db-'+d).classList.add('pressed');}
+function dpadEnd(d){dpadHeld[d]=false;document.getElementById('db-'+d).classList.remove('pressed');}
+
+// ===== COLLISION =====
+function canWalk(px,py){
+  const margin=10;
+  const corners=[
+    [px-margin,py-margin],[px+margin,py-margin],
+    [px-margin,py+margin],[px+margin,py+margin],
+  ];
+  for(const[cx,cy]of corners){
+    const tx=Math.floor(cx/TS),ty=Math.floor(cy/TS);
+    if(tx<0||ty<0||tx>=MAP_W||ty>=MAP_H)return false;
+    if(mapTiles[ty][tx]===T.BL)return false;
+    if(mapTiles[ty][tx]===T.WA)return false;
+  }
+  return true;
 }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => {
-    s.classList.remove('active');
-    s.style.display = '';
+// ===== PLAYER UPDATE =====
+function updatePlayer(){
+  if(inBattle)return;
+  const spd=2;
+  let dx=0,dy=0;
+  if(keys['ArrowUp']||keys['w']||keys['W']||dpadHeld.up)dy=-1;
+  if(keys['ArrowDown']||keys['s']||keys['S']||dpadHeld.down)dy=1;
+  if(keys['ArrowLeft']||keys['a']||keys['A']||dpadHeld.left)dx=-1;
+  if(keys['ArrowRight']||keys['d']||keys['D']||dpadHeld.right)dx=1;
+  if(dx!==0&&dy!==0){dx*=0.707;dy*=0.707;}
+  if(dx!==0)player.facing=dx>0?'r':'l';
+  else if(dy!==0)player.facing=dy>0?'d':'u';
+  if(dx!==0||dy!==0){
+    player.animTimer++;
+    if(player.animTimer%8===0)player.animFrame=(player.animFrame+1)%4;
+  }
+  const nx=player.px+dx*spd, ny=player.py+dy*spd;
+  if(canWalk(nx,player.py))player.px=nx;
+  if(canWalk(player.px,ny))player.py=ny;
+  player.px=cl(player.px,TS,MAP_W*TS-TS);
+  player.py=cl(player.py,TS,MAP_H*TS-TS);
+}
+
+// ===== NPC UPDATE =====
+function updateNPCs(){
+  if(inBattle)return;
+  npcs.forEach(n=>{
+    n.changeTimer--;
+    if(n.changeTimer<=0){
+      n.idle=!n.idle;
+      n.changeTimer=n.idle?ri(30,80):ri(60,180);
+      if(!n.idle)n.dir=Math.random()*Math.PI*2;
+    }
+    if(!n.idle){
+      const nx=n.px+Math.cos(n.dir)*n.spd;
+      const ny=n.py+Math.sin(n.dir)*n.spd;
+      if(canWalk(nx,n.py))n.px=nx; else n.dir+=Math.PI+ri(-30,30)*0.05;
+      if(canWalk(n.px,ny))n.py=ny; else n.dir+=Math.PI+ri(-30,30)*0.05;
+      n.px=cl(n.px,TS,MAP_W*TS-TS);
+      n.py=cl(n.py,TS,MAP_H*TS-TS);
+    }
   });
-  document.getElementById(id).classList.add('active');
 }
 
-// ===== 勝敗チェック =====
-function checkWinLose() {
-  if (G.money >= GOAL) {
-    showWin();
-    return true;
+// ===== PROXIMITY CHECK =====
+function checkProximity(){
+  nearNPC=null; nearBuilding=null;
+  // NPCとの距離チェック
+  let minD=Infinity;
+  npcs.forEach(n=>{
+    const d=Math.hypot(n.px-player.px,n.py-player.py);
+    if(d<52&&d<minD){minD=d;nearNPC=n;}
+  });
+  // 建物との距離チェック
+  if(!nearNPC){
+    BUILDINGS.forEach(b=>{
+      const bx=b.tx*TS+b.tw*TS/2, by=b.ty*TS+b.th*TS/2;
+      const d=Math.hypot(bx-player.px,by-player.py);
+      if(d<b.tw*TS/2+30&&d<Infinity){
+        nearBuilding=b;
+      }
+    });
   }
-  if (G.ageMonths >= AGE_LIMIT * 12 || G.hp <= 0) {
-    showLose();
-    return true;
+  const btn=document.getElementById('act-btn');
+  if(nearNPC){
+    btn.textContent='💬 話しかける';
+    btn.classList.add('show');
+  }else if(nearBuilding){
+    btn.textContent=`🚪 入る`;
+    btn.classList.add('show');
+  }else{
+    btn.classList.remove('show');
   }
+}
+
+// ===== INTERACTION =====
+function doInteract(){
+  if(inBattle)return;
+  if(nearNPC){
+    startBattle(nearNPC);
+  }else if(nearBuilding){
+    doBuilding(nearBuilding);
+  }
+}
+function doBuilding(b){
+  G.actCount++;
+  let ok=true;
+  switch(b.type){
+    case'salon':
+      if(G.money<5000){setMsg('💸 お金が足りない（5,000円必要）');return;}
+      G.money-=5000;G.charm=cl(G.charm+15,0,100);G.ageM+=1;G.hp=cl(G.hp-5,0,G.maxHp);break;
+    case'bar':
+      G.exp+=25;G.charm=cl(G.charm+5,0,100);G.ageM+=2;G.hp=cl(G.hp-20,0,G.maxHp);G.mp=cl(G.mp-10,0,G.maxMp);break;
+    case'cafe':
+      G.hp=cl(G.hp+40,0,G.maxHp);G.mp=cl(G.mp+30,0,G.maxMp);G.ageM+=1;break;
+    case'shop':
+      G.money+=20000;G.exp+=10;G.ageM+=1;G.hp=cl(G.hp-15,0,G.maxHp);break;
+    case'invest':
+      if(G.money<15000){setMsg('💸 自己投資には15,000円必要');return;}
+      G.money-=15000;G.charm=cl(G.charm+25,0,100);G.exp+=15;G.ageM+=2;break;
+    case'food':
+      G.hp=cl(G.hp+25,0,G.maxHp);G.mp=cl(G.mp+15,0,G.maxMp);G.ageM+=1;break;
+    case'hills':case'tower':case'odaiba':
+      G.charm=cl(G.charm+(b.type==='tower'?10:b.type==='odaiba'?8:5),0,100);
+      G.exp+=b.type==='hills'?5:10;G.ageM+=1;break;
+    case'park':
+      G.hp=cl(G.hp+50,0,G.maxHp);G.mp=cl(G.mp+40,0,G.maxMp);G.ageM+=1;break;
+  }
+  setMsg(b.enter);
+  checkLvUp();
+  updateHUD();
+  checkWinLose();
+  // 建物入ってもギャラ飲み抽選
+  if(Math.random()*100<inviteChance()&&!inBattle){
+    setTimeout(()=>{
+      const npc=npcs[ri(0,npcs.length-1)];
+      setMsg('📩 ギャラ飲みのお誘いが来た！');
+      setTimeout(()=>startBattle(npc),800);
+    },1200);
+  }
+}
+
+// ===== WIN/LOSE =====
+function checkWinLose(){
+  if(G.money>=GOAL){showWin();return true;}
+  if(G.ageM>=AGE_LIMIT*12||G.hp<=0){showLose();return true;}
   return false;
 }
-
-function showWin() {
-  document.getElementById('win-msg').textContent =
-    `${G.name}は${fmtAge(G.ageMonths)}で100万円を達成！港の女王誕生！✨`;
-  document.getElementById('win-stats').innerHTML = `
-    <div>💰 最終資産：${fmtMoney(G.money)}</div>
-    <div>👤 最終年齢：${fmtAge(G.ageMonths)}</div>
-    <div>📊 最終レベル：Lv${G.level}</div>
-    <div>🍾 ギャラ飲み回数：${G.battlesWon}回</div>
-    <div>🎯 総行動数：${G.actionsCount}回</div>
-  `;
-  showScreen('win-screen');
+function showWin(){
+  running=false;
+  document.getElementById('win-msg').textContent=`${G.name}は${fmtAge(G.ageM)}で100万円達成！港の女王誕生！✨`;
+  document.getElementById('win-stats').innerHTML=
+    `<div>💰 ${fmtMoney(G.money)}</div><div>👤 ${fmtAge(G.ageM)}</div><div>📊 Lv${G.lv}</div><div>🍾 ギャラ飲み${G.battlesWon}回</div>`;
+  document.getElementById('win-screen').classList.add('active');
+}
+function showLose(){
+  running=false;
+  const reason=G.hp<=0?'体力が尽きた...':`${fmtAge(G.ageM)}になり誰からも誘われなくなった...`;
+  document.getElementById('lose-msg').textContent=reason;
+  document.getElementById('lose-stats').innerHTML=
+    `<div>💰 ${fmtMoney(G.money)}</div><div>👤 ${fmtAge(G.ageM)}</div><div>📊 Lv${G.lv}</div><div>あと${fmtMoney(Math.max(0,GOAL-G.money))}</div>`;
+  document.getElementById('lose-screen').classList.add('active');
 }
 
-function showLose() {
-  let reason = G.hp <= 0 ? '体力が尽きてしまった...' : `${fmtAge(G.ageMonths)}になり、誰からも誘われなくなった...`;
-  document.getElementById('lose-msg').textContent = reason;
-  document.getElementById('lose-stats').innerHTML = `
-    <div>💰 獲得金額：${fmtMoney(G.money)}</div>
-    <div>👤 最終年齢：${fmtAge(G.ageMonths)}</div>
-    <div>📊 最終レベル：Lv${G.level}</div>
-    <div>🍾 ギャラ飲み回数：${G.battlesWon}回</div>
-    <div>あと ${fmtMoney(Math.max(0, GOAL - G.money))} だったのに！</div>
-  `;
-  showScreen('lose-screen');
+// ===== HUD =====
+function updateHUD(){
+  if(!G.name)return;
+  document.getElementById('h-name').textContent=G.name;
+  document.getElementById('h-lv').textContent=G.lv;
+  document.getElementById('h-age').textContent=fmtAge(G.ageM);
+  document.getElementById('h-hp').textContent=G.hp;
+  document.getElementById('h-mp').textContent=G.mp;
+  document.getElementById('h-charm').textContent=G.charm;
+  document.getElementById('h-money').textContent=fmtMoney(G.money);
 }
 
-// ===== アクション =====
-function doAction(type) {
-  if (G.inBattle) return;
-  G.actionsCount++;
-
-  const msgs = {
-    salon: () => {
-      if (G.money < 5000) { addLog('💸 お金が足りない！（-5,000円必要）', 'danger'); G.actionsCount--; return false; }
-      G.money -= 5000; G.charm = clamp(G.charm + 15, 0, 100);
-      G.ageMonths += 1; G.hp = clamp(G.hp - 5, 0, G.maxHp);
-      addLog(`💆 美容院に行った！魅力UP！（-5,000円、魅力+15）`, '');
-      return true;
-    },
-    rest: () => {
-      G.hp = clamp(G.hp + 40, 0, G.maxHp);
-      G.mp = clamp(G.mp + 30, 0, G.maxMp);
-      G.ageMonths += 1; // 半月扱いだが月単位で+0.5→切り上げ1
-      addLog(`😴 ゆっくり休んだ！HP・MPが回復した！`, '');
-      return true;
-    },
-    sns: () => {
-      G.charm = clamp(G.charm + 8, 0, 100);
-      G.ageMonths += 1; G.hp = clamp(G.hp - 5, 0, G.maxHp);
-      const viral = Math.random() < 0.2;
-      if (viral) {
-        G.charm = clamp(G.charm + 10, 0, 100);
-        addLog(`📱 SNS更新！投稿がバズった！魅力爆上がり！✨`, 'highlight');
-      } else {
-        addLog(`📱 SNS更新！魅力がちょっとアップ！`, '');
-      }
-      return true;
-    },
-    work: () => {
-      G.money += 20000; G.exp += 10;
-      G.ageMonths += 1; G.hp = clamp(G.hp - 15, 0, G.maxHp);
-      G.totalEarned += 20000;
-      addLog(`💼 バイト頑張った！+20,000円ゲット！でも疲れた...`, 'money');
-      return true;
-    },
-    goukon: () => {
-      G.exp += 25; G.charm = clamp(G.charm + 5, 0, 100);
-      G.ageMonths += 2; G.hp = clamp(G.hp - 20, 0, G.maxHp); G.mp = clamp(G.mp - 10, 0, G.maxMp);
-      addLog(`🍻 合コン参加！人脈が広がった！EXP+25`, '');
-      return true;
-    },
-    invest: () => {
-      if (G.money < 15000) { addLog('💸 自己投資には15,000円必要！', 'danger'); G.actionsCount--; return false; }
-      G.money -= 15000; G.charm = clamp(G.charm + 25, 0, 100); G.exp += 15;
-      G.ageMonths += 2;
-      addLog(`✨ 自己投資した！魅力大幅アップ！（-15,000円）`, '');
-      return true;
-    },
-  };
-
-  const fn = msgs[type];
-  if (!fn) return;
-  const ok = fn();
-  if (!ok) { renderMain(); return; }
-
-  checkLevelUp();
-
-  if (checkWinLose()) return;
-
-  // ギャラ飲み抽選
-  const chance = inviteChance();
-  if (Math.random() * 100 < chance) {
-    setTimeout(() => startBattle(), 600);
-    addLog(`📩 ギャラ飲みのお誘いが来た！チャンス！`, 'highlight');
-  }
-
-  renderMain();
-}
-
-// ===== バトル開始 =====
-function startBattle() {
-  const oji = {...OJIS[rand(0, OJIS.length - 1)]};
-  const wallet = rand(oji.walletMin, oji.walletMax);
-  G.battle = {
-    oji,
-    wallet,
-    mood: Math.floor(oji.moodMax * 0.3),
-    round: 1,
-    maxRound: 3,
-    finished: false,
-  };
-  G.inBattle = true;
-  document.getElementById('battle-log').innerHTML = '';
-
-  document.getElementById('oji-icon').textContent = oji.icon;
-  document.getElementById('oji-name').textContent = oji.name;
-  document.getElementById('oji-type').textContent = oji.type + '　💰予算：' + fmtMoney(wallet);
-  document.getElementById('battle-title').textContent = '⚔️ ギャラ飲みバトル！';
-
-  addBattleLog(`${oji.icon} ${oji.name}との飲み会が始まった！`, 'good');
-  addBattleLog(`機嫌を上げて、たくさん稼ごう！`, '');
-
-  showScreen('battle-screen');
+// ===== BATTLE =====
+function startBattle(npc){
+  const ojiIdx=npc?npc.ojiIdx:ri(0,OJIS.length-1);
+  const oji=OJIS[ojiIdx];
+  const wallet=ri(oji.wMin,oji.wMax);
+  battle={oji,wallet,mood:Math.floor(oji.moodMax*0.3),round:1,maxRound:3,done:false};
+  inBattle=true;
+  document.getElementById('bt-log').innerHTML='';
+  document.getElementById('bt-icon').textContent=oji.icon;
+  document.getElementById('bt-name').textContent=oji.name;
+  document.getElementById('bt-sub').textContent='💰予算：'+fmtMoney(wallet);
+  document.getElementById('battle').classList.add('active');
+  bLog(`${oji.icon} ${oji.name}との飲み会が始まった！`,'g');
+  bLog('機嫌を上げて稼ごう！','');
   renderBattle();
 }
-
-// ===== スキル使用 =====
-function useSkill(skillId) {
-  if (!G.battle || G.battle.finished) return;
-  const skill = SKILLS.find(s => s.id === skillId);
-  if (!skill) return;
-  if (G.mp < skill.mpCost) { addBattleLog('⚡ テンションが足りない！', 'bad'); return; }
-
-  G.mp -= skill.mpCost;
-  let gain = skill.moodGain;
-
-  // スキル固有効果
-  if (skillId === 'hype') gain += rand(-10, 10);
-  if (skillId === 'cute') { G.hp = clamp(G.hp - 5, 0, G.maxHp); }
-  if (skillId === 'real') {
-    if (Math.random() < 0.3) {
-      gain = -20;
-      addBattleLog(`💬 本音を言いすぎた！おじが怒った！`, 'bad');
-    }
-  }
-  if (skillId === 'smile') { G.charm = clamp(G.charm + 3, 0, 100); }
-  if (skillId === 'toast' && G.battle.mood >= G.battle.oji.moodMax * 0.5) {
-    gain = 60;
-    addBattleLog(`🥂 伝説の乾杯が炸裂！！！`, 'good');
-  }
-
-  G.battle.mood = clamp(G.battle.mood + gain, 0, G.battle.oji.moodMax);
-
-  if (gain > 0) {
-    addBattleLog(`${skill.icon} ${skill.name}！ 機嫌+${gain}`, 'good');
-  }
-
-  // おじの反応
-  const moodPct = G.battle.mood / G.battle.oji.moodMax;
-  let dialogPool = moodPct < 0.4 ? OJI_DIALOGUE.low : moodPct < 0.7 ? OJI_DIALOGUE.mid : OJI_DIALOGUE.high;
-  const dialogue = dialogPool[rand(0, dialogPool.length - 1)];
-  addBattleLog(`${G.battle.oji.icon}「${dialogue}」`, 'oji');
-
-  // ラウンド進行
-  G.battle.round++;
-  if (G.battle.round > G.battle.maxRound) {
-    endBattle();
-    return;
-  }
-
+function bLog(msg,cls){
+  const d=document.createElement('div');
+  d.className='bl '+(cls||'');d.textContent=msg;
+  const log=document.getElementById('bt-log');
+  log.appendChild(d);log.scrollTop=log.scrollHeight;
+}
+function useSkill(id){
+  if(!battle||battle.done)return;
+  const sk=SKILLS.find(s=>s.id===id);
+  if(!sk||G.mp<sk.mp){bLog('⚡ テンション不足！','b');return;}
+  G.mp-=sk.mp;
+  let gain=sk.gain;
+  if(id==='hype')gain+=ri(-10,10);
+  if(id==='cute')G.hp=cl(G.hp-5,0,G.maxHp);
+  if(id==='real'&&Math.random()<0.3){gain=-20;bLog('💬 本音言いすぎた！おじが怒った！','b');}
+  if(id==='smile')G.charm=cl(G.charm+3,0,100);
+  if(id==='toast'&&battle.mood>=battle.oji.moodMax*0.5)gain=60;
+  battle.mood=cl(battle.mood+gain,0,battle.oji.moodMax);
+  if(gain>0)bLog(`${sk.icon} ${sk.name}！ 機嫌+${gain}`,'g');
+  const pct=battle.mood/battle.oji.moodMax;
+  const pool=pct<0.4?OJI_SAY.lo:pct<0.7?OJI_SAY.mi:OJI_SAY.hi;
+  bLog(`${battle.oji.icon}「${pool[ri(0,pool.length-1)]}」`,'o');
+  battle.round++;
+  if(battle.round>battle.maxRound){endBattle();return;}
   renderBattle();
 }
-
-// ===== バトル終了 =====
-function endBattle() {
-  if (!G.battle) return;
-  const {oji, wallet, mood} = G.battle;
-  const moodPct = mood / oji.moodMax;
-  let payout = Math.floor(wallet * moodPct);
-
-  let bonusMsg = '';
-  if (moodPct >= 0.8) {
-    payout = Math.floor(payout * 1.2);
-    bonusMsg = '🎊 太っ腹ボーナス！(+20%)';
-  }
-
-  G.money += payout;
-  G.totalEarned += payout;
-  G.exp += 20 + Math.floor(moodPct * 30);
-  G.battlesWon++;
-  G.battle.finished = true;
-  G.inBattle = false;
-  G.ageMonths += 1;
-
-  addBattleLog(`─────────────`, '');
-  addBattleLog(`🍾 飲み会終了！機嫌：${Math.floor(moodPct*100)}%`, '');
-  if (bonusMsg) addBattleLog(bonusMsg, 'good');
-  addBattleLog(`💰 ゲット：${fmtMoney(payout)}！`, 'good');
-
-  checkLevelUp();
-
-  // 3秒後にメイン画面へ
-  setTimeout(() => {
-    G.battle = null;
-    addLog(`🍾 ${oji.name}から ${fmtMoney(payout)} もらった！`, 'money');
-    if (bonusMsg) addLog(bonusMsg, 'highlight');
-    if (checkWinLose()) return;
-    showScreen('main-screen');
-    renderMain();
-  }, 2500);
+function endBattle(){
+  const{oji,wallet,mood}=battle;
+  const pct=mood/oji.moodMax;
+  let pay=Math.floor(wallet*pct);
+  let bonus='';
+  if(pct>=0.8){pay=Math.floor(pay*1.2);bonus='🎊 太っ腹ボーナス！(+20%)';}
+  G.money+=pay;G.exp+=20+Math.floor(pct*30);G.battlesWon++;
+  battle.done=true;inBattle=false;G.ageM+=1;
+  bLog('─────────────','');
+  bLog(`🍾 飲み会終了！機嫌${Math.floor(pct*100)}%`,'');
+  if(bonus)bLog(bonus,'g');
+  bLog(`💰 ゲット：${fmtMoney(pay)}！`,'g');
+  checkLvUp();updateHUD();
+  setTimeout(()=>{
+    battle=null;
+    document.getElementById('battle').classList.remove('active');
+    setMsg(`🍾 ${oji.name}から${fmtMoney(pay)}もらった！${bonus}`);
+    if(checkWinLose())return;
+  },2200);
 }
-
-// ===== レンダリング =====
-function renderMain() {
-  const ageY = G.ageMonths / 12;
-  document.getElementById('stat-name').textContent =
-    `${G.name} / ${fmtAge(G.ageMonths)} / Lv${G.level}`;
-  document.getElementById('stat-charm').textContent = `${G.charm} / 100`;
-  document.getElementById('stat-hp').textContent = `${G.hp} / ${G.maxHp}`;
-  document.getElementById('stat-mp').textContent = `${G.mp} / ${G.maxMp}`;
-  document.getElementById('hp-bar').style.width = `${(G.hp/G.maxHp)*100}%`;
-  document.getElementById('mp-bar').style.width = `${(G.mp/G.maxMp)*100}%`;
-  document.getElementById('stat-money').textContent = fmtMoney(G.money);
-  const pct = Math.min(100, (G.money / GOAL) * 100);
-  document.getElementById('money-bar').style.width = pct + '%';
-  const remain = Math.max(0, GOAL - G.money);
-  document.getElementById('money-progress').textContent =
-    remain > 0 ? `目標まで あと ${fmtMoney(remain)}` : `🎉 目標達成！！`;
-  document.getElementById('invite-pct').textContent = inviteChance() + '%';
-
-  // ログ表示
-  const logEl = document.getElementById('main-log');
-  logEl.innerHTML = G.log.slice(0, 10).map(l =>
-    `<div class="log-entry ${l.type}">${l.msg}</div>`
-  ).join('');
-}
-
-function renderBattle() {
-  if (!G.battle) return;
-  const {oji, mood, round, maxRound, wallet} = G.battle;
-  document.getElementById('round-disp').textContent = `ラウンド ${round} / ${maxRound}`;
-  const moodPct = (mood / oji.moodMax) * 100;
-  document.getElementById('mood-bar').style.width = moodPct + '%';
-  document.getElementById('mood-val').textContent = `${mood} / ${oji.moodMax}`;
-  document.getElementById('battle-mp-bar').style.width = `${(G.mp/G.maxMp)*100}%`;
-  document.getElementById('battle-mp-val').textContent = `${G.mp} / ${G.maxMp}`;
-
-  const estPayout = Math.floor(wallet * (mood / oji.moodMax));
-  const bonus = mood / oji.moodMax >= 0.8 ? '（ボーナス対象！🎊）' : '';
-  document.getElementById('payout-preview').textContent =
-    `💰 予想ゲット額：${fmtMoney(estPayout)} ${bonus}`;
-
-  // スキルボタン生成
-  const grid = document.getElementById('skills-grid');
-  grid.innerHTML = '';
-  SKILLS.forEach(skill => {
-    const canUse = G.level >= skill.minLv && G.mp >= skill.mpCost;
-    const locked = G.level < skill.minLv;
-    const btn = document.createElement('button');
-    btn.className = 'skill-btn';
-    btn.disabled = !canUse;
-    btn.innerHTML = `
-      <div class="sk-name">${skill.icon} ${skill.name}</div>
-      <div class="sk-cost">MP: ${skill.mpCost}${locked ? '　🔒Lv'+skill.minLv : ''}</div>
-      <div class="sk-effect">${skill.desc}</div>
-    `;
-    if (canUse) btn.onclick = () => useSkill(skill.id);
-    grid.appendChild(btn);
+function renderBattle(){
+  if(!battle)return;
+  const{oji,mood,round,maxRound,wallet}=battle;
+  const pct=mood/oji.moodMax;
+  document.getElementById('mbar').style.width=(pct*100)+'%';
+  document.getElementById('mbar-val').textContent=`${mood} / ${oji.moodMax}`;
+  document.getElementById('bt-mp-bar').style.width=`${(G.mp/G.maxMp)*100}%`;
+  document.getElementById('bt-mp-val').textContent=`${G.mp} / ${G.maxMp}`;
+  document.getElementById('bt-pay').textContent=
+    `💰 予想ゲット額：${fmtMoney(Math.floor(wallet*pct))}${pct>=0.8?' 🎊ボーナス！':''}`;
+  document.getElementById('bt-rnd').textContent=`ラウンド ${round} / ${maxRound}`;
+  const grid=document.getElementById('sk-grid');
+  grid.innerHTML='';
+  SKILLS.forEach(sk=>{
+    const ok=G.lv>=sk.lv&&G.mp>=sk.mp;
+    const locked=G.lv<sk.lv;
+    const b=document.createElement('button');
+    b.className='sk';b.disabled=!ok;
+    b.innerHTML=`<div class="sk-nm">${sk.icon} ${sk.name}</div>
+<div class="sk-mp">MP:${sk.mp}${locked?` 🔒Lv${sk.lv}`:''}</div>
+<div class="sk-fx">${sk.desc}</div>`;
+    if(ok)b.onclick=()=>useSkill(sk.id);
+    grid.appendChild(b);
   });
 }
 
-// 初期表示
-showScreen('start-screen');
+// ===== RENDER =====
+const canvas=document.getElementById('map-canvas');
+const ctx=canvas.getContext('2d');
+// Tile colors and decorations
+const BUILD_PATTERNS={
+  salon:{grad:['#8b1c5e','#c02a88']},
+  bar:{grad:['#2a1060','#4a20a0']},
+  cafe:{grad:['#5c3010','#9a5020']},
+  shop:{grad:['#1a4070','#2a60b0']},
+  invest:{grad:['#3a1060','#6a20a0']},
+  food:{grad:['#6b2010','#b04020']},
+  hills:{grad:['#1c2a3a','#2c4a6a']},
+  park:{grad:['#1a4020','#2a7030']},
+  tower:{grad:['#8b2200','#dd4400']},
+  odaiba:{grad:['#0a2040','#1a4080']},
+};
+
+function render(){
+  ctx.clearRect(0,0,VW,VH);
+  // Camera
+  cam.x=cl(player.px-VW/2,0,MAP_W*TS-VW);
+  cam.y=cl(player.py-VH/2,0,MAP_H*TS-VH);
+
+  // Tiles
+  const tx0=Math.floor(cam.x/TS),ty0=Math.floor(cam.y/TS);
+  const tx1=Math.min(MAP_W,tx0+Math.ceil(VW/TS)+2);
+  const ty1=Math.min(MAP_H,ty0+Math.ceil(VH/TS)+2);
+  for(let ty=ty0;ty<ty1;ty++){
+    for(let tx=tx0;tx<tx1;tx++){
+      const t=mapTiles[ty][tx];
+      ctx.fillStyle=TILE_C[t];
+      const sx=tx*TS-cam.x, sy=ty*TS-cam.y;
+      ctx.fillRect(sx,sy,TS,TS);
+      // Road markings
+      if(t===T.RD){
+        ctx.fillStyle='rgba(255,255,255,0.06)';
+        ctx.fillRect(sx+TS/2-1,sy,2,TS);
+      }
+      // Grass texture
+      if(t===T.GR&&(tx+ty)%3===0){
+        ctx.fillStyle='rgba(255,255,255,0.04)';
+        ctx.fillRect(sx+4,sy+4,4,4);
+      }
+      // Water shimmer
+      if(t===T.WA){
+        ctx.fillStyle='rgba(100,180,255,0.08)';
+        ctx.fillRect(sx,sy+(Date.now()/200+tx*3)%TS,TS,3);
+      }
+    }
+  }
+
+  // Buildings
+  BUILDINGS.forEach(b=>{
+    const bx=b.tx*TS-cam.x, by=b.ty*TS-cam.y;
+    const bw=b.tw*TS, bh=b.th*TS;
+    if(bx+bw<0||bx>VW||by+bh<0||by>VH)return;
+    const pat=BUILD_PATTERNS[b.type];
+    const g=ctx.createLinearGradient(bx,by,bx,by+bh);
+    g.addColorStop(0,pat.grad[0]);g.addColorStop(1,pat.grad[1]);
+    ctx.fillStyle=g;
+    roundRect(ctx,bx+1,by+1,bw-2,bh-2,4);
+    ctx.fill();
+    // Border
+    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;
+    roundRect(ctx,bx+1,by+1,bw-2,bh-2,4);ctx.stroke();
+    // Windows
+    ctx.fillStyle='rgba(255,255,180,0.25)';
+    for(let wy=by+5;wy<by+bh-8;wy+=10)
+      for(let wx=bx+5;wx<bx+bw-6;wx+=10)
+        ctx.fillRect(wx,wy,5,5);
+    // Label
+    ctx.fillStyle='rgba(0,0,0,0.6)';
+    ctx.fillRect(bx+2,by+bh-16,bw-4,14);
+    ctx.fillStyle='#fff';ctx.font='bold 9px sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(b.name,bx+bw/2,by+bh-9);
+  });
+
+  // NPCs
+  npcs.forEach(n=>{
+    const sx=n.px-cam.x, sy=n.py-cam.y;
+    if(sx<-32||sx>VW+32||sy<-32||sy>VH+32)return;
+    const c=NPC_COLORS[n.colorIdx];
+    // Shadow
+    ctx.fillStyle='rgba(0,0,0,0.3)';
+    ctx.beginPath();ctx.ellipse(sx,sy+10,8,4,0,0,Math.PI*2);ctx.fill();
+    // Body
+    ctx.fillStyle=c;
+    roundRect(ctx,sx-7,sy-4,14,16,4);ctx.fill();
+    // Head
+    ctx.fillStyle='#f5c89a';
+    ctx.beginPath();ctx.arc(sx,sy-10,9,0,Math.PI*2);ctx.fill();
+    // Hair
+    ctx.fillStyle=c;
+    ctx.beginPath();ctx.arc(sx,sy-16,6,Math.PI,0);ctx.fill();
+    // Eyes
+    ctx.fillStyle='#222';
+    ctx.fillRect(sx-4,sy-12,3,3);ctx.fillRect(sx+1,sy-12,3,3);
+    // NPC type emoji
+    ctx.font='9px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(OJIS[n.ojiIdx].icon,sx,sy+4);
+    // Talk bubble if near
+    if(nearNPC===n){
+      ctx.fillStyle='rgba(255,255,255,0.9)';
+      roundRect(ctx,sx-14,sy-34,28,14,4);ctx.fill();
+      ctx.fillStyle='#333';ctx.font='bold 8px sans-serif';
+      ctx.fillText('💬話せる',sx,sy-27);
+    }
+  });
+
+  // Player
+  drawPlayer(player.px-cam.x, player.py-cam.y);
+
+  // Minimap
+  drawMinimap();
+}
+
+function drawPlayer(sx,sy){
+  const bob=Math.sin(player.animFrame*1.5)*2;
+  // Shadow
+  ctx.fillStyle='rgba(0,0,0,0.35)';
+  ctx.beginPath();ctx.ellipse(sx,sy+12,9,4,0,0,Math.PI*2);ctx.fill();
+  // Body (dress)
+  const dg=ctx.createLinearGradient(sx-8,sy,sx+8,sy+16);
+  dg.addColorStop(0,'#ff69b4');dg.addColorStop(1,'#cc44aa');
+  ctx.fillStyle=dg;
+  roundRect(ctx,sx-8,sy-4+bob,16,18,5);ctx.fill();
+  // Head
+  ctx.fillStyle='#f5c89a';
+  ctx.beginPath();ctx.arc(sx,sy-12+bob,10,0,Math.PI*2);ctx.fill();
+  // Hair
+  const hg=ctx.createLinearGradient(sx-10,sy-22,sx+10,sy-10);
+  hg.addColorStop(0,'#2a1a00');hg.addColorStop(1,'#5a3a10');
+  ctx.fillStyle=hg;
+  ctx.beginPath();ctx.arc(sx,sy-17+bob,7,Math.PI,0);ctx.fill();
+  ctx.fillRect(sx-10,sy-18+bob,5,10);
+  ctx.fillRect(sx+5,sy-18+bob,5,10);
+  // Eyes
+  ctx.fillStyle='#222';
+  ctx.fillRect(sx-4,sy-14+bob,3,3);ctx.fillRect(sx+1,sy-14+bob,3,3);
+  // Mouth (smile)
+  ctx.strokeStyle='#cc6688';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(sx,sy-10+bob,3,0.1,Math.PI-0.1);ctx.stroke();
+  // Name tag
+  ctx.fillStyle='rgba(255,105,180,0.8)';
+  roundRect(ctx,sx-18,sy-30+bob,36,12,4);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 8px sans-serif';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(G.name||'?',sx,sy-24+bob);
+}
+
+function drawMinimap(){
+  const mw=60,mh=48,mx=VW-mw-6,my=6;
+  ctx.fillStyle='rgba(0,0,0,0.6)';
+  ctx.fillRect(mx,my,mw,mh);
+  ctx.strokeStyle='rgba(255,105,180,0.6)';ctx.lineWidth=1;
+  ctx.strokeRect(mx,my,mw,mh);
+  const scx=mw/MAP_W,scy=mh/MAP_H;
+  // Tiles
+  for(let y=0;y<MAP_H;y+=2)for(let x=0;x<MAP_W;x+=2){
+    const t=mapTiles[y][x];
+    ctx.fillStyle=t===T.RD?'#555':t===T.GR?'#2a5':t===T.WA?'#24a':t===T.BL?'#333':'#444';
+    ctx.fillRect(mx+x*scx,my+y*scy,scx*2,scy*2);
+  }
+  // NPCs
+  ctx.fillStyle='#ffa500';
+  npcs.forEach(n=>{
+    ctx.fillRect(mx+n.px/TS*scx-1,my+n.py/TS*scy-1,2,2);
+  });
+  // Player
+  ctx.fillStyle='#ff69b4';
+  ctx.fillRect(mx+player.px/TS*scx-2,my+player.py/TS*scy-2,4,4);
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+// ===== GAME LOOP =====
+let lastTime=0;
+function gameLoop(ts){
+  if(!running)return;
+  requestAnimationFrame(gameLoop);
+  if(ts-lastTime<16){return;}lastTime=ts;
+  updatePlayer();
+  updateNPCs();
+  checkProximity();
+  render();
+  updateHUD();
+}
+
+// ===== START / RESET =====
+function startGame(){
+  const name=document.getElementById('player-name').value.trim()||'みなと';
+  G=initG(name);
+  buildMap();
+  buildRoadSpots();
+  spawnNPCs();
+  player={px:9*TS,py:9*TS,facing:'d',animFrame:0,animTimer:0};
+  inBattle=false;battle=null;
+  document.getElementById('start-screen').classList.remove('active');
+  running=true;
+  setMsg('🌊 港区へようこそ！おじに近づいて話しかけよう！');
+  requestAnimationFrame(gameLoop);
+}
+function resetGame(){
+  running=false;inBattle=false;battle=null;
+  document.getElementById('win-screen').classList.remove('active');
+  document.getElementById('lose-screen').classList.remove('active');
+  document.getElementById('battle').classList.remove('active');
+  document.getElementById('player-name').value='';
+  document.getElementById('start-screen').classList.add('active');
+}
 </script>
 </body>
 </html>
