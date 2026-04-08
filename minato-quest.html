@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>港クエスト 🌊</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#1a0a2e;color:#fff;min-height:100vh}
+.screen{display:none;min-height:100vh;padding:10px}
+.screen.active{display:block}
+
+/* ===== START SCREEN ===== */
+#start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0a2e,#2d1b4e)}
+.logo{font-size:3em;text-align:center;margin-bottom:10px;text-shadow:0 0 20px #ff69b4}
+.logo-sub{font-size:1.1em;color:#daa520;margin-bottom:30px;text-align:center}
+.start-card{background:rgba(255,255,255,0.1);border:2px solid #ff69b4;border-radius:16px;padding:30px;max-width:400px;width:100%}
+.start-card h2{text-align:center;margin-bottom:20px;color:#ff69b4}
+.start-card p{font-size:0.85em;color:#ccc;margin-bottom:20px;line-height:1.6}
+.name-input{width:100%;padding:12px;border:2px solid #ff69b4;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff;font-size:1.1em;text-align:center;margin-bottom:15px}
+.name-input::placeholder{color:#888}
+.btn-start{width:100%;padding:15px;background:linear-gradient(135deg,#ff69b4,#daa520);border:none;border-radius:10px;color:#fff;font-size:1.2em;font-weight:bold;cursor:pointer;transition:transform 0.1s}
+.btn-start:hover{transform:scale(1.03)}
+
+/* ===== MAIN SCREEN ===== */
+#main-screen{background:linear-gradient(180deg,#1a0a2e 0%,#0d1b2a 100%)}
+.top-bar{background:rgba(0,0,0,0.5);border-bottom:1px solid #ff69b4;padding:8px 12px}
+.top-bar h1{font-size:1.2em;color:#ff69b4;display:inline}
+.top-bar .goal{float:right;font-size:0.85em;color:#daa520}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
+.stat-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,105,180,0.3);border-radius:10px;padding:8px 12px}
+.stat-label{font-size:0.7em;color:#aaa;margin-bottom:3px}
+.stat-value{font-size:1em;font-weight:bold;color:#fff}
+.bar-wrap{background:#333;border-radius:4px;height:8px;margin-top:4px;overflow:hidden}
+.bar{height:100%;border-radius:4px;transition:width 0.3s}
+.hp-bar{background:linear-gradient(90deg,#ff4444,#ff8888)}
+.mp-bar{background:linear-gradient(90deg,#4488ff,#88ccff)}
+.money-big{text-align:center;padding:10px;background:rgba(218,165,32,0.15);border:1px solid #daa520;border-radius:10px;margin:0 10px}
+.money-big .amount{font-size:1.8em;font-weight:bold;color:#daa520}
+.money-big .progress{font-size:0.75em;color:#aaa;margin-top:2px}
+.progress-bar-wrap{background:#333;border-radius:4px;height:6px;margin-top:6px;overflow:hidden}
+.progress-bar{background:linear-gradient(90deg,#daa520,#ffd700);height:100%;border-radius:4px;transition:width 0.5s}
+
+.section-title{font-size:0.85em;color:#ff69b4;padding:10px 12px 5px;font-weight:bold;letter-spacing:1px}
+.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 10px}
+.action-btn{background:rgba(255,255,255,0.07);border:1px solid rgba(255,105,180,0.4);border-radius:12px;padding:12px 8px;cursor:pointer;text-align:center;transition:all 0.2s;color:#fff}
+.action-btn:hover{background:rgba(255,105,180,0.15);border-color:#ff69b4;transform:translateY(-2px)}
+.action-btn:active{transform:translateY(0)}
+.action-btn .icon{font-size:1.5em}
+.action-btn .name{font-size:0.85em;font-weight:bold;margin:4px 0 2px}
+.action-btn .detail{font-size:0.68em;color:#aaa;line-height:1.4}
+
+.invite-box{margin:0 10px 10px;padding:10px;background:rgba(255,105,180,0.1);border:1px dashed #ff69b4;border-radius:10px;text-align:center}
+.invite-chance{font-size:0.85em;color:#ff69b4}
+.invite-chance span{font-size:1.2em;font-weight:bold}
+
+.log-box{margin:0 10px 10px;background:rgba(0,0,0,0.3);border:1px solid #333;border-radius:10px;padding:10px;max-height:160px;overflow-y:auto}
+.log-entry{font-size:0.8em;color:#ddd;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.log-entry:last-child{border-bottom:none}
+.log-entry.highlight{color:#ff69b4}
+.log-entry.money{color:#daa520}
+.log-entry.danger{color:#ff6666}
+.log-entry.level{color:#88ff88}
+
+/* ===== BATTLE SCREEN ===== */
+#battle-screen{background:linear-gradient(135deg,#0d0020,#1a0030)}
+.battle-header{background:rgba(0,0,0,0.5);padding:12px;text-align:center;border-bottom:2px solid #8844ff}
+.battle-header h2{font-size:1.1em;color:#cc88ff}
+.oji-card{margin:10px;background:rgba(136,68,255,0.1);border:2px solid #8844ff;border-radius:14px;padding:15px;text-align:center}
+.oji-icon{font-size:2.5em}
+.oji-name{font-size:1em;font-weight:bold;color:#cc88ff;margin:5px 0}
+.oji-type{font-size:0.75em;color:#aaa}
+.mood-wrap{margin-top:8px}
+.mood-label{font-size:0.75em;color:#aaa;margin-bottom:3px}
+.mood-bar-bg{background:#333;border-radius:6px;height:14px;overflow:hidden}
+.mood-bar-fill{background:linear-gradient(90deg,#ff69b4,#ff4488);height:100%;border-radius:6px;transition:width 0.4s}
+.mood-value{font-size:0.85em;color:#ff69b4;margin-top:3px}
+
+.player-mp{margin:0 10px;background:rgba(68,136,255,0.1);border:1px solid #4488ff;border-radius:10px;padding:8px 12px}
+.player-mp-label{font-size:0.75em;color:#88aaff}
+.player-mp-bar-bg{background:#333;border-radius:4px;height:10px;margin-top:4px;overflow:hidden}
+.player-mp-bar{background:linear-gradient(90deg,#4488ff,#88ccff);height:100%;border-radius:4px;transition:width 0.3s}
+
+.battle-log{margin:8px 10px;background:rgba(0,0,0,0.4);border:1px solid #444;border-radius:10px;padding:10px;height:100px;overflow-y:auto}
+.blog-entry{font-size:0.78em;color:#ddd;padding:2px 0}
+.blog-entry.good{color:#88ff88}
+.blog-entry.bad{color:#ff6666}
+.blog-entry.oji{color:#cc88ff;font-style:italic}
+
+.skills-title{font-size:0.85em;color:#cc88ff;padding:5px 12px;font-weight:bold}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 10px 10px}
+.skill-btn{background:rgba(136,68,255,0.15);border:1px solid #8844ff;border-radius:10px;padding:10px 6px;cursor:pointer;text-align:center;color:#fff;transition:all 0.2s}
+.skill-btn:hover:not(:disabled){background:rgba(136,68,255,0.35);transform:scale(1.02)}
+.skill-btn:disabled{opacity:0.35;cursor:not-allowed}
+.skill-btn .sk-name{font-size:0.85em;font-weight:bold}
+.skill-btn .sk-cost{font-size:0.7em;color:#88aaff;margin-top:2px}
+.skill-btn .sk-effect{font-size:0.68em;color:#aaa}
+
+.round-info{text-align:center;padding:6px;font-size:0.8em;color:#aaa}
+.payout-preview{text-align:center;padding:5px;font-size:0.85em;color:#daa520}
+.btn-end-battle{display:block;width:calc(100% - 20px);margin:5px 10px;padding:12px;background:linear-gradient(135deg,#8844ff,#ff69b4);border:none;border-radius:10px;color:#fff;font-size:1em;font-weight:bold;cursor:pointer}
+
+/* ===== END SCREENS ===== */
+#win-screen,#lose-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a2010,#1a4030)}
+#lose-screen{background:linear-gradient(135deg,#200a0a,#401a1a)}
+.end-card{text-align:center;padding:30px;max-width:360px}
+.end-icon{font-size:4em;margin-bottom:15px}
+.end-title{font-size:1.8em;font-weight:bold;margin-bottom:10px}
+.end-msg{font-size:0.9em;color:#ccc;line-height:1.6;margin-bottom:20px}
+.end-stats{background:rgba(255,255,255,0.08);border-radius:10px;padding:15px;margin-bottom:20px;text-align:left}
+.end-stats div{font-size:0.85em;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
+.btn-retry{padding:14px 30px;background:linear-gradient(135deg,#ff69b4,#daa520);border:none;border-radius:10px;color:#fff;font-size:1.1em;font-weight:bold;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div id="start-screen" class="screen active">
+  <div class="logo">🌊 港クエスト</div>
+  <div class="logo-sub">〜ギャラ飲みで100万円を目指せ！〜</div>
+  <div class="start-card">
+    <h2>ゲームについて</h2>
+    <p>
+      🎯 目標：<strong>100万円</strong>を稼ぐ！<br>
+      👧 年齢が若いほど誘われやすい（30歳でゲームオーバー）<br>
+      🍾 ギャラ飲みはRPGバトル形式！スキルを使って<br>　　おじの機嫌を上げてお金をゲット！<br>
+      ⚡ 行動するたびに月日が経つ…戦略が命！
+    </p>
+    <input type="text" class="name-input" id="player-name" placeholder="あなたの名前を入力" maxlength="8">
+    <button class="btn-start" onclick="startGame()">スタート！</button>
+  </div>
+</div>
+
+<!-- MAIN SCREEN -->
+<div id="main-screen" class="screen">
+  <div class="top-bar">
+    <h1>🌊 港クエスト</h1>
+    <span class="goal">目標：1,000,000円</span>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">👤 名前・年齢・Lv</div>
+      <div class="stat-value" id="stat-name">-</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">✨ 魅力</div>
+      <div class="stat-value" id="stat-charm">50</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">❤️ 体力 (HP)</div>
+      <div class="stat-value" id="stat-hp">100/100</div>
+      <div class="bar-wrap"><div class="bar hp-bar" id="hp-bar" style="width:100%"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">⚡ テンション (MP)</div>
+      <div class="stat-value" id="stat-mp">60/60</div>
+      <div class="bar-wrap"><div class="bar mp-bar" id="mp-bar" style="width:100%"></div></div>
+    </div>
+  </div>
+  <div class="money-big">
+    <div class="amount" id="stat-money">0円</div>
+    <div class="progress" id="money-progress">目標まで 1,000,000円</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="money-bar" style="width:0%"></div></div>
+  </div>
+  <div class="invite-box">
+    <div class="invite-chance">📩 ギャラ飲み誘われ率：<span id="invite-pct">--%</span></div>
+    <div style="font-size:0.7em;color:#aaa;margin-top:3px">行動後に抽選されます</div>
+  </div>
+
+  <div class="section-title">📍 やること</div>
+  <div class="actions-grid">
+    <button class="action-btn" onclick="doAction('salon')">
+      <div class="icon">💆</div>
+      <div class="name">美容院へ</div>
+      <div class="detail">-5,000円<br>魅力+15 / +1ヶ月</div>
+    </button>
+    <button class="action-btn" onclick="doAction('rest')">
+      <div class="icon">😴</div>
+      <div class="name">ゆっくり休む</div>
+      <div class="detail">HP+40 MP+30<br>+2週間</div>
+    </button>
+    <button class="action-btn" onclick="doAction('sns')">
+      <div class="icon">📱</div>
+      <div class="name">SNS更新</div>
+      <div class="detail">魅力+8<br>+1ヶ月</div>
+    </button>
+    <button class="action-btn" onclick="doAction('work')">
+      <div class="icon">💼</div>
+      <div class="name">バイトする</div>
+      <div class="detail">+20,000円 EXP+10<br>HP-15 / +1ヶ月</div>
+    </button>
+    <button class="action-btn" onclick="doAction('goukon')">
+      <div class="icon">🍻</div>
+      <div class="name">合コン参加</div>
+      <div class="detail">EXP+25 魅力+5<br>HP-20 MP-10 / +2ヶ月</div>
+    </button>
+    <button class="action-btn" onclick="doAction('invest')">
+      <div class="icon">✨</div>
+      <div class="name">自己投資</div>
+      <div class="detail">-15,000円 魅力+25<br>EXP+15 / +2ヶ月</div>
+    </button>
+  </div>
+
+  <div class="log-box" id="main-log"></div>
+</div>
+
+<!-- BATTLE SCREEN -->
+<div id="battle-screen" class="screen">
+  <div class="battle-header">
+    <h2 id="battle-title">⚔️ ギャラ飲みバトル</h2>
+    <div style="font-size:0.75em;color:#aaa" id="round-disp">ラウンド 1 / 3</div>
+  </div>
+  <div class="oji-card">
+    <div class="oji-icon" id="oji-icon">👔</div>
+    <div class="oji-name" id="oji-name">おじ</div>
+    <div class="oji-type" id="oji-type">タイプ</div>
+    <div class="mood-wrap">
+      <div class="mood-label">機嫌 😊</div>
+      <div class="mood-bar-bg"><div class="mood-bar-fill" id="mood-bar" style="width:30%"></div></div>
+      <div class="mood-value" id="mood-val">30 / 80</div>
+    </div>
+  </div>
+  <div class="player-mp">
+    <div class="player-mp-label">⚡ テンション (MP)</div>
+    <div class="player-mp-bar-bg"><div class="player-mp-bar" id="battle-mp-bar" style="width:100%"></div></div>
+    <div style="font-size:0.75em;color:#88aaff;margin-top:2px" id="battle-mp-val">60/60</div>
+  </div>
+  <div class="battle-log" id="battle-log"></div>
+  <div class="payout-preview" id="payout-preview">💰 予想ゲット額：計算中...</div>
+  <div class="skills-title">🎯 スキル選択</div>
+  <div class="skills-grid" id="skills-grid"></div>
+  <div style="height:10px"></div>
+</div>
+
+<!-- WIN SCREEN -->
+<div id="win-screen" class="screen">
+  <div class="end-card">
+    <div class="end-icon">🎉</div>
+    <div class="end-title" style="color:#daa520">おめでとう！</div>
+    <div class="end-msg" id="win-msg">100万円達成！港の女王誕生！</div>
+    <div class="end-stats" id="win-stats"></div>
+    <button class="btn-retry" onclick="resetGame()">もう一度プレイ</button>
+  </div>
+</div>
+
+<!-- LOSE SCREEN -->
+<div id="lose-screen" class="screen">
+  <div class="end-card">
+    <div class="end-icon">😢</div>
+    <div class="end-title" style="color:#ff6666">ゲームオーバー</div>
+    <div class="end-msg" id="lose-msg">残念...</div>
+    <div class="end-stats" id="lose-stats"></div>
+    <button class="btn-retry" onclick="resetGame()">もう一度チャレンジ</button>
+  </div>
+</div>
+
+<script>
+// ===== ゲーム定数 =====
+const GOAL = 1000000;
+const AGE_LIMIT = 30;
+const LEVEL_EXP = [0,30,70,130,210,320,460,640,870,1150,9999];
+
+const OJIS = [
+  {icon:'🏢',name:'サラリーマンおじ',type:'平凡なサラリーマン',moodMax:80,walletMin:50000,walletMax:80000,likes:'褒める系'},
+  {icon:'💰',name:'社長おじ',type:'どこかの社長らしい',moodMax:100,walletMin:100000,walletMax:200000,likes:'聞き上手系'},
+  {icon:'🎸',name:'バンドおじ',type:'元バンドマン（自称）',moodMax:70,walletMin:30000,walletMax:60000,likes:'盛り上げ系'},
+  {icon:'👔',name:'政治家おじ',type:'あやしい人脈あり',moodMax:90,walletMin:80000,walletMax:150000,likes:'甘え系'},
+  {icon:'⚓',name:'港のおじ',type:'地元の常連さん',moodMax:60,walletMin:20000,walletMax:40000,likes:'なんでも'},
+];
+
+const OJI_DIALOGUE = {
+  low: ['うーん...','まあそうだな','次の予定あるんだよね','（スマホをいじる）','ふむ'],
+  mid: ['なかなかいいじゃない','もっと飲もうよ','楽しいね！','君面白いね'],
+  high: ['きみ最高だよ！','また誘っていい？','これ持ってって！','最高の夜だ！'],
+};
+
+const SKILLS = [
+  {id:'home',name:'褒める',icon:'⭐',mpCost:8,moodGain:18,minLv:1,desc:'機嫌+18'},
+  {id:'smile',name:'笑顔MAX',icon:'😊',mpCost:12,moodGain:22,minLv:1,desc:'機嫌+22 魅力+3'},
+  {id:'listen',name:'話を聞く',icon:'👂',mpCost:3,moodGain:12,minLv:1,desc:'機嫌+12（低コスト）'},
+  {id:'hype',name:'盛り上げる',icon:'🎉',mpCost:15,moodGain:28,minLv:3,desc:'機嫌+18〜38'},
+  {id:'cute',name:'甘える',icon:'🥺',mpCost:20,moodGain:35,minLv:5,desc:'機嫌+35 HP-5'},
+  {id:'real',name:'本音トーク',icon:'💬',mpCost:25,moodGain:45,minLv:7,desc:'機嫌+45（失敗あり）'},
+  {id:'toast',name:'伝説の乾杯',icon:'🥂',mpCost:40,moodGain:60,minLv:10,desc:'機嫌+60（最強）'},
+];
+
+// ===== ゲーム状態 =====
+let G = {};
+
+function initState(name) {
+  return {
+    name: name || 'プレイヤー',
+    ageMonths: 240, // 20歳 = 240ヶ月
+    level: 1,
+    exp: 0,
+    hp: 100, maxHp: 100,
+    mp: 60, maxMp: 60,
+    charm: 50,
+    money: 0,
+    totalEarned: 0,
+    actionsCount: 0,
+    battlesWon: 0,
+    log: [],
+    // バトル状態
+    inBattle: false,
+    battle: null,
+  };
+}
+
+// ===== ユーティリティ =====
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+
+function fmtAge(months) {
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+  return m === 0 ? `${y}歳` : `${y}歳${m}ヶ月`;
+}
+
+function fmtMoney(n) {
+  return n.toLocaleString('ja-JP') + '円';
+}
+
+function addLog(msg, type='') {
+  G.log.unshift({msg, type});
+  if (G.log.length > 30) G.log.pop();
+}
+
+function addBattleLog(msg, type='') {
+  const log = document.getElementById('battle-log');
+  const div = document.createElement('div');
+  div.className = 'blog-entry ' + type;
+  div.textContent = msg;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ===== 誘われ率計算 =====
+function inviteChance() {
+  const ageY = G.ageMonths / 12;
+  const base = (AGE_LIMIT - ageY) * 6 + G.level * 10 + G.charm / 4;
+  return clamp(Math.floor(base), 5, 85);
+}
+
+// ===== レベルアップ =====
+function checkLevelUp() {
+  while (G.level < 10 && G.exp >= LEVEL_EXP[G.level]) {
+    G.level++;
+    G.maxHp += 5;
+    G.maxMp += 5;
+    G.hp = Math.min(G.hp + 10, G.maxHp);
+    G.mp = Math.min(G.mp + 10, G.maxMp);
+    addLog(`✨ レベルアップ！ Lv${G.level} になった！HP・MPが増えた！`, 'level');
+  }
+}
+
+// ===== ゲーム開始 =====
+function startGame() {
+  const name = document.getElementById('player-name').value.trim() || 'みなと';
+  G = initState(name);
+  showScreen('main-screen');
+  addLog(`${name}のギャラ飲みライフが始まった！100万円を目指すぞ！`, 'highlight');
+  renderMain();
+}
+
+function resetGame() {
+  G = {};
+  document.getElementById('player-name').value = '';
+  document.getElementById('battle-log').innerHTML = '';
+  showScreen('start-screen');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).style.display = 'flex';
+  document.getElementById(id).classList.add('active');
+  if (id !== 'start-screen') {
+    document.getElementById(id).style.display = 'block';
+  }
+}
+
+// ===== 勝敗チェック =====
+function checkWinLose() {
+  if (G.money >= GOAL) {
+    showWin();
+    return true;
+  }
+  if (G.ageMonths >= AGE_LIMIT * 12 || G.hp <= 0) {
+    showLose();
+    return true;
+  }
+  return false;
+}
+
+function showWin() {
+  document.getElementById('win-msg').textContent =
+    `${G.name}は${fmtAge(G.ageMonths)}で100万円を達成！港の女王誕生！✨`;
+  document.getElementById('win-stats').innerHTML = `
+    <div>💰 最終資産：${fmtMoney(G.money)}</div>
+    <div>👤 最終年齢：${fmtAge(G.ageMonths)}</div>
+    <div>📊 最終レベル：Lv${G.level}</div>
+    <div>🍾 ギャラ飲み回数：${G.battlesWon}回</div>
+    <div>🎯 総行動数：${G.actionsCount}回</div>
+  `;
+  showScreen('win-screen');
+}
+
+function showLose() {
+  let reason = G.hp <= 0 ? '体力が尽きてしまった...' : `${fmtAge(G.ageMonths)}になり、誰からも誘われなくなった...`;
+  document.getElementById('lose-msg').textContent = reason;
+  document.getElementById('lose-stats').innerHTML = `
+    <div>💰 獲得金額：${fmtMoney(G.money)}</div>
+    <div>👤 最終年齢：${fmtAge(G.ageMonths)}</div>
+    <div>📊 最終レベル：Lv${G.level}</div>
+    <div>🍾 ギャラ飲み回数：${G.battlesWon}回</div>
+    <div>あと ${fmtMoney(Math.max(0, GOAL - G.money))} だったのに！</div>
+  `;
+  showScreen('lose-screen');
+}
+
+// ===== アクション =====
+function doAction(type) {
+  if (G.inBattle) return;
+  G.actionsCount++;
+
+  const msgs = {
+    salon: () => {
+      if (G.money < 5000) { addLog('💸 お金が足りない！（-5,000円必要）', 'danger'); G.actionsCount--; return false; }
+      G.money -= 5000; G.charm = clamp(G.charm + 15, 0, 100);
+      G.ageMonths += 1; G.hp = clamp(G.hp - 5, 0, G.maxHp);
+      addLog(`💆 美容院に行った！魅力UP！（-5,000円、魅力+15）`, '');
+      return true;
+    },
+    rest: () => {
+      G.hp = clamp(G.hp + 40, 0, G.maxHp);
+      G.mp = clamp(G.mp + 30, 0, G.maxMp);
+      G.ageMonths += 1; // 半月扱いだが月単位で+0.5→切り上げ1
+      addLog(`😴 ゆっくり休んだ！HP・MPが回復した！`, '');
+      return true;
+    },
+    sns: () => {
+      G.charm = clamp(G.charm + 8, 0, 100);
+      G.ageMonths += 1; G.hp = clamp(G.hp - 5, 0, G.maxHp);
+      const viral = Math.random() < 0.2;
+      if (viral) {
+        G.charm = clamp(G.charm + 10, 0, 100);
+        addLog(`📱 SNS更新！投稿がバズった！魅力爆上がり！✨`, 'highlight');
+      } else {
+        addLog(`📱 SNS更新！魅力がちょっとアップ！`, '');
+      }
+      return true;
+    },
+    work: () => {
+      G.money += 20000; G.exp += 10;
+      G.ageMonths += 1; G.hp = clamp(G.hp - 15, 0, G.maxHp);
+      G.totalEarned += 20000;
+      addLog(`💼 バイト頑張った！+20,000円ゲット！でも疲れた...`, 'money');
+      return true;
+    },
+    goukon: () => {
+      G.exp += 25; G.charm = clamp(G.charm + 5, 0, 100);
+      G.ageMonths += 2; G.hp = clamp(G.hp - 20, 0, G.maxHp); G.mp = clamp(G.mp - 10, 0, G.maxMp);
+      addLog(`🍻 合コン参加！人脈が広がった！EXP+25`, '');
+      return true;
+    },
+    invest: () => {
+      if (G.money < 15000) { addLog('💸 自己投資には15,000円必要！', 'danger'); G.actionsCount--; return false; }
+      G.money -= 15000; G.charm = clamp(G.charm + 25, 0, 100); G.exp += 15;
+      G.ageMonths += 2;
+      addLog(`✨ 自己投資した！魅力大幅アップ！（-15,000円）`, '');
+      return true;
+    },
+  };
+
+  const fn = msgs[type];
+  if (!fn) return;
+  const ok = fn();
+  if (!ok) { renderMain(); return; }
+
+  checkLevelUp();
+
+  if (checkWinLose()) return;
+
+  // ギャラ飲み抽選
+  const chance = inviteChance();
+  if (Math.random() * 100 < chance) {
+    setTimeout(() => startBattle(), 600);
+    addLog(`📩 ギャラ飲みのお誘いが来た！チャンス！`, 'highlight');
+  }
+
+  renderMain();
+}
+
+// ===== バトル開始 =====
+function startBattle() {
+  const oji = {...OJIS[rand(0, OJIS.length - 1)]};
+  const wallet = rand(oji.walletMin, oji.walletMax);
+  G.battle = {
+    oji,
+    wallet,
+    mood: Math.floor(oji.moodMax * 0.3),
+    round: 1,
+    maxRound: 3,
+    finished: false,
+  };
+  G.inBattle = true;
+  document.getElementById('battle-log').innerHTML = '';
+
+  document.getElementById('oji-icon').textContent = oji.icon;
+  document.getElementById('oji-name').textContent = oji.name;
+  document.getElementById('oji-type').textContent = oji.type + '　💰予算：' + fmtMoney(wallet);
+  document.getElementById('battle-title').textContent = '⚔️ ギャラ飲みバトル！';
+
+  addBattleLog(`${oji.icon} ${oji.name}との飲み会が始まった！`, 'good');
+  addBattleLog(`機嫌を上げて、たくさん稼ごう！`, '');
+
+  showScreen('battle-screen');
+  renderBattle();
+}
+
+// ===== スキル使用 =====
+function useSkill(skillId) {
+  if (!G.battle || G.battle.finished) return;
+  const skill = SKILLS.find(s => s.id === skillId);
+  if (!skill) return;
+  if (G.mp < skill.mpCost) { addBattleLog('⚡ テンションが足りない！', 'bad'); return; }
+
+  G.mp -= skill.mpCost;
+  let gain = skill.moodGain;
+
+  // スキル固有効果
+  if (skillId === 'hype') gain += rand(-10, 10);
+  if (skillId === 'cute') { G.hp = clamp(G.hp - 5, 0, G.maxHp); }
+  if (skillId === 'real') {
+    if (Math.random() < 0.3) {
+      gain = -20;
+      addBattleLog(`💬 本音を言いすぎた！おじが怒った！`, 'bad');
+    }
+  }
+  if (skillId === 'smile') { G.charm = clamp(G.charm + 3, 0, 100); }
+  if (skillId === 'toast' && G.battle.mood >= G.battle.oji.moodMax * 0.5) {
+    gain = 60;
+    addBattleLog(`🥂 伝説の乾杯が炸裂！！！`, 'good');
+  }
+
+  G.battle.mood = clamp(G.battle.mood + gain, 0, G.battle.oji.moodMax);
+
+  if (gain > 0) {
+    addBattleLog(`${skill.icon} ${skill.name}！ 機嫌+${gain}`, 'good');
+  }
+
+  // おじの反応
+  const moodPct = G.battle.mood / G.battle.oji.moodMax;
+  let dialogPool = moodPct < 0.4 ? OJI_DIALOGUE.low : moodPct < 0.7 ? OJI_DIALOGUE.mid : OJI_DIALOGUE.high;
+  const dialogue = dialogPool[rand(0, dialogPool.length - 1)];
+  addBattleLog(`${G.battle.oji.icon}「${dialogue}」`, 'oji');
+
+  // ラウンド進行
+  G.battle.round++;
+  if (G.battle.round > G.battle.maxRound) {
+    endBattle();
+    return;
+  }
+
+  renderBattle();
+}
+
+// ===== バトル終了 =====
+function endBattle() {
+  if (!G.battle) return;
+  const {oji, wallet, mood} = G.battle;
+  const moodPct = mood / oji.moodMax;
+  let payout = Math.floor(wallet * moodPct);
+
+  let bonusMsg = '';
+  if (moodPct >= 0.8) {
+    payout = Math.floor(payout * 1.2);
+    bonusMsg = '🎊 太っ腹ボーナス！(+20%)';
+  }
+
+  G.money += payout;
+  G.totalEarned += payout;
+  G.exp += 20 + Math.floor(moodPct * 30);
+  G.battlesWon++;
+  G.battle.finished = true;
+  G.inBattle = false;
+  G.ageMonths += 1;
+
+  addBattleLog(`─────────────`, '');
+  addBattleLog(`🍾 飲み会終了！機嫌：${Math.floor(moodPct*100)}%`, '');
+  if (bonusMsg) addBattleLog(bonusMsg, 'good');
+  addBattleLog(`💰 ゲット：${fmtMoney(payout)}！`, 'good');
+
+  checkLevelUp();
+
+  // 3秒後にメイン画面へ
+  setTimeout(() => {
+    G.battle = null;
+    addLog(`🍾 ${oji.name}から ${fmtMoney(payout)} もらった！`, 'money');
+    if (bonusMsg) addLog(bonusMsg, 'highlight');
+    if (checkWinLose()) return;
+    showScreen('main-screen');
+    renderMain();
+  }, 2500);
+}
+
+// ===== レンダリング =====
+function renderMain() {
+  const ageY = G.ageMonths / 12;
+  document.getElementById('stat-name').textContent =
+    `${G.name} / ${fmtAge(G.ageMonths)} / Lv${G.level}`;
+  document.getElementById('stat-charm').textContent = `${G.charm} / 100`;
+  document.getElementById('stat-hp').textContent = `${G.hp} / ${G.maxHp}`;
+  document.getElementById('stat-mp').textContent = `${G.mp} / ${G.maxMp}`;
+  document.getElementById('hp-bar').style.width = `${(G.hp/G.maxHp)*100}%`;
+  document.getElementById('mp-bar').style.width = `${(G.mp/G.maxMp)*100}%`;
+  document.getElementById('stat-money').textContent = fmtMoney(G.money);
+  const pct = Math.min(100, (G.money / GOAL) * 100);
+  document.getElementById('money-bar').style.width = pct + '%';
+  const remain = Math.max(0, GOAL - G.money);
+  document.getElementById('money-progress').textContent =
+    remain > 0 ? `目標まで あと ${fmtMoney(remain)}` : `🎉 目標達成！！`;
+  document.getElementById('invite-pct').textContent = inviteChance() + '%';
+
+  // ログ表示
+  const logEl = document.getElementById('main-log');
+  logEl.innerHTML = G.log.slice(0, 10).map(l =>
+    `<div class="log-entry ${l.type}">${l.msg}</div>`
+  ).join('');
+}
+
+function renderBattle() {
+  if (!G.battle) return;
+  const {oji, mood, round, maxRound, wallet} = G.battle;
+  document.getElementById('round-disp').textContent = `ラウンド ${round} / ${maxRound}`;
+  const moodPct = (mood / oji.moodMax) * 100;
+  document.getElementById('mood-bar').style.width = moodPct + '%';
+  document.getElementById('mood-val').textContent = `${mood} / ${oji.moodMax}`;
+  document.getElementById('battle-mp-bar').style.width = `${(G.mp/G.maxMp)*100}%`;
+  document.getElementById('battle-mp-val').textContent = `${G.mp} / ${G.maxMp}`;
+
+  const estPayout = Math.floor(wallet * (mood / oji.moodMax));
+  const bonus = mood / oji.moodMax >= 0.8 ? '（ボーナス対象！🎊）' : '';
+  document.getElementById('payout-preview').textContent =
+    `💰 予想ゲット額：${fmtMoney(estPayout)} ${bonus}`;
+
+  // スキルボタン生成
+  const grid = document.getElementById('skills-grid');
+  grid.innerHTML = '';
+  SKILLS.forEach(skill => {
+    const canUse = G.level >= skill.minLv && G.mp >= skill.mpCost;
+    const locked = G.level < skill.minLv;
+    const btn = document.createElement('button');
+    btn.className = 'skill-btn';
+    btn.disabled = !canUse;
+    btn.innerHTML = `
+      <div class="sk-name">${skill.icon} ${skill.name}</div>
+      <div class="sk-cost">MP: ${skill.mpCost}${locked ? '　🔒Lv'+skill.minLv : ''}</div>
+      <div class="sk-effect">${skill.desc}</div>
+    `;
+    if (canUse) btn.onclick = () => useSkill(skill.id);
+    grid.appendChild(btn);
+  });
+}
+
+// 初期表示
+showScreen('start-screen');
+</script>
+</body>
+</html>
