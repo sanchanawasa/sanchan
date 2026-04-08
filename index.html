@@ -179,7 +179,7 @@ body{background:#0a0010;display:flex;flex-direction:column;align-items:center;mi
 // ===== CONSTANTS =====
 const TS=32, MAP_W=44, MAP_H=36, VW=400, VH=380;
 const T={RD:0,SW:1,GR:2,WA:3,BL:4}; // road,sidewalk,grass,water,block
-const TILE_C=['#2c2c2c','#3a3a4a','#2a5218','#1a3a6a','#1a1520'];
+const TILE_C=['#555560','#6a6a88','#3a8a2a','#2a6acc','#22203a'];
 const GOAL=1000000, AGE_LIMIT=30;
 const LEVEL_EXP=[0,30,70,130,210,320,460,640,870,1150,9999];
 
@@ -585,20 +585,21 @@ const canvas=document.getElementById('map-canvas');
 const ctx=canvas.getContext('2d');
 // Tile colors and decorations
 const BUILD_PATTERNS={
-  salon:{grad:['#8b1c5e','#c02a88']},
-  bar:{grad:['#2a1060','#4a20a0']},
-  cafe:{grad:['#5c3010','#9a5020']},
-  shop:{grad:['#1a4070','#2a60b0']},
-  invest:{grad:['#3a1060','#6a20a0']},
-  food:{grad:['#6b2010','#b04020']},
-  hills:{grad:['#1c2a3a','#2c4a6a']},
-  park:{grad:['#1a4020','#2a7030']},
-  tower:{grad:['#8b2200','#dd4400']},
-  odaiba:{grad:['#0a2040','#1a4080']},
+  salon:{grad:['#cc3388','#ff66bb']},
+  bar:{grad:['#4422bb','#7744ee']},
+  cafe:{grad:['#885522','#cc8844']},
+  shop:{grad:['#2266bb','#44aaff']},
+  invest:{grad:['#6622bb','#aa44ff']},
+  food:{grad:['#bb3322','#ee6644']},
+  hills:{grad:['#2244aa','#4488dd']},
+  park:{grad:['#226622','#44aa44']},
+  tower:{grad:['#cc3300','#ff6600']},
+  odaiba:{grad:['#1144aa','#2288ee']},
 };
 
 function render(){
-  ctx.clearRect(0,0,VW,VH);
+  ctx.fillStyle='#22203a';
+  ctx.fillRect(0,0,VW,VH);
   // Camera
   cam.x=cl(player.px-VW/2,0,MAP_W*TS-VW);
   cam.y=cl(player.py-VH/2,0,MAP_H*TS-VH);
@@ -615,18 +616,18 @@ function render(){
       ctx.fillRect(sx,sy,TS,TS);
       // Road markings
       if(t===T.RD){
-        ctx.fillStyle='rgba(255,255,255,0.06)';
+        ctx.fillStyle='rgba(255,255,100,0.18)';
         ctx.fillRect(sx+TS/2-1,sy,2,TS);
       }
       // Grass texture
-      if(t===T.GR&&(tx+ty)%3===0){
-        ctx.fillStyle='rgba(255,255,255,0.04)';
-        ctx.fillRect(sx+4,sy+4,4,4);
+      if(t===T.GR){
+        ctx.fillStyle='rgba(100,255,100,0.1)';
+        if((tx+ty)%2===0)ctx.fillRect(sx+2,sy+2,6,6);
       }
       // Water shimmer
       if(t===T.WA){
-        ctx.fillStyle='rgba(100,180,255,0.08)';
-        ctx.fillRect(sx,sy+(Date.now()/200+tx*3)%TS,TS,3);
+        ctx.fillStyle='rgba(100,200,255,0.2)';
+        ctx.fillRect(sx,sy+(Math.floor(Date.now()/300+tx*3))%TS,TS,4);
       }
     }
   }
