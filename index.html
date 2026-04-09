@@ -108,10 +108,10 @@ body{background:#0a0010;display:flex;flex-direction:column;align-items:center;mi
 <div id="win-screen">
   <div class="sc-card" style="text-align:center">
     <div class="end-icon">🎉</div>
-    <div class="end-title" style="color:#ffd700">おめでとう！</div>
+    <div class="end-title" style="color:#ffd700" id="win-title">おめでとう！</div>
     <div id="win-msg" style="font-size:0.85em;color:#ccc;margin-bottom:10px"></div>
     <div class="end-stats" id="win-stats"></div>
-    <button class="big-btn" onclick="resetGame()">もう一度</button>
+    <button class="big-btn" onclick="resetGame()" id="win-retry">もう一度</button>
   </div>
 </div>
 
@@ -119,16 +119,16 @@ body{background:#0a0010;display:flex;flex-direction:column;align-items:center;mi
 <div id="lose-screen">
   <div class="sc-card" style="text-align:center">
     <div class="end-icon">😢</div>
-    <div class="end-title" style="color:#ff6666">ゲームオーバー</div>
+    <div class="end-title" style="color:#ff6666" id="lose-title">ゲームオーバー</div>
     <div id="lose-msg" style="font-size:0.85em;color:#ccc;margin-bottom:10px"></div>
     <div class="end-stats" id="lose-stats"></div>
-    <button class="big-btn" onclick="resetGame()">リトライ</button>
+    <button class="big-btn" onclick="resetGame()" id="lose-retry">リトライ</button>
   </div>
 </div>
 
 <!-- MAIN GAME -->
 <div id="wrap">
-  <div id="hud">
+  <div id="hud"><button onclick="toggleLang()" id="lang-btn" style="background:rgba(255,105,180,0.3);border:1px solid #ff69b4;color:#fff;padding:3px 7px;border-radius:6px;cursor:pointer;font-size:0.7em;margin-right:4px">🌐JP/EN</button>
     <div class="hud-block">👤 <span id="h-name" class="hud-val">-</span><br>Lv<span id="h-lv">1</span> / <span id="h-age">20歳</span></div>
     <div class="hud-block">❤️<span id="h-hp" class="hud-val">100</span> ⚡<span id="h-mp" class="hud-val">60</span></div>
     <div class="hud-block">✨魅力 <span id="h-charm" class="hud-val">50</span></div>
@@ -184,38 +184,84 @@ const GOAL=1000000, AGE_LIMIT=30;
 const LEVEL_EXP=[0,30,70,130,210,320,460,640,870,1150,9999];
 
 // ===== GAME DATA =====
+// ===== LANGUAGE =====
+let LANG='jp';
+const TXT={
+  jp:{
+    title:'港クエスト',sub:'〜ギャラ飲みで100万円を目指せ！〜',
+    start:'スタート！',namePH:'あなたの名前を入力',goal:'目標：1,000,000円',
+    talk:'💬 話しかける',enter:'🚪 入る',
+    timePass:(m)=>`${m}ヶ月が経った...`,walkAge:'歩き回って時間が経った…',
+    lvUp:(lv)=>`✨ レベルアップ！ Lv${lv} になった！`,
+    win:'おめでとう！',winSub:(n,a)=>`${n}は${a}で100万円達成！港の女王誕生！✨`,
+    lose:'ゲームオーバー',loseHP:'体力が尽きた...',loseAge:(a)=>`${a}になり誰からも誘われなくなった...`,
+    retry:'リトライ',stat_hp:'❤体力',stat_mp:'⚡テンション',stat_charm:'✨魅力',
+    makura_use:'🌙 枕営業...！全てを賭けた！',makura_result:'💫 とてつもない効果が炸裂！報酬×3！！',
+    surgery_poor:'💸 整形には100,000円必要！',surgery_done:'💉 整形した！魅力爆上がり！（-100,000円 +3ヶ月）',
+    bonus:'🎊 太っ腹ボーナス！(+20%)',battleStart:(n)=>`${n}との飲み会が始まった！`,
+    battleHint:'機嫌を上げて稼ごう！',battleEnd:(p)=>`🍾 飲み会終了！機嫌${p}%`,
+    got:(m)=>`💰 ゲット：${m}！`,tooReal:'💬 本音言いすぎた！おじが怒った！',
+    noMP:'⚡ テンション不足！',welcome:'🌊 港区へようこそ！おじに近づいて話しかけよう！',
+    invite:'📩 ギャラ飲みのお誘いが来た！',got2:(n,m)=>`🍾 ${n}から${m}もらった！`,
+    poor_salon:'💸 お金が足りない（5,000円必要）',poor_invest:'💸 自己投資には15,000円必要',
+  },
+  en:{
+    title:'Minato Quest',sub:'~Earn ¥1M through paid drinking!~',
+    start:'Start!',namePH:'Enter your name',goal:'Goal: ¥1,000,000',
+    talk:'💬 Talk',enter:'🚪 Enter',
+    timePass:(m)=>`${m} month(s) passed...`,walkAge:'Time passed while walking...',
+    lvUp:(lv)=>`✨ Level Up! Now Lv${lv}! HP/MP increased!`,
+    win:'Congratulations!',winSub:(n,a)=>`${n} earned ¥1M at ${a}! Queen of Minato!✨`,
+    lose:'Game Over',loseHP:'You ran out of energy...',loseAge:(a)=>`At ${a}, no one invites you anymore...`,
+    retry:'Retry',stat_hp:'❤HP',stat_mp:'⚡Tension',stat_charm:'✨Charm',
+    makura_use:'🌙 Ultimate move! All-in!',makura_result:'💫 Tremendous effect! Payout ×3!!!',
+    surgery_poor:'💸 Cosmetic surgery needs ¥100,000!',surgery_done:'💉 Surgery done! Charm exploded! (-¥100,000 +3mo)',
+    bonus:'🎊 Big Spender Bonus! (+20%)',battleStart:(n)=>`Party with ${n} started!`,
+    battleHint:'Raise their mood and earn big!',battleEnd:(p)=>`🍾 Party over! Mood ${p}%`,
+    got:(m)=>`💰 Got: ${m}!`,tooReal:'💬 Too honest! He got upset!',
+    noMP:'⚡ Not enough tension!',welcome:'🌊 Welcome to Minato! Find ojis and talk to them!',
+    invite:'📩 Gala drinking invitation!',got2:(n,m)=>`🍾 Got ${m} from ${n}!`,
+    poor_salon:'💸 Need ¥5,000 for salon',poor_invest:'💸 Need ¥15,000 for self-investment',
+  }
+};
+function tx(k,...a){const s=TXT[LANG][k];return typeof s==='function'?s(...a):s;}
+function toggleLang(){LANG=LANG==='jp'?'en':'jp';updateHUD();setMsg(tx('welcome'));}
+
 const OJIS=[
-  {icon:'🏢',name:'サラリーマンおじ',moodMax:80,wMin:50000,wMax:80000},
-  {icon:'💰',name:'社長おじ',moodMax:100,wMin:100000,wMax:200000},
-  {icon:'🎸',name:'バンドおじ',moodMax:70,wMin:30000,wMax:60000},
-  {icon:'👔',name:'政治家おじ',moodMax:90,wMin:80000,wMax:150000},
-  {icon:'⚓',name:'港のおじ',moodMax:60,wMin:20000,wMax:40000},
+  {icon:'🏢',name:{jp:'サラリーマンおじ',en:'Salaryman Uncle'},moodMax:80,wMin:50000,wMax:80000},
+  {icon:'💰',name:{jp:'社長おじ',en:'CEO Uncle'},moodMax:100,wMin:100000,wMax:200000},
+  {icon:'🎸',name:{jp:'バンドおじ',en:'Band Uncle'},moodMax:70,wMin:30000,wMax:60000},
+  {icon:'👔',name:{jp:'政治家おじ',en:'Politician Uncle'},moodMax:90,wMin:80000,wMax:150000},
+  {icon:'⚓',name:{jp:'港のおじ',en:'Harbor Uncle'},moodMax:60,wMin:20000,wMax:40000},
 ];
-const OJI_SAY={
+const OJI_SAY={jp:{
   lo:['うーん...','まあそうだな','（スマホをいじる）','次あるんだよね'],
   mi:['なかなかいいじゃない','もっと飲もうよ','楽しいね！'],
-  hi:['きみ最高だよ！','また誘っていい？','これ持ってって！'],
+  hi:['きみ最高だよ！','また誘っていい？','これ持ってって！']},
+  en:{lo:["Hmm...","Well sure","(checks phone)","I have plans later"],mi:["Not bad!","Let's drink more!","Having fun!"],hi:["You're the best!","Can I invite you again?","Take this!"]},
 };
 const SKILLS=[
-  {id:'home',name:'褒める',icon:'⭐',mp:8,gain:18,lv:1,desc:'機嫌+18'},
-  {id:'smile',name:'笑顔MAX',icon:'😊',mp:12,gain:22,lv:1,desc:'機嫌+22 魅力+3'},
-  {id:'listen',name:'話を聞く',icon:'👂',mp:3,gain:12,lv:1,desc:'機嫌+12（低コスト）'},
-  {id:'hype',name:'盛り上げる',icon:'🎉',mp:15,gain:28,lv:3,desc:'機嫌+18〜38'},
-  {id:'cute',name:'甘える',icon:'🥺',mp:20,gain:35,lv:5,desc:'機嫌+35 HP-5'},
-  {id:'real',name:'本音トーク',icon:'💬',mp:25,gain:45,lv:7,desc:'機嫌+45（失敗あり）'},
-  {id:'toast',name:'伝説の乾杯',icon:'🥂',mp:40,gain:60,lv:10,desc:'機嫌+60（最強）'},
+  {id:'home',name:{jp:'褒める',en:'Praise'},icon:'⭐',mp:8,gain:18,lv:1,desc:{jp:'機嫌+18',en:'Mood+18'}},
+  {id:'smile',name:{jp:'笑顔MAX',en:'Big Smile'},icon:'😊',mp:12,gain:22,lv:1,desc:{jp:'機嫌+22 魅力+3',en:'Mood+22 Charm+3'}},
+  {id:'listen',name:{jp:'話を聞く',en:'Listen'},icon:'👂',mp:3,gain:12,lv:1,desc:{jp:'機嫌+12（低コスト）',en:'Mood+12 (low cost)'}},
+  {id:'hype',name:{jp:'盛り上げる',en:'Hype Up'},icon:'🎉',mp:15,gain:28,lv:3,desc:{jp:'機嫌+18〜38',en:'Mood+18~38'}},
+  {id:'cute',name:{jp:'甘える',en:'Act Cute'},icon:'🥺',mp:20,gain:35,lv:5,desc:{jp:'機嫌+35 HP-5',en:'Mood+35 HP-5'}},
+  {id:'real',name:{jp:'本音トーク',en:'Real Talk'},icon:'💬',mp:25,gain:45,lv:7,desc:{jp:'機嫌+45（失敗あり）',en:'Mood+45 (risky)'}},
+  {id:'toast',name:{jp:'伝説の乾杯',en:'Epic Toast'},icon:'🥂',mp:40,gain:60,lv:10,desc:{jp:'機嫌+60（最強）',en:'Mood+60 (strongest)'}},
+  {id:'makura',name:{jp:'枕営業🌙',en:'ULTIMATE🌙'},icon:'🌙',mp:0,gain:0,lv:10,desc:{jp:'全ST激減・報酬×3即勝利',en:'All stats drop, Payout×3 instant win'}},
 ];
 const BUILDINGS=[
-  {tx:1,ty:1,tw:5,th:3,name:'💆 美容院',col:'#8b1c5e',type:'salon',enter:'美容院に入った！魅力+15（-5,000円）'},
-  {tx:8,ty:1,tw:5,th:3,name:'🍾 六本木BAR',col:'#2a1060',type:'bar',enter:'バーで合コン！EXP+25 魅力+5（-2ヶ月 HP-20）'},
-  {tx:19,ty:1,tw:5,th:3,name:'☕ 青山カフェ',col:'#5c3010',type:'cafe',enter:'カフェで休憩…HP+40 MP+30（+2週間）'},
-  {tx:29,ty:1,tw:5,th:3,name:'🏪 コンビニ',col:'#1a4070',type:'shop',enter:'バイトした！+20,000円 EXP+10（HP-15）'},
-  {tx:36,ty:1,tw:6,th:3,name:'✨ 自己投資',col:'#3a1060',type:'invest',enter:'自己投資！魅力+25 EXP+15（-15,000円 +2ヶ月）'},
-  {tx:1,ty:8,tw:6,th:4,name:'🍜 麻布十番',col:'#6b2010',type:'food',enter:'麻布十番で食事！HP+25 MP+15（+1ヶ月）'},
-  {tx:19,ty:8,tw:8,th:5,name:'🏙️ 六本木ヒルズ',col:'#1c2a3a',type:'hills',enter:'六本木ヒルズに来た！魅力+5 EXP+5'},
-  {tx:10,ty:15,tw:7,th:6,name:'🌿 芝公園',col:'#1a4020',type:'park',enter:'公園でのんびり…HP+50 MP+40（+1ヶ月）'},
-  {tx:36,ty:20,tw:5,th:9,name:'🗼 東京タワー',col:'#8b2200',type:'tower',enter:'東京タワー！魅力+10 EXP+10（+1ヶ月）'},
-  {tx:28,ty:14,tw:6,th:5,name:'🎆 お台場',col:'#0a2040',type:'odaiba',enter:'お台場！魅力+8 HP+20（+1ヶ月）'},
+  {tx:1,ty:1,tw:5,th:3,name:{jp:'💆 美容院',en:'💆 Beauty Salon'},col:'#8b1c5e',type:'salon',enter:{jp:'美容院に入った！魅力+15（-5,000円）',en:'Beauty salon! Charm+15 (-¥5k)'}},
+  {tx:8,ty:1,tw:5,th:3,name:{jp:'🍾 六本木BAR',en:'🍾 Roppongi Bar'},col:'#2a1060',type:'bar',enter:{jp:'バーで合コン！EXP+25 魅力+5（-2ヶ月 HP-20）',en:'Mixer at bar! EXP+25 Charm+5 (-2mo HP-20)'}},
+  {tx:19,ty:1,tw:5,th:3,name:{jp:'☕ 青山カフェ',en:'☕ Aoyama Cafe'},col:'#5c3010',type:'cafe',enter:{jp:'カフェで休憩…HP+40 MP+30（+2週間）',en:'Cafe break! HP+40 MP+30 (+2wk)'}},
+  {tx:29,ty:1,tw:5,th:3,name:{jp:'🏪 コンビニ',en:'🏪 Convenience Store'},col:'#1a4070',type:'shop',enter:{jp:'バイトした！+20,000円 EXP+10（HP-15）',en:'Part-time job! +¥20k EXP+10 (HP-15)'}},
+  {tx:36,ty:1,tw:6,th:3,name:{jp:'✨ 自己投資',en:'✨ Self-Invest'},col:'#3a1060',type:'invest',enter:{jp:'自己投資！魅力+25 EXP+15（-15,000円 +2ヶ月）',en:'Self-invest! Charm+25 EXP+15 (-¥15k +2mo)'}},
+  {tx:1,ty:8,tw:6,th:4,name:{jp:'🍜 麻布十番',en:'🍜 Azabu Juban'},col:'#6b2010',type:'food',enter:{jp:'麻布十番で食事！HP+25 MP+15（+1ヶ月）',en:'Dinner at Azabu! HP+25 MP+15 (+1mo)'}},
+  {tx:19,ty:8,tw:8,th:5,name:{jp:'🏙️ 六本木ヒルズ',en:'🏙️ Roppongi Hills'},col:'#1c2a3a',type:'hills',enter:{jp:'六本木ヒルズに来た！魅力+5 EXP+5',en:'Roppongi Hills! Charm+5 EXP+5'}},
+  {tx:10,ty:15,tw:7,th:6,name:{jp:'🌿 芝公園',en:'🌿 Shiba Park'},col:'#1a4020',type:'park',enter:{jp:'公園でのんびり…HP+50 MP+40（+1ヶ月）',en:'Park relaxation! HP+50 MP+40 (+1mo)'}},
+  {tx:36,ty:20,tw:5,th:9,name:{jp:'🗼 東京タワー',en:'🗼 Tokyo Tower'},col:'#8b2200',type:'tower',enter:{jp:'東京タワー！魅力+10 EXP+10（+1ヶ月）',en:'Tokyo Tower! Charm+10 EXP+10 (+1mo)'}},
+  {tx:28,ty:14,tw:6,th:5,name:{jp:'🎆 お台場',en:'🎆 Odaiba'},col:'#0a2040',type:'odaiba',enter:{jp:'お台場！魅力+8 HP+20（+1ヶ月）',en:'Odaiba! Charm+8 HP+20 (+1mo)'}},
+  {tx:8,ty:8,tw:6,th:5,name:{jp:'💉 整形外科',en:'💉 Cosmetic Clinic'},col:'#880060',type:'clinic',enter:{jp:'整形した！魅力爆上がり！（-100,000円 +3ヶ月）',en:'Surgery done! Charm exploded! (-¥100k +3mo)'}},
 ];
 
 // ===== MAP =====
@@ -303,7 +349,7 @@ function checkLvUp(){
   while(G.lv<10&&G.exp>=LEVEL_EXP[G.lv]){
     G.lv++;G.maxHp+=5;G.maxMp+=5;
     G.hp=Math.min(G.hp+10,G.maxHp);G.mp=Math.min(G.mp+10,G.maxMp);
-    setMsg(`✨ レベルアップ！ Lv${G.lv} になった！`);
+    setMsg(tx('lvUp',G.lv));
   }
 }
 function inviteChance(){
@@ -351,6 +397,14 @@ function updatePlayer(){
   if(dx!==0||dy!==0){
     player.animTimer++;
     if(player.animTimer%8===0)player.animFrame=(player.animFrame+1)%4;
+    player.steps=(player.steps||0)+1;
+    if(player.steps>=500){
+      player.steps=0;
+      G.ageM++;
+      setMsg(tx('walkAge'));
+      updateHUD();
+      checkWinLose();
+    }
   }
   const nx=player.px+dx*spd, ny=player.py+dy*spd;
   if(canWalk(nx,player.py))player.px=nx;
@@ -401,10 +455,10 @@ function checkProximity(){
   }
   const btn=document.getElementById('act-btn');
   if(nearNPC){
-    btn.textContent='💬 話しかける';
+    btn.textContent=tx('talk');
     btn.classList.add('show');
   }else if(nearBuilding){
-    btn.textContent=`🚪 入る`;
+    btn.textContent=tx('enter');
     btn.classList.add('show');
   }else{
     btn.classList.remove('show');
@@ -425,7 +479,7 @@ function doBuilding(b){
   let ok=true;
   switch(b.type){
     case'salon':
-      if(G.money<5000){setMsg('💸 お金が足りない（5,000円必要）');return;}
+      if(G.money<5000){setMsg(tx('poor_salon'));return;}
       G.money-=5000;G.charm=cl(G.charm+15,0,100);G.ageM+=1;G.hp=cl(G.hp-5,0,G.maxHp);break;
     case'bar':
       G.exp+=25;G.charm=cl(G.charm+5,0,100);G.ageM+=2;G.hp=cl(G.hp-20,0,G.maxHp);G.mp=cl(G.mp-10,0,G.maxMp);break;
@@ -434,7 +488,7 @@ function doBuilding(b){
     case'shop':
       G.money+=20000;G.exp+=10;G.ageM+=1;G.hp=cl(G.hp-15,0,G.maxHp);break;
     case'invest':
-      if(G.money<15000){setMsg('💸 自己投資には15,000円必要');return;}
+      if(G.money<15000){setMsg(tx('poor_invest'));return;}
       G.money-=15000;G.charm=cl(G.charm+25,0,100);G.exp+=15;G.ageM+=2;break;
     case'food':
       G.hp=cl(G.hp+25,0,G.maxHp);G.mp=cl(G.mp+15,0,G.maxMp);G.ageM+=1;break;
@@ -444,7 +498,7 @@ function doBuilding(b){
     case'park':
       G.hp=cl(G.hp+50,0,G.maxHp);G.mp=cl(G.mp+40,0,G.maxMp);G.ageM+=1;break;
   }
-  setMsg(b.enter);
+  if(b.type==='clinic'){setMsg(tx('surgery_done'));}else if(b.type==='odaiba'){setMsg(typeof b.enter==='object'?b.enter[LANG]:b.enter);}else{setMsg(typeof b.enter==='object'?b.enter[LANG]:b.enter);}
   checkLvUp();
   updateHUD();
   checkWinLose();
@@ -452,7 +506,7 @@ function doBuilding(b){
   if(Math.random()*100<inviteChance()&&!inBattle){
     setTimeout(()=>{
       const npc=npcs[ri(0,npcs.length-1)];
-      setMsg('📩 ギャラ飲みのお誘いが来た！');
+      setMsg(tx('invite'));
       setTimeout(()=>startBattle(npc),800);
     },1200);
   }
@@ -466,14 +520,14 @@ function checkWinLose(){
 }
 function showWin(){
   running=false;
-  document.getElementById('win-msg').textContent=`${G.name}は${fmtAge(G.ageM)}で100万円達成！港の女王誕生！✨`;
+  document.getElementById('win-msg').textContent=tx('winSub',G.name,fmtAge(G.ageM));
   document.getElementById('win-stats').innerHTML=
     `<div>💰 ${fmtMoney(G.money)}</div><div>👤 ${fmtAge(G.ageM)}</div><div>📊 Lv${G.lv}</div><div>🍾 ギャラ飲み${G.battlesWon}回</div>`;
   document.getElementById('win-screen').classList.add('active');
 }
 function showLose(){
   running=false;
-  const reason=G.hp<=0?'体力が尽きた...':`${fmtAge(G.ageM)}になり誰からも誘われなくなった...`;
+  const reason=G.hp<=0?tx('loseHP'):tx('loseAge',fmtAge(G.ageM));
   document.getElementById('lose-msg').textContent=reason;
   document.getElementById('lose-stats').innerHTML=
     `<div>💰 ${fmtMoney(G.money)}</div><div>👤 ${fmtAge(G.ageM)}</div><div>📊 Lv${G.lv}</div><div>あと${fmtMoney(Math.max(0,GOAL-G.money))}</div>`;
@@ -487,6 +541,13 @@ function updateHUD(){
   document.getElementById('h-lv').textContent=G.lv;
   document.getElementById('h-age').textContent=fmtAge(G.ageM);
   document.getElementById('h-hp').textContent=G.hp;
+  document.getElementById('lang-btn').textContent=LANG==='jp'?'🌐→EN':'🌐→JP';
+  try{
+    document.getElementById('win-title').textContent=tx('win');
+    document.getElementById('win-retry').textContent=tx('retry');
+    document.getElementById('lose-title').textContent=tx('lose');
+    document.getElementById('lose-retry').textContent=tx('retry');
+  }catch(e){}
   document.getElementById('h-mp').textContent=G.mp;
   document.getElementById('h-charm').textContent=G.charm;
   document.getElementById('h-money').textContent=fmtMoney(G.money);
@@ -501,11 +562,12 @@ function startBattle(npc){
   inBattle=true;
   document.getElementById('bt-log').innerHTML='';
   document.getElementById('bt-icon').textContent=oji.icon;
-  document.getElementById('bt-name').textContent=oji.name;
+  document.getElementById('bt-name').textContent=typeof oji.name==='object'?oji.name[LANG]:oji.name;
   document.getElementById('bt-sub').textContent='💰予算：'+fmtMoney(wallet);
   document.getElementById('battle').classList.add('active');
-  bLog(`${oji.icon} ${oji.name}との飲み会が始まった！`,'g');
-  bLog('機嫌を上げて稼ごう！','');
+  const ojiNm=typeof oji.name==='object'?oji.name[LANG]:oji.name;
+  bLog(tx('battleStart',ojiNm),'g');
+  bLog(tx('battleHint'),'');
   renderBattle();
 }
 function bLog(msg,cls){
@@ -517,7 +579,22 @@ function bLog(msg,cls){
 function useSkill(id){
   if(!battle||battle.done)return;
   const sk=SKILLS.find(s=>s.id===id);
-  if(!sk||G.mp<sk.mp){bLog('⚡ テンション不足！','b');return;}
+  // 枕営業は特別処理
+  if(id==='makura'){
+    bLog(tx('makura_use'),'b');
+    G.hp=cl(G.hp-40,1,G.maxHp);
+    G.mp=0;
+    G.charm=cl(G.charm-25,0,100);
+    G.ageM+=2;
+    G.exp+=50;
+    battle.mood=battle.oji.moodMax;
+    battle.wallet=Math.floor(battle.wallet*3);
+    setTimeout(()=>bLog(tx('makura_result'),'g'),400);
+    setTimeout(()=>endBattle(),900);
+    renderBattle();
+    return;
+  }
+  if(!sk||G.mp<sk.mp){bLog(tx('noMP'),'b');return;}
   G.mp-=sk.mp;
   let gain=sk.gain;
   if(id==='hype')gain+=ri(-10,10);
@@ -528,7 +605,8 @@ function useSkill(id){
   battle.mood=cl(battle.mood+gain,0,battle.oji.moodMax);
   if(gain>0)bLog(`${sk.icon} ${sk.name}！ 機嫌+${gain}`,'g');
   const pct=battle.mood/battle.oji.moodMax;
-  const pool=pct<0.4?OJI_SAY.lo:pct<0.7?OJI_SAY.mi:OJI_SAY.hi;
+  const ojiSay=OJI_SAY[LANG]||OJI_SAY.jp;
+  const pool=pct<0.4?ojiSay.lo:pct<0.7?ojiSay.mi:ojiSay.hi;
   bLog(`${battle.oji.icon}「${pool[ri(0,pool.length-1)]}」`,'o');
   battle.round++;
   if(battle.round>battle.maxRound){endBattle();return;}
@@ -543,14 +621,15 @@ function endBattle(){
   G.money+=pay;G.exp+=20+Math.floor(pct*30);G.battlesWon++;
   battle.done=true;inBattle=false;G.ageM+=1;
   bLog('─────────────','');
-  bLog(`🍾 飲み会終了！機嫌${Math.floor(pct*100)}%`,'');
-  if(bonus)bLog(bonus,'g');
-  bLog(`💰 ゲット：${fmtMoney(pay)}！`,'g');
+  bLog(tx('battleEnd',Math.floor(pct*100)),'');
+  const bonusTxt=pct>=0.8?tx('bonus'):'';if(bonusTxt)bLog(bonusTxt,'g');
+  bLog(tx('got',fmtMoney(pay)),'g');
   checkLvUp();updateHUD();
   setTimeout(()=>{
     battle=null;
     document.getElementById('battle').classList.remove('active');
-    setMsg(`🍾 ${oji.name}から${fmtMoney(pay)}もらった！${bonus}`);
+    const nm2=typeof oji.name==='object'?oji.name[LANG]:oji.name;
+    setMsg(tx('got2',nm2,fmtMoney(pay)));
     if(checkWinLose())return;
   },2200);
 }
@@ -568,13 +647,15 @@ function renderBattle(){
   const grid=document.getElementById('sk-grid');
   grid.innerHTML='';
   SKILLS.forEach(sk=>{
-    const ok=G.lv>=sk.lv&&G.mp>=sk.mp;
+    const ok=G.lv>=sk.lv&&(sk.id==='makura'||G.mp>=sk.mp);
     const locked=G.lv<sk.lv;
     const b=document.createElement('button');
     b.className='sk';b.disabled=!ok;
-    b.innerHTML=`<div class="sk-nm">${sk.icon} ${sk.name}</div>
-<div class="sk-mp">MP:${sk.mp}${locked?` 🔒Lv${sk.lv}`:''}</div>
-<div class="sk-fx">${sk.desc}</div>`;
+    const snm=typeof sk.name==='object'?sk.name[LANG]:sk.name;
+    const sds=typeof sk.desc==='object'?sk.desc[LANG]:sk.desc;
+    b.innerHTML=`<div class="sk-nm">${sk.icon} ${snm}${sk.id==='makura'?' ⚠️':''}</div>
+<div class="sk-mp">MP:${sk.mp===0?'ALL':sk.mp}${locked?` 🔒Lv${sk.lv}`:''}</div>
+<div class="sk-fx">${sds}</div>`;
     if(ok)b.onclick=()=>useSkill(sk.id);
     grid.appendChild(b);
   });
@@ -595,6 +676,7 @@ const BUILD_PATTERNS={
   park:{grad:['#226622','#44aa44']},
   tower:{grad:['#cc3300','#ff6600']},
   odaiba:{grad:['#1144aa','#2288ee']},
+  clinic:{grad:['#880060','#cc0088']},
 };
 
 function render(){
@@ -656,7 +738,8 @@ function render(){
     ctx.fillRect(bx+2,by+bh-16,bw-4,14);
     ctx.fillStyle='#fff';ctx.font='bold 9px sans-serif';
     ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(b.name,bx+bw/2,by+bh-9);
+    const bnm=typeof b.name==='object'?b.name[LANG]:b.name;
+    ctx.fillText(bnm,bx+bw/2,by+bh-9);
   });
 
   // NPCs
@@ -788,10 +871,20 @@ function startGame(){
   inBattle=false;battle=null;
   document.getElementById('start-screen').classList.remove('active');
   running=true;
-  setMsg('🌊 港区へようこそ！おじに近づいて話しかけよう！');
+  setMsg(tx('welcome'));
+  // 自動時間経過（20秒=1ヶ月）
+  if(G._ageTimer)clearInterval(G._ageTimer);
+  G._ageTimer=setInterval(()=>{
+    if(!running||inBattle)return;
+    G.ageM++;
+    setMsg(tx('timePass',1));
+    updateHUD();
+    if(checkWinLose()){clearInterval(G._ageTimer);}
+  },20000);
   requestAnimationFrame(gameLoop);
 }
 function resetGame(){
+  if(G._ageTimer)clearInterval(G._ageTimer);
   running=false;inBattle=false;battle=null;
   document.getElementById('win-screen').classList.remove('active');
   document.getElementById('lose-screen').classList.remove('active');
