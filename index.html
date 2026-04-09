@@ -599,15 +599,15 @@ function useSkill(id){
   let gain=sk.gain;
   if(id==='hype')gain+=ri(-10,10);
   if(id==='cute')G.hp=cl(G.hp-5,0,G.maxHp);
-  if(id==='real'&&Math.random()<0.3){gain=-20;bLog('💬 本音言いすぎた！おじが怒った！','b');}
+  if(id==='real'&&Math.random()<0.3){gain=-20;bLog(tx('tooReal'),'b');}
   if(id==='smile')G.charm=cl(G.charm+3,0,100);
   if(id==='toast'&&battle.mood>=battle.oji.moodMax*0.5)gain=60;
   battle.mood=cl(battle.mood+gain,0,battle.oji.moodMax);
-  if(gain>0)bLog(`${sk.icon} ${sk.name}！ 機嫌+${gain}`,'g');
+  if(gain>0){const snm2=typeof sk.name==='object'?sk.name[LANG]:sk.name;bLog(`${sk.icon} ${snm2}！ 機嫌+${gain}`,'g');}
   const pct=battle.mood/battle.oji.moodMax;
   const ojiSay=OJI_SAY[LANG]||OJI_SAY.jp;
   const pool=pct<0.4?ojiSay.lo:pct<0.7?ojiSay.mi:ojiSay.hi;
-  bLog(`${battle.oji.icon}「${pool[ri(0,pool.length-1)]}」`,'o');
+  const ojiNm2=typeof battle.oji.name==='object'?battle.oji.name[LANG]:battle.oji.name;bLog(`${ojiNm2}「${pool[ri(0,pool.length-1)]}」`,'o');
   battle.round++;
   if(battle.round>battle.maxRound){endBattle();return;}
   renderBattle();
