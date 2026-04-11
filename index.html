@@ -2,382 +2,378 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="港クエスト">
+<meta name="theme-color" content="#0a0010">
+<link rel="manifest" href="manifest.json">
 <title>港クエスト 🌊</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:#0a0010;display:flex;flex-direction:column;align-items:center;min-height:100vh;
-  font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;color:#fff;overflow:hidden}
-#wrap{position:relative;width:400px;max-width:100vw}
-#hud{background:rgba(0,0,0,0.85);border-bottom:2px solid #ff69b4;
-  padding:5px 10px;display:flex;justify-content:space-between;align-items:center;width:100%}
-.hud-block{text-align:center;font-size:0.68em;line-height:1.5}
-.hud-val{font-weight:bold;font-size:1.1em;color:#fff}
-.hud-money{color:#ffd700;font-size:1.15em;font-weight:bold}
-#map-canvas{display:block;width:400px;height:380px;cursor:default;touch-action:none}
-#msg-bar{background:rgba(0,0,0,0.8);border-top:1px solid #555;border-bottom:1px solid #555;
-  padding:5px 12px;font-size:0.78em;color:#eee;min-height:28px;width:100%}
-#controls{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;width:100%}
-.dpad{display:grid;grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px 44px;gap:3px}
-.db{background:rgba(255,105,180,0.25);border:2px solid rgba(255,105,180,0.5);
-  border-radius:8px;color:#fff;font-size:1.3em;display:flex;align-items:center;
-  justify-content:center;cursor:pointer;user-select:none;-webkit-user-select:none}
-.db:active,.db.pressed{background:rgba(255,105,180,0.6)}
-#act-btn{padding:10px 18px;background:linear-gradient(135deg,#ff69b4,#daa520);
-  border:none;border-radius:12px;color:#fff;font-size:0.85em;font-weight:bold;
-  cursor:pointer;opacity:0;transition:opacity 0.2s;pointer-events:none;white-space:nowrap}
-#act-btn.show{opacity:1;pointer-events:auto}
+html,body{height:100%;overflow:hidden;background:#0a0010;
+  font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Meiryo',sans-serif;color:#fff}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;
+  position:relative;background:#0a0010}
 
-/* ===== BATTLE OVERLAY ===== */
-#battle{display:none;position:fixed;inset:0;background:rgba(0,0,10,0.95);
-  z-index:200;flex-direction:column;align-items:center;overflow-y:auto;padding:10px}
-#battle.active{display:flex}
-.bt-head{text-align:center;padding:8px;color:#cc88ff;font-size:1em;font-weight:bold}
-.bt-oji{background:rgba(136,68,255,0.15);border:2px solid #8844ff;border-radius:14px;
-  padding:14px;text-align:center;width:100%;max-width:380px;margin-bottom:8px}
-.bt-oji-icon{font-size:2.2em}
-.bt-oji-name{color:#cc88ff;font-weight:bold;margin:4px 0}
-.bt-oji-sub{font-size:0.72em;color:#aaa}
-.mbar-wrap{margin-top:8px}
-.mbar-lbl{font-size:0.72em;color:#aaa;margin-bottom:3px}
-.mbar-bg{background:#333;border-radius:6px;height:12px;overflow:hidden}
-.mbar-fill{background:linear-gradient(90deg,#ff69b4,#ff4488);height:100%;border-radius:6px;transition:width 0.4s}
-.mbar-val{font-size:0.8em;color:#ff69b4;margin-top:2px}
-.bt-mp{background:rgba(68,136,255,0.1);border:1px solid #4488ff;border-radius:10px;
-  padding:7px 12px;width:100%;max-width:380px;margin-bottom:6px}
-.bt-mp-lbl{font-size:0.72em;color:#88aaff}
-.bt-mp-bg{background:#333;border-radius:4px;height:8px;margin-top:3px;overflow:hidden}
-.bt-mp-bar{background:linear-gradient(90deg,#4488ff,#88ccff);height:100%;border-radius:4px;transition:width 0.3s}
-.bt-log{background:rgba(0,0,0,0.5);border:1px solid #444;border-radius:10px;
-  padding:8px 10px;width:100%;max-width:380px;height:90px;overflow-y:auto;margin-bottom:6px;font-size:0.76em}
-.bl{padding:2px 0;color:#ddd}.bl.g{color:#88ff88}.bl.b{color:#ff6666}.bl.o{color:#cc88ff;font-style:italic}
-.bt-pay{text-align:center;font-size:0.82em;color:#daa520;padding:3px;margin-bottom:4px}
-.bt-rnd{text-align:center;font-size:0.75em;color:#aaa;margin-bottom:6px}
-.sk-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:380px;margin-bottom:8px}
-.sk{background:rgba(136,68,255,0.15);border:1px solid #8844ff;border-radius:10px;
-  padding:9px 6px;cursor:pointer;text-align:center;color:#fff;transition:all 0.15s}
-.sk:hover:not(:disabled){background:rgba(136,68,255,0.35)}
-.sk:disabled{opacity:0.3;cursor:not-allowed}
-.sk-nm{font-size:0.83em;font-weight:bold}
-.sk-mp{font-size:0.68em;color:#88aaff;margin-top:2px}
-.sk-fx{font-size:0.65em;color:#aaa}
+/* HUD */
+#hud{flex-shrink:0;background:rgba(0,0,0,0.9);border-bottom:2px solid #ff69b4;
+  padding:4px 8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.hb{font-size:0.65em;text-align:center;flex:1}
+.hv{font-weight:bold;font-size:1.05em}
+.hm{color:#ffd700;font-weight:bold}
+#lang-btn{background:rgba(255,105,180,0.3);border:1px solid #ff69b4;color:#fff;
+  padding:2px 6px;border-radius:6px;cursor:pointer;font-size:0.65em;flex-shrink:0}
 
-/* ===== START / END SCREENS ===== */
-#start-screen,#win-screen,#lose-screen{
-  display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0a0020,#1a0030);
-  z-index:300;flex-direction:column;align-items:center;justify-content:center;padding:20px}
-#start-screen.active,#win-screen.active,#lose-screen.active{display:flex}
-.sc-logo{font-size:2.8em;margin-bottom:6px;text-shadow:0 0 20px #ff69b4}
-.sc-sub{color:#daa520;font-size:1em;margin-bottom:24px}
-.sc-card{background:rgba(255,255,255,0.08);border:2px solid #ff69b4;border-radius:16px;
-  padding:24px;max-width:360px;width:100%}
-.sc-card h2{text-align:center;color:#ff69b4;margin-bottom:14px}
-.sc-card p{font-size:0.82em;color:#ccc;line-height:1.7;margin-bottom:16px}
-.name-in{width:100%;padding:11px;border:2px solid #ff69b4;border-radius:8px;
-  background:rgba(255,255,255,0.08);color:#fff;font-size:1.05em;text-align:center;margin-bottom:12px}
-.name-in::placeholder{color:#777}
-.big-btn{width:100%;padding:14px;background:linear-gradient(135deg,#ff69b4,#daa520);
-  border:none;border-radius:10px;color:#fff;font-size:1.1em;font-weight:bold;cursor:pointer}
-.end-icon{font-size:3.5em;margin-bottom:12px}
-.end-title{font-size:1.6em;font-weight:bold;margin-bottom:8px}
-.end-stats{background:rgba(255,255,255,0.07);border-radius:10px;padding:12px;
-  margin:12px 0;text-align:left;font-size:0.83em;width:100%}
-.end-stats div{padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
+/* Canvas */
+#gc{flex:1;display:block;width:100%;touch-action:none}
+
+/* Message bar */
+#msg{flex-shrink:0;background:rgba(0,0,0,0.85);border-top:1px solid #444;
+  border-bottom:1px solid #444;padding:4px 10px;font-size:0.75em;color:#eee;min-height:24px}
+
+/* Controls */
+#ctrl{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:6px 12px;background:rgba(0,0,0,0.5)}
+.dp{display:grid;grid-template-columns:46px 46px 46px;grid-template-rows:46px 46px 46px;gap:3px}
+.db{background:rgba(255,105,180,0.2);border:2px solid rgba(255,105,180,0.5);
+  border-radius:8px;color:#fff;font-size:1.4em;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;user-select:none;-webkit-user-select:none;
+  touch-action:none}
+.db:active,.db.on{background:rgba(255,105,180,0.55);border-color:#ff69b4}
+#abtn{padding:10px 14px;background:linear-gradient(135deg,#ff69b4,#daa520);
+  border:none;border-radius:12px;color:#fff;font-size:0.82em;font-weight:bold;
+  cursor:pointer;display:none;touch-action:manipulation;white-space:nowrap}
+
+/* Battle overlay */
+#bov{display:none;position:absolute;inset:0;background:rgba(0,0,12,0.97);
+  z-index:50;flex-direction:column;align-items:center;overflow-y:auto;padding:8px;
+  -webkit-overflow-scrolling:touch}
+.bh{text-align:center;padding:6px;color:#cc88ff;font-size:0.95em;font-weight:bold}
+.bcard{background:rgba(136,68,255,0.12);border:2px solid #8844ff;border-radius:14px;
+  padding:12px;text-align:center;width:100%;max-width:400px;margin-bottom:7px}
+.bci{font-size:2em}
+.bcn{color:#cc88ff;font-weight:bold;font-size:0.9em;margin:3px 0}
+.bcs{font-size:0.7em;color:#aaa}
+.bbar{margin-top:7px}
+.bbg{background:#333;border-radius:5px;height:12px;overflow:hidden}
+.bfill{background:linear-gradient(90deg,#ff69b4,#ff4488);height:100%;border-radius:5px;transition:width 0.35s}
+.bval{font-size:0.8em;color:#ff69b4;margin-top:2px}
+.mpbar{background:rgba(68,136,255,0.1);border:1px solid #4488ff;border-radius:9px;
+  padding:6px 10px;width:100%;max-width:400px;margin-bottom:5px}
+.mpbg{background:#333;border-radius:4px;height:8px;margin-top:3px;overflow:hidden}
+.mpfill{background:linear-gradient(90deg,#4488ff,#88ccff);height:100%;border-radius:4px;transition:width 0.3s}
+.blog{background:rgba(0,0,0,0.5);border:1px solid #444;border-radius:9px;
+  padding:7px 9px;width:100%;max-width:400px;height:88px;overflow-y:auto;
+  margin-bottom:5px;font-size:0.74em;-webkit-overflow-scrolling:touch}
+.bl{padding:2px 0;color:#ddd}.bl.g{color:#88ff88}.bl.b{color:#ff8888}.bl.o{color:#cc88ff;font-style:italic}
+.bpay{text-align:center;font-size:0.8em;color:#daa520;padding:2px}
+.brnd{text-align:center;font-size:0.72em;color:#aaa;margin-bottom:5px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%;max-width:400px;padding-bottom:8px}
+.sk{background:rgba(136,68,255,0.15);border:1px solid #8844ff;border-radius:9px;
+  padding:8px 5px;cursor:pointer;text-align:center;color:#fff;touch-action:manipulation}
+.sk:active:not(:disabled){background:rgba(136,68,255,0.4)}
+.sk:disabled{opacity:0.28;cursor:not-allowed}
+.sn{font-size:0.82em;font-weight:bold}
+.sm{font-size:0.67em;color:#88aaff;margin-top:1px}
+.sf{font-size:0.63em;color:#aaa}
+
+/* Start/End screens */
+.oscreen{display:none;position:absolute;inset:0;background:linear-gradient(135deg,#08001a,#18002e);
+  z-index:100;flex-direction:column;align-items:center;justify-content:center;padding:16px;
+  overflow-y:auto;-webkit-overflow-scrolling:touch}
+.logo{font-size:2.5em;text-align:center;text-shadow:0 0 20px #ff69b4;margin-bottom:4px}
+.sublogo{color:#daa520;font-size:0.9em;margin-bottom:20px;text-align:center}
+.card{background:rgba(255,255,255,0.07);border:2px solid #ff69b4;border-radius:16px;
+  padding:20px;width:100%;max-width:380px}
+.card h2{text-align:center;color:#ff69b4;margin-bottom:12px;font-size:1em}
+.card p{font-size:0.78em;color:#ccc;line-height:1.75;margin-bottom:14px}
+.nin{width:100%;padding:11px;border:2px solid #ff69b4;border-radius:8px;
+  background:rgba(255,255,255,0.07);color:#fff;font-size:1em;text-align:center;margin-bottom:11px}
+.nin::placeholder{color:#666}
+.bbtn{width:100%;padding:14px;background:linear-gradient(135deg,#ff69b4,#daa520);
+  border:none;border-radius:10px;color:#fff;font-size:1.05em;font-weight:bold;cursor:pointer;
+  touch-action:manipulation}
+.eicon{font-size:3em;margin-bottom:10px;text-align:center}
+.etitle{font-size:1.5em;font-weight:bold;margin-bottom:8px;text-align:center}
+.estats{background:rgba(255,255,255,0.07);border-radius:9px;padding:10px;margin:10px 0;font-size:0.8em}
+.estats div{padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
 </style>
 </head>
 <body>
-<!-- START SCREEN -->
-<div id="start-screen" class="active">
-  <div class="sc-logo">🌊 港クエスト</div>
-  <div class="sc-sub">〜ギャラ飲みで100万円を目指せ！〜</div>
-  <div class="sc-card">
-    <h2>NEWGAME</h2>
-    <p>
-      🗺 <b>港区マップ</b>を自由に歩き回ろう！<br>
+<!-- START -->
+<div class="oscreen" id="ss" style="display:flex">
+  <div class="logo">🌊 港クエスト</div>
+  <div class="sublogo" id="ss-sub">〜ギャラ飲みで100万円を目指せ！〜</div>
+  <div class="card">
+    <h2 id="ss-title">NEWGAME</h2>
+    <p id="ss-info">🗺 <b>港区マップ</b>を歩き回ろう！<br>
+      👔 おじに近づいて<b>ギャラ飲みバトル</b>！<br>
+      🏠 建物に入ってアクション<br>
       🎯 目標：<b>100万円</b>を稼ぐ<br>
-      👔 おじに近づいて声をかけると<b>ギャラ飲みバトル</b>！<br>
-      🏠 建物に入ると色々なアクション<br>
-      ⚡ 行動するたびに月日が経つ…30歳でゲームオーバー
-    </p>
-    <input type="text" class="name-in" id="player-name" placeholder="あなたの名前を入力" maxlength="8">
-    <button class="big-btn" onclick="startGame()">スタート！</button>
+      ⏱ じっとしてても時間は経つ…30歳でGO</p>
+    <input type="text" class="nin" id="pname" placeholder="あなたの名前を入力" maxlength="8">
+    <button class="bbtn" id="sbtn">スタート！</button>
   </div>
 </div>
-
-<!-- WIN SCREEN -->
-<div id="win-screen">
-  <div class="sc-card" style="text-align:center">
-    <div class="end-icon">🎉</div>
-    <div class="end-title" style="color:#ffd700" id="win-title">おめでとう！</div>
-    <div id="win-msg" style="font-size:0.85em;color:#ccc;margin-bottom:10px"></div>
-    <div class="end-stats" id="win-stats"></div>
-    <button class="big-btn" onclick="resetGame()" id="win-retry">もう一度</button>
+<!-- WIN -->
+<div class="oscreen" id="ws">
+  <div class="card" style="text-align:center">
+    <div class="eicon">🎉</div>
+    <div class="etitle" id="wt" style="color:#ffd700">おめでとう！</div>
+    <div id="wm" style="font-size:0.8em;color:#ccc;margin-bottom:8px"></div>
+    <div class="estats" id="wst"></div>
+    <button class="bbtn" id="wbtn">もう一度</button>
   </div>
 </div>
-
-<!-- LOSE SCREEN -->
-<div id="lose-screen">
-  <div class="sc-card" style="text-align:center">
-    <div class="end-icon">😢</div>
-    <div class="end-title" style="color:#ff6666" id="lose-title">ゲームオーバー</div>
-    <div id="lose-msg" style="font-size:0.85em;color:#ccc;margin-bottom:10px"></div>
-    <div class="end-stats" id="lose-stats"></div>
-    <button class="big-btn" onclick="resetGame()" id="lose-retry">リトライ</button>
+<!-- LOSE -->
+<div class="oscreen" id="ls">
+  <div class="card" style="text-align:center">
+    <div class="eicon">😢</div>
+    <div class="etitle" id="lt" style="color:#ff6666">ゲームオーバー</div>
+    <div id="lm" style="font-size:0.8em;color:#ccc;margin-bottom:8px"></div>
+    <div class="estats" id="lst"></div>
+    <button class="bbtn" id="lbtn">リトライ</button>
   </div>
 </div>
-
-<!-- MAIN GAME -->
-<div id="wrap">
-  <div id="hud"><button onclick="toggleLang()" id="lang-btn" style="background:rgba(255,105,180,0.3);border:1px solid #ff69b4;color:#fff;padding:3px 7px;border-radius:6px;cursor:pointer;font-size:0.7em;margin-right:4px">🌐JP/EN</button>
-    <div class="hud-block">👤 <span id="h-name" class="hud-val">-</span><br>Lv<span id="h-lv">1</span> / <span id="h-age">20歳</span></div>
-    <div class="hud-block">❤️<span id="h-hp" class="hud-val">100</span> ⚡<span id="h-mp" class="hud-val">60</span></div>
-    <div class="hud-block">✨魅力 <span id="h-charm" class="hud-val">50</span></div>
-    <div class="hud-block">💰 <span id="h-money" class="hud-money">0円</span></div>
+<!-- MAIN -->
+<div id="app">
+  <div id="hud">
+    <button id="lang-btn">🌐JP</button>
+    <div class="hb">👤 <span id="hn" class="hv">-</span><br>Lv<span id="hlv">1</span> <span id="hage">20歳</span></div>
+    <div class="hb">❤<span id="hhp" class="hv">100</span> ⚡<span id="hmp" class="hv">60</span></div>
+    <div class="hb">✨<span id="hch" class="hv">50</span></div>
+    <div class="hb">💰<span id="hmn" class="hm">0円</span></div>
   </div>
-  <canvas id="map-canvas" width="400" height="380"></canvas>
-  <div id="msg-bar">🌊 港区へようこそ！矢印キーか下のボタンで移動</div>
-  <div id="controls">
-    <div class="dpad">
-      <div></div>
-      <div class="db" id="db-up" ontouchstart="dpadStart('up')" ontouchend="dpadEnd('up')">↑</div>
-      <div></div>
-      <div class="db" id="db-left" ontouchstart="dpadStart('left')" ontouchend="dpadEnd('left')">←</div>
-      <div class="db" id="db-center">●</div>
-      <div class="db" id="db-right" ontouchstart="dpadStart('right')" ontouchend="dpadEnd('right')">→</div>
-      <div></div>
-      <div class="db" id="db-down" ontouchstart="dpadStart('down')" ontouchend="dpadEnd('down')">↓</div>
-      <div></div>
+  <canvas id="gc"></canvas>
+  <div id="msg">🌊 港区へようこそ！</div>
+  <div id="ctrl">
+    <div class="dp">
+      <div></div><div class="db" id="du">↑</div><div></div>
+      <div class="db" id="dl">←</div><div class="db">●</div><div class="db" id="dr">→</div>
+      <div></div><div class="db" id="dd">↓</div><div></div>
     </div>
-    <button id="act-btn" onclick="doInteract()">話しかける</button>
+    <button id="abtn">💬 話しかける</button>
   </div>
-</div>
-
-<!-- BATTLE OVERLAY -->
-<div id="battle">
-  <div class="bt-head" id="bt-title">⚔️ ギャラ飲みバトル！</div>
-  <div class="bt-oji">
-    <div class="bt-oji-icon" id="bt-icon">👔</div>
-    <div class="bt-oji-name" id="bt-name">おじ</div>
-    <div class="bt-oji-sub" id="bt-sub">タイプ</div>
-    <div class="mbar-wrap">
-      <div class="mbar-lbl">機嫌 😊</div>
-      <div class="mbar-bg"><div class="mbar-fill" id="mbar" style="width:30%"></div></div>
-      <div class="mbar-val" id="mbar-val">30 / 80</div>
+  <!-- Battle -->
+  <div id="bov">
+    <div class="bh" id="btit">⚔️ ギャラ飲みバトル！</div>
+    <div class="bcard">
+      <div class="bci" id="bic">👔</div>
+      <div class="bcn" id="bnm">おじ</div>
+      <div class="bcs" id="bsb">タイプ</div>
+      <div class="bbar"><div class="bbg"><div class="bfill" id="mbf" style="width:30%"></div></div>
+        <div class="bval" id="mbv">30/80</div></div>
     </div>
+    <div class="mpbar">
+      <div style="font-size:0.7em;color:#88aaff">⚡ テンション</div>
+      <div class="mpbg"><div class="mpfill" id="mpf"></div></div>
+      <div style="font-size:0.68em;color:#88aaff;margin-top:2px" id="mpv"></div>
+    </div>
+    <div class="blog" id="blog"></div>
+    <div class="bpay" id="bpay">💰 予想：---</div>
+    <div class="brnd" id="brnd">ラウンド 1/3</div>
+    <div class="sgrid" id="sgrid"></div>
   </div>
-  <div class="bt-mp">
-    <div class="bt-mp-lbl">⚡ テンション</div>
-    <div class="bt-mp-bg"><div class="bt-mp-bar" id="bt-mp-bar"></div></div>
-    <div style="font-size:0.72em;color:#88aaff;margin-top:2px" id="bt-mp-val"></div>
-  </div>
-  <div class="bt-log" id="bt-log"></div>
-  <div class="bt-pay" id="bt-pay">💰 予想ゲット額：---</div>
-  <div class="bt-rnd" id="bt-rnd">ラウンド 1 / 3</div>
-  <div class="sk-grid" id="sk-grid"></div>
 </div>
 <script>
-// ===== CONSTANTS =====
-const TS=32, MAP_W=44, MAP_H=36, VW=400, VH=380;
-const T={RD:0,SW:1,GR:2,WA:3,BL:4}; // road,sidewalk,grass,water,block
-const TILE_C=['#555560','#6a6a88','#3a8a2a','#2a6acc','#22203a'];
-const GOAL=1000000, AGE_LIMIT=30;
-const LEVEL_EXP=[0,30,70,130,210,320,460,640,870,1150,9999];
-
-// ===== GAME DATA =====
 // ===== LANGUAGE =====
 let LANG='jp';
-const TXT={
+const L={
   jp:{
-    title:'港クエスト',sub:'〜ギャラ飲みで100万円を目指せ！〜',
-    start:'スタート！',namePH:'あなたの名前を入力',goal:'目標：1,000,000円',
+    sub:'〜ギャラ飲みで100万円を目指せ！〜',start:'スタート！',ph:'あなたの名前を入力',
     talk:'💬 話しかける',enter:'🚪 入る',
-    timePass:(m)=>`${m}ヶ月が経った...`,walkAge:'歩き回って時間が経った…',
-    lvUp:(lv)=>`✨ レベルアップ！ Lv${lv} になった！`,
-    win:'おめでとう！',winSub:(n,a)=>`${n}は${a}で100万円達成！港の女王誕生！✨`,
-    lose:'ゲームオーバー',loseHP:'体力が尽きた...',loseAge:(a)=>`${a}になり誰からも誘われなくなった...`,
-    retry:'リトライ',stat_hp:'❤体力',stat_mp:'⚡テンション',stat_charm:'✨魅力',
-    makura_use:'🌙 枕営業...！全てを賭けた！',makura_result:'💫 とてつもない効果が炸裂！報酬×3！！',
-    surgery_poor:'💸 整形には100,000円必要！',surgery_done:'💉 整形した！魅力爆上がり！（-100,000円 +3ヶ月）',
-    bonus:'🎊 太っ腹ボーナス！(+20%)',battleStart:(n)=>`${n}との飲み会が始まった！`,
-    battleHint:'機嫌を上げて稼ごう！',battleEnd:(p)=>`🍾 飲み会終了！機嫌${p}%`,
-    got:(m)=>`💰 ゲット：${m}！`,tooReal:'💬 本音言いすぎた！おじが怒った！',
-    noMP:'⚡ テンション不足！',welcome:'🌊 港区へようこそ！おじに近づいて話しかけよう！',
-    invite:'📩 ギャラ飲みのお誘いが来た！',got2:(n,m)=>`🍾 ${n}から${m}もらった！`,
-    poor_salon:'💸 お金が足りない（5,000円必要）',poor_invest:'💸 自己投資には15,000円必要',
+    tp:m=>`${m}ヶ月経った…`,walk:'歩きすぎて時間が経った…',
+    lv:v=>`✨ レベルアップ！ Lv${v}！`,
+    win:'おめでとう！',wsub:(n,a)=>`${n}は${a}で100万円達成！港の女王誕生！✨`,
+    lose:'ゲームオーバー',lhp:'体力が尽きた…',lage:a=>`${a}になり誰からも誘われなくなった…`,
+    retry:'リトライ',again:'もう一度',
+    makura_use:'🌙 枕営業！全てを賭けた！',makura_res:'💫 とてつもない効果…！報酬×3！！',
+    surgery_ok:'💉 整形完了！魅力爆上がり！（-100,000円 +3ヶ月）',
+    surgery_ng:'💸 整形には100,000円必要！',
+    bonus:'🎊 太っ腹ボーナス！(+20%)',
+    bs:n=>`${n}との飲み会開始！`,bh:'機嫌を上げて稼ごう！',
+    be:p=>`🍾 飲み会終了！機嫌${p}%`,got:m=>`💰 ゲット：${m}！`,
+    toreal:'💬 本音言いすぎ！おじが怒った！',nomp:'⚡ テンション不足！',
+    welcome:'🌊 港区へようこそ！おじに近づいて話しかけよう！',
+    invite:'📩 ギャラ飲みのお誘いが来た！',
+    got2:(n,m)=>`🍾 ${n}から${m}もらった！`,
+    poor5:'💸 5,000円必要！',poor15:'💸 15,000円必要！',
   },
   en:{
-    title:'Minato Quest',sub:'~Earn ¥1M through paid drinking!~',
-    start:'Start!',namePH:'Enter your name',goal:'Goal: ¥1,000,000',
+    sub:'~Earn ¥1M through paid drinking!~',start:'Start!',ph:'Enter your name',
     talk:'💬 Talk',enter:'🚪 Enter',
-    timePass:(m)=>`${m} month(s) passed...`,walkAge:'Time passed while walking...',
-    lvUp:(lv)=>`✨ Level Up! Now Lv${lv}! HP/MP increased!`,
-    win:'Congratulations!',winSub:(n,a)=>`${n} earned ¥1M at ${a}! Queen of Minato!✨`,
-    lose:'Game Over',loseHP:'You ran out of energy...',loseAge:(a)=>`At ${a}, no one invites you anymore...`,
-    retry:'Retry',stat_hp:'❤HP',stat_mp:'⚡Tension',stat_charm:'✨Charm',
-    makura_use:'🌙 Ultimate move! All-in!',makura_result:'💫 Tremendous effect! Payout ×3!!!',
-    surgery_poor:'💸 Cosmetic surgery needs ¥100,000!',surgery_done:'💉 Surgery done! Charm exploded! (-¥100,000 +3mo)',
-    bonus:'🎊 Big Spender Bonus! (+20%)',battleStart:(n)=>`Party with ${n} started!`,
-    battleHint:'Raise their mood and earn big!',battleEnd:(p)=>`🍾 Party over! Mood ${p}%`,
-    got:(m)=>`💰 Got: ${m}!`,tooReal:'💬 Too honest! He got upset!',
-    noMP:'⚡ Not enough tension!',welcome:'🌊 Welcome to Minato! Find ojis and talk to them!',
-    invite:'📩 Gala drinking invitation!',got2:(n,m)=>`🍾 Got ${m} from ${n}!`,
-    poor_salon:'💸 Need ¥5,000 for salon',poor_invest:'💸 Need ¥15,000 for self-investment',
+    tp:m=>`${m} month(s) passed…`,walk:'Time passed while walking…',
+    lv:v=>`✨ Level Up! Lv${v}!`,
+    win:'Congratulations!',wsub:(n,a)=>`${n} earned ¥1M at ${a}! Queen of Minato!✨`,
+    lose:'Game Over',lhp:'You ran out of energy…',lage:a=>`At ${a}, no one invites you…`,
+    retry:'Retry',again:'Play Again',
+    makura_use:'🌙 Ultimate move! All-in!',makura_res:'💫 Tremendous effect! Payout×3!!',
+    surgery_ok:'💉 Surgery done! Charm exploded! (-¥100k +3mo)',
+    surgery_ng:'💸 Need ¥100,000 for surgery!',
+    bonus:'🎊 Big Spender Bonus! (+20%)',
+    bs:n=>`Party with ${n} started!`,bh:'Raise their mood and earn!',
+    be:p=>`🍾 Party over! Mood ${p}%`,got:m=>`💰 Got: ${m}!`,
+    toreal:'💬 Too honest! He got upset!',nomp:'⚡ Not enough tension!',
+    welcome:'🌊 Welcome to Minato! Find uncles and talk to them!',
+    invite:'📩 Gala drinking invitation!',
+    got2:(n,m)=>`🍾 Got ${m} from ${n}!`,
+    poor5:'💸 Need ¥5,000!',poor15:'💸 Need ¥15,000!',
   }
 };
-function tx(k,...a){const s=TXT[LANG][k];return typeof s==='function'?s(...a):s;}
-function toggleLang(){LANG=LANG==='jp'?'en':'jp';updateHUD();setMsg(tx('welcome'));}
+const t=k=>typeof L[LANG][k]==='function'?L[LANG][k]:L[LANG][k]||k;
+const tf=(k,...a)=>L[LANG][k](...a);
 
+// ===== CONSTANTS =====
+const TS=32,MW=44,MH=36,GOAL=1000000,ALIM=30;
+const LEX=[0,30,70,130,210,320,460,640,870,1150,9999];
+const TC=['#555560','#6a6a88','#3a8a2a','#2a6acc','#22203a'];
+const TT={RD:0,SW:1,GR:2,WA:3,BL:4};
+
+// ===== GAME DATA =====
 const OJIS=[
-  {icon:'🏢',name:{jp:'サラリーマンおじ',en:'Salaryman Uncle'},moodMax:80,wMin:50000,wMax:80000},
-  {icon:'💰',name:{jp:'社長おじ',en:'CEO Uncle'},moodMax:100,wMin:100000,wMax:200000},
-  {icon:'🎸',name:{jp:'バンドおじ',en:'Band Uncle'},moodMax:70,wMin:30000,wMax:60000},
-  {icon:'👔',name:{jp:'政治家おじ',en:'Politician Uncle'},moodMax:90,wMin:80000,wMax:150000},
-  {icon:'⚓',name:{jp:'港のおじ',en:'Harbor Uncle'},moodMax:60,wMin:20000,wMax:40000},
+  {icon:'🏢',jp:'サラリーマンおじ',en:'Salaryman',moodMax:80,wMin:50000,wMax:80000},
+  {icon:'💰',jp:'社長おじ',en:'CEO Uncle',moodMax:100,wMin:100000,wMax:200000},
+  {icon:'🎸',jp:'バンドおじ',en:'Band Uncle',moodMax:70,wMin:30000,wMax:60000},
+  {icon:'👔',jp:'政治家おじ',en:'Politician',moodMax:90,wMin:80000,wMax:150000},
+  {icon:'⚓',jp:'港のおじ',en:'Harbor Uncle',moodMax:60,wMin:20000,wMax:40000},
 ];
-const OJI_SAY={jp:{
-  lo:['うーん...','まあそうだな','（スマホをいじる）','次あるんだよね'],
-  mi:['なかなかいいじゃない','もっと飲もうよ','楽しいね！'],
-  hi:['きみ最高だよ！','また誘っていい？','これ持ってって！']},
-  en:{lo:["Hmm...","Well sure","(checks phone)","I have plans later"],mi:["Not bad!","Let's drink more!","Having fun!"],hi:["You're the best!","Can I invite you again?","Take this!"]},
+const OSAY={
+  jp:{lo:['うーん…','まあそうだな','（スマホ見る）','次の予定が…'],
+      mi:['なかなかいいじゃない','もっと飲もうよ','楽しいね！'],
+      hi:['きみ最高！','また誘っていい？','これ持ってって！']},
+  en:{lo:['Hmm…','Well sure','(checks phone)','I have plans…'],
+      mi:["Not bad!","Let's drink more!","Fun!"],
+      hi:["You're amazing!","Can I invite you again?","Take this!"]}
 };
 const SKILLS=[
-  {id:'home',name:{jp:'褒める',en:'Praise'},icon:'⭐',mp:8,gain:18,lv:1,desc:{jp:'機嫌+18',en:'Mood+18'}},
-  {id:'smile',name:{jp:'笑顔MAX',en:'Big Smile'},icon:'😊',mp:12,gain:22,lv:1,desc:{jp:'機嫌+22 魅力+3',en:'Mood+22 Charm+3'}},
-  {id:'listen',name:{jp:'話を聞く',en:'Listen'},icon:'👂',mp:3,gain:12,lv:1,desc:{jp:'機嫌+12（低コスト）',en:'Mood+12 (low cost)'}},
-  {id:'hype',name:{jp:'盛り上げる',en:'Hype Up'},icon:'🎉',mp:15,gain:28,lv:3,desc:{jp:'機嫌+18〜38',en:'Mood+18~38'}},
-  {id:'cute',name:{jp:'甘える',en:'Act Cute'},icon:'🥺',mp:20,gain:35,lv:5,desc:{jp:'機嫌+35 HP-5',en:'Mood+35 HP-5'}},
-  {id:'real',name:{jp:'本音トーク',en:'Real Talk'},icon:'💬',mp:25,gain:45,lv:7,desc:{jp:'機嫌+45（失敗あり）',en:'Mood+45 (risky)'}},
-  {id:'toast',name:{jp:'伝説の乾杯',en:'Epic Toast'},icon:'🥂',mp:40,gain:60,lv:10,desc:{jp:'機嫌+60（最強）',en:'Mood+60 (strongest)'}},
-  {id:'makura',name:{jp:'枕営業🌙',en:'ULTIMATE🌙'},icon:'🌙',mp:0,gain:0,lv:10,desc:{jp:'全ST激減・報酬×3即勝利',en:'All stats drop, Payout×3 instant win'}},
+  {id:'home',jp:'褒める',en:'Praise',icon:'⭐',mp:8,gain:18,lv:1,djp:'機嫌+18',den:'Mood+18'},
+  {id:'smile',jp:'笑顔MAX',en:'Big Smile',icon:'😊',mp:12,gain:22,lv:1,djp:'機嫌+22 魅力+3',den:'Mood+22 Charm+3'},
+  {id:'listen',jp:'話を聞く',en:'Listen',icon:'👂',mp:3,gain:12,lv:1,djp:'機嫌+12（低コスト）',den:'Mood+12 (cheap)'},
+  {id:'hype',jp:'盛り上げる',en:'Hype Up',icon:'🎉',mp:15,gain:28,lv:3,djp:'機嫌+18〜38',den:'Mood+18~38'},
+  {id:'cute',jp:'甘える',en:'Act Cute',icon:'🥺',mp:20,gain:35,lv:5,djp:'機嫌+35 HP-5',den:'Mood+35 HP-5'},
+  {id:'real',jp:'本音トーク',en:'Real Talk',icon:'💬',mp:25,gain:45,lv:7,djp:'機嫌+45（失敗あり）',den:'Mood+45 (risky)'},
+  {id:'toast',jp:'伝説の乾杯',en:'Epic Toast',icon:'🥂',mp:40,gain:60,lv:10,djp:'機嫌+60（最強）',den:'Mood+60 (max)'},
+  {id:'makura',jp:'枕営業🌙',en:'ULTIMATE🌙',icon:'🌙',mp:0,gain:0,lv:10,djp:'全ST激減・報酬×3即勝利⚠️',den:'All stats drop, Payout×3⚠️'},
 ];
-const BUILDINGS=[
-  {tx:1,ty:1,tw:5,th:3,name:{jp:'💆 美容院',en:'💆 Beauty Salon'},col:'#8b1c5e',type:'salon',enter:{jp:'美容院に入った！魅力+15（-5,000円）',en:'Beauty salon! Charm+15 (-¥5k)'}},
-  {tx:8,ty:1,tw:5,th:3,name:{jp:'🍾 六本木BAR',en:'🍾 Roppongi Bar'},col:'#2a1060',type:'bar',enter:{jp:'バーで合コン！EXP+25 魅力+5（-2ヶ月 HP-20）',en:'Mixer at bar! EXP+25 Charm+5 (-2mo HP-20)'}},
-  {tx:19,ty:1,tw:5,th:3,name:{jp:'☕ 青山カフェ',en:'☕ Aoyama Cafe'},col:'#5c3010',type:'cafe',enter:{jp:'カフェで休憩…HP+40 MP+30（+2週間）',en:'Cafe break! HP+40 MP+30 (+2wk)'}},
-  {tx:29,ty:1,tw:5,th:3,name:{jp:'🏪 コンビニ',en:'🏪 Convenience Store'},col:'#1a4070',type:'shop',enter:{jp:'バイトした！+20,000円 EXP+10（HP-15）',en:'Part-time job! +¥20k EXP+10 (HP-15)'}},
-  {tx:36,ty:1,tw:6,th:3,name:{jp:'✨ 自己投資',en:'✨ Self-Invest'},col:'#3a1060',type:'invest',enter:{jp:'自己投資！魅力+25 EXP+15（-15,000円 +2ヶ月）',en:'Self-invest! Charm+25 EXP+15 (-¥15k +2mo)'}},
-  {tx:1,ty:8,tw:6,th:4,name:{jp:'🍜 麻布十番',en:'🍜 Azabu Juban'},col:'#6b2010',type:'food',enter:{jp:'麻布十番で食事！HP+25 MP+15（+1ヶ月）',en:'Dinner at Azabu! HP+25 MP+15 (+1mo)'}},
-  {tx:19,ty:8,tw:8,th:5,name:{jp:'🏙️ 六本木ヒルズ',en:'🏙️ Roppongi Hills'},col:'#1c2a3a',type:'hills',enter:{jp:'六本木ヒルズに来た！魅力+5 EXP+5',en:'Roppongi Hills! Charm+5 EXP+5'}},
-  {tx:10,ty:15,tw:7,th:6,name:{jp:'🌿 芝公園',en:'🌿 Shiba Park'},col:'#1a4020',type:'park',enter:{jp:'公園でのんびり…HP+50 MP+40（+1ヶ月）',en:'Park relaxation! HP+50 MP+40 (+1mo)'}},
-  {tx:36,ty:20,tw:5,th:9,name:{jp:'🗼 東京タワー',en:'🗼 Tokyo Tower'},col:'#8b2200',type:'tower',enter:{jp:'東京タワー！魅力+10 EXP+10（+1ヶ月）',en:'Tokyo Tower! Charm+10 EXP+10 (+1mo)'}},
-  {tx:28,ty:14,tw:6,th:5,name:{jp:'🎆 お台場',en:'🎆 Odaiba'},col:'#0a2040',type:'odaiba',enter:{jp:'お台場！魅力+8 HP+20（+1ヶ月）',en:'Odaiba! Charm+8 HP+20 (+1mo)'}},
-  {tx:8,ty:8,tw:6,th:5,name:{jp:'💉 整形外科',en:'💉 Cosmetic Clinic'},col:'#880060',type:'clinic',enter:{jp:'整形した！魅力爆上がり！（-100,000円 +3ヶ月）',en:'Surgery done! Charm exploded! (-¥100k +3mo)'}},
+const BLDGS=[
+  {tx:1,ty:1,tw:5,th:3,jp:'💆 美容院',en:'💆 Beauty Salon',col:['#cc3388','#ff66bb'],type:'salon'},
+  {tx:8,ty:1,tw:5,th:3,jp:'🍾 六本木BAR',en:'🍾 Roppongi Bar',col:['#4422bb','#7744ee'],type:'bar'},
+  {tx:19,ty:1,tw:5,th:3,jp:'☕ 青山カフェ',en:'☕ Aoyama Cafe',col:['#885522','#cc8844'],type:'cafe'},
+  {tx:29,ty:1,tw:5,th:3,jp:'🏪 コンビニ',en:'🏪 Convenience',col:['#2266bb','#44aaff'],type:'shop'},
+  {tx:36,ty:1,tw:6,th:3,jp:'✨ 自己投資',en:'✨ Self-Invest',col:['#6622bb','#aa44ff'],type:'invest'},
+  {tx:1,ty:8,tw:6,th:4,jp:'🍜 麻布十番',en:'🍜 Azabu Juban',col:['#bb3322','#ee6644'],type:'food'},
+  {tx:19,ty:8,tw:8,th:5,jp:'🏙️ 六本木ヒルズ',en:'🏙️ Roppongi Hills',col:['#2244aa','#4488dd'],type:'hills'},
+  {tx:8,ty:8,tw:6,th:5,jp:'💉 整形外科',en:'💉 Cosmetic Clinic',col:['#880060','#cc0099'],type:'clinic'},
+  {tx:10,ty:15,tw:7,th:6,jp:'🌿 芝公園',en:'🌿 Shiba Park',col:['#226622','#44aa44'],type:'park'},
+  {tx:36,ty:20,tw:5,th:9,jp:'🗼 東京タワー',en:'🗼 Tokyo Tower',col:['#cc3300','#ff6600'],type:'tower'},
+  {tx:28,ty:14,tw:6,th:5,jp:'🎆 お台場',en:'🎆 Odaiba',col:['#1144aa','#2288ee'],type:'odaiba'},
 ];
 
 // ===== MAP =====
-let mapTiles=[];
+let map=[];
 function buildMap(){
-  mapTiles=Array.from({length:MAP_H},()=>Array(MAP_W).fill(T.SW));
-  // 横道
-  [[5,6],[12,13],[20,21],[27,28],[33,34]].forEach(([r1,r2])=>{
-    for(let x=0;x<MAP_W;x++){mapTiles[r1][x]=T.RD;mapTiles[r2][x]=T.RD;}
+  map=Array.from({length:MH},()=>Array(MW).fill(TT.SW));
+  [[5,6],[12,13],[20,21],[27,28],[33,34]].forEach(([a,b])=>{
+    for(let x=0;x<MW;x++){map[a][x]=TT.RD;map[b][x]=TT.RD;}
   });
-  // 縦道
-  [[7,8],[16,17],[24,25],[31,32],[38,39]].forEach(([c1,c2])=>{
-    for(let y=0;y<MAP_H;y++){mapTiles[y][c1]=T.RD;mapTiles[y][c2]=T.RD;}
+  [[7,8],[16,17],[24,25],[31,32],[38,39]].forEach(([a,b])=>{
+    for(let y=0;y<MH;y++){map[y][a]=TT.RD;map[y][b]=TT.RD;}
   });
-  // 芝公園 (草)
-  fillTile(T.GR,9,14,9,8);
-  // 東京湾
-  fillTile(T.WA,35,28,MAP_W-35,MAP_H-28);
-  fillTile(T.WA,0,32,MAP_W,MAP_H-32);
-  // 建物を壁で塗りつぶす
-  BUILDINGS.forEach(b=>{
-    fillTile(T.BL,b.tx,b.ty,b.tw,b.th);
-  });
+  fr(TT.GR,9,14,9,8);
+  fr(TT.WA,35,28,MW-35,MH-28);
+  fr(TT.WA,0,32,MW,MH-32);
+  BLDGS.forEach(b=>fr(TT.BL,b.tx,b.ty,b.tw,b.th));
 }
-function fillTile(t,x,y,w,h){
+function fr(t,x,y,w,h){
   for(let dy=0;dy<h;dy++)for(let dx=0;dx<w;dx++){
     const nx=x+dx,ny=y+dy;
-    if(ny>=0&&ny<MAP_H&&nx>=0&&nx<MAP_W)mapTiles[ny][nx]=t;
+    if(ny>=0&&ny<MH&&nx>=0&&nx<MW)map[ny][nx]=t;
   }
 }
-
-// ===== NPC SYSTEM =====
-const NPC_COLORS=['#4488cc','#cc8833','#44cc88','#cc44cc','#cc8888'];
-let npcs=[];
-const ROAD_SPOTS=[];
-function buildRoadSpots(){
-  ROAD_SPOTS.length=0;
-  for(let y=0;y<MAP_H;y++)for(let x=0;x<MAP_W;x++)
-    if(mapTiles[y][x]===T.RD)ROAD_SPOTS.push({x,y});
+const ROADS=[];
+function buildRoads(){
+  ROADS.length=0;
+  for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)
+    if(map[y][x]===TT.RD)ROADS.push({x,y});
 }
+
+// ===== NPC =====
+const NPC_C=['#4488cc','#cc8833','#44cc88','#cc44cc','#cc8888'];
+let npcs=[];
 function spawnNPCs(){
   npcs=[];
   for(let i=0;i<10;i++){
-    const sp=ROAD_SPOTS[ri(0,ROAD_SPOTS.length-1)];
-    npcs.push({
-      px:sp.x*TS+TS/2,py:sp.y*TS+TS/2,
-      ojiIdx:ri(0,OJIS.length-1),
-      colorIdx:ri(0,NPC_COLORS.length-1),
-      dir:Math.random()*Math.PI*2,
-      spd:0.6+Math.random()*0.4,
-      changeTimer:ri(60,180),
-      idle:false,idleTimer:0,
-    });
+    const sp=ROADS[ri(0,ROADS.length-1)];
+    npcs.push({px:sp.x*TS+16,py:sp.y*TS+16,oi:ri(0,OJIS.length-1),ci:ri(0,NPC_C.length-1),
+      dir:Math.random()*Math.PI*2,spd:.6+Math.random()*.4,ct:ri(60,180),idle:false,it:0});
   }
 }
 
-// ===== GAME STATE =====
-let G={}, running=false, inBattle=false, battle=null;
-let keys={}, dpadHeld={};
+// ===== STATE =====
+let G={},running=false,inBattle=false,bat=null,ageTimer=null;
+let keys={},dpad={};
 let cam={x:0,y:0};
-let player={px:9*TS,py:9*TS,facing:'d',animFrame:0,animTimer:0};
-let nearNPC=null, nearBuilding=null;
-let msgTimeout=null;
+let pl={px:9*TS,py:9*TS,af:0,at:0,steps:0};
+let nearNPC=null,nearBldg=null;
 
 function initG(name){
-  return{
-    name:name||'みなと',
-    ageM:240, lv:1, exp:0,
-    hp:100,maxHp:100, mp:60,maxMp:60,
-    charm:50, money:0, battlesWon:0, actCount:0,
-  };
+  return{name:name||'みなと',ageM:240,lv:1,exp:0,
+    hp:100,mhp:100,mp:60,mmp:60,charm:50,money:0,bw:0,ac:0};
 }
 
 // ===== UTILS =====
 function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 function cl(v,a,b){return Math.min(b,Math.max(a,v));}
-function fmtAge(m){const y=Math.floor(m/12),mo=m%12;return mo?`${y}歳${mo}ヶ月`:`${y}歳`;}
-function fmtMoney(n){return n.toLocaleString('ja-JP')+'円';}
-function setMsg(t,ms=0){
-  document.getElementById('msg-bar').textContent=t;
-  if(msgTimeout)clearTimeout(msgTimeout);
-  if(ms>0)msgTimeout=setTimeout(()=>document.getElementById('msg-bar').textContent='',ms);
-}
-function checkLvUp(){
-  while(G.lv<10&&G.exp>=LEVEL_EXP[G.lv]){
-    G.lv++;G.maxHp+=5;G.maxMp+=5;
-    G.hp=Math.min(G.hp+10,G.maxHp);G.mp=Math.min(G.mp+10,G.maxMp);
-    setMsg(tx('lvUp',G.lv));
+function fage(m){const y=Math.floor(m/12),mo=m%12;return mo?`${y}歳${mo}ヶ月`:`${y}歳`;}
+function fmoney(n){return n.toLocaleString('ja-JP')+'円';}
+function setMsg(t){document.getElementById('msg').textContent=t;}
+function lvup(){
+  while(G.lv<10&&G.exp>=LEX[G.lv]){
+    G.lv++;G.mhp+=5;G.mmp+=5;
+    G.hp=Math.min(G.hp+10,G.mhp);G.mp=Math.min(G.mp+10,G.mmp);
+    setMsg(tf('lv',G.lv));
   }
 }
-function inviteChance(){
-  const ay=G.ageM/12;
-  return cl(Math.floor((AGE_LIMIT-ay)*6+G.lv*10+G.charm/4),5,85);
+function invChance(){
+  return cl(Math.floor((ALIM-G.ageM/12)*6+G.lv*10+G.charm/4),5,85);
 }
 
 // ===== INPUT =====
 window.addEventListener('keydown',e=>{
   keys[e.key]=true;
-  if(e.key===' '||e.key==='Enter'){e.preventDefault();doInteract();}
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();interact();}
 });
 window.addEventListener('keyup',e=>{keys[e.key]=false;});
-function dpadStart(d){dpadHeld[d]=true;document.getElementById('db-'+d).classList.add('pressed');}
-function dpadEnd(d){dpadHeld[d]=false;document.getElementById('db-'+d).classList.remove('pressed');}
+
+['u','d','l','r'].forEach(d=>{
+  const el=document.getElementById('d'+d);
+  if(!el)return;
+  el.addEventListener('touchstart',e=>{e.preventDefault();dpad[d]=true;el.classList.add('on');},{passive:false});
+  el.addEventListener('touchend',e=>{e.preventDefault();dpad[d]=false;el.classList.remove('on');},{passive:false});
+  el.addEventListener('mousedown',e=>{dpad[d]=true;el.classList.add('on');});
+  el.addEventListener('mouseup',e=>{dpad[d]=false;el.classList.remove('on');});
+});
+
+document.getElementById('sbtn').addEventListener('click',startGame);
+document.getElementById('wbtn').addEventListener('click',resetGame);
+document.getElementById('lbtn').addEventListener('click',resetGame);
+document.getElementById('abtn').addEventListener('click',interact);
+document.getElementById('lang-btn').addEventListener('click',toggleLang);
+
+function toggleLang(){
+  LANG=LANG==='jp'?'en':'jp';
+  document.getElementById('lang-btn').textContent=LANG==='jp'?'🌐JP':'🌐EN';
+  updateHUD();
+}
 
 // ===== COLLISION =====
 function canWalk(px,py){
-  const margin=10;
-  const corners=[
-    [px-margin,py-margin],[px+margin,py-margin],
-    [px-margin,py+margin],[px+margin,py+margin],
-  ];
-  for(const[cx,cy]of corners){
+  const m=10;
+  for(const[cx,cy]of[[px-m,py-m],[px+m,py-m],[px-m,py+m],[px+m,py+m]]){
     const tx=Math.floor(cx/TS),ty=Math.floor(cy/TS);
-    if(tx<0||ty<0||tx>=MAP_W||ty>=MAP_H)return false;
-    if(mapTiles[ty][tx]===T.BL)return false;
-    if(mapTiles[ty][tx]===T.WA)return false;
+    if(tx<0||ty<0||tx>=MW||ty>=MH)return false;
+    if(map[ty][tx]===TT.BL||map[ty][tx]===TT.WA)return false;
   }
   return true;
 }
@@ -385,513 +381,380 @@ function canWalk(px,py){
 // ===== PLAYER UPDATE =====
 function updatePlayer(){
   if(inBattle)return;
-  const spd=2;
+  const spd=2.5;
   let dx=0,dy=0;
-  if(keys['ArrowUp']||keys['w']||keys['W']||dpadHeld.up)dy=-1;
-  if(keys['ArrowDown']||keys['s']||keys['S']||dpadHeld.down)dy=1;
-  if(keys['ArrowLeft']||keys['a']||keys['A']||dpadHeld.left)dx=-1;
-  if(keys['ArrowRight']||keys['d']||keys['D']||dpadHeld.right)dx=1;
-  if(dx!==0&&dy!==0){dx*=0.707;dy*=0.707;}
-  if(dx!==0)player.facing=dx>0?'r':'l';
-  else if(dy!==0)player.facing=dy>0?'d':'u';
-  if(dx!==0||dy!==0){
-    player.animTimer++;
-    if(player.animTimer%8===0)player.animFrame=(player.animFrame+1)%4;
-    player.steps=(player.steps||0)+1;
-    if(player.steps>=500){
-      player.steps=0;
-      G.ageM++;
-      setMsg(tx('walkAge'));
-      updateHUD();
-      checkWinLose();
-    }
+  if(keys['ArrowUp']||keys['w']||dpad.u)dy=-1;
+  if(keys['ArrowDown']||keys['s']||dpad.d)dy=1;
+  if(keys['ArrowLeft']||keys['a']||dpad.l)dx=-1;
+  if(keys['ArrowRight']||keys['d']||dpad.r)dx=1;
+  if(dx&&dy){dx*=.707;dy*=.707;}
+  if(dx||dy){
+    pl.at++;if(pl.at%8===0)pl.af=(pl.af+1)%4;
+    pl.steps++;
+    if(pl.steps>=500){pl.steps=0;G.ageM++;setMsg(t('walk'));updateHUD();checkEnd();}
   }
-  const nx=player.px+dx*spd, ny=player.py+dy*spd;
-  if(canWalk(nx,player.py))player.px=nx;
-  if(canWalk(player.px,ny))player.py=ny;
-  player.px=cl(player.px,TS,MAP_W*TS-TS);
-  player.py=cl(player.py,TS,MAP_H*TS-TS);
+  const nx=pl.px+dx*spd,ny=pl.py+dy*spd;
+  if(canWalk(nx,pl.py))pl.px=nx;
+  if(canWalk(pl.px,ny))pl.py=ny;
+  pl.px=cl(pl.px,TS,MW*TS-TS);
+  pl.py=cl(pl.py,TS,MH*TS-TS);
 }
 
 // ===== NPC UPDATE =====
 function updateNPCs(){
   if(inBattle)return;
   npcs.forEach(n=>{
-    n.changeTimer--;
-    if(n.changeTimer<=0){
-      n.idle=!n.idle;
-      n.changeTimer=n.idle?ri(30,80):ri(60,180);
-      if(!n.idle)n.dir=Math.random()*Math.PI*2;
-    }
+    n.ct--;
+    if(n.ct<=0){n.idle=!n.idle;n.ct=n.idle?ri(30,80):ri(60,180);if(!n.idle)n.dir=Math.random()*Math.PI*2;}
     if(!n.idle){
-      const nx=n.px+Math.cos(n.dir)*n.spd;
-      const ny=n.py+Math.sin(n.dir)*n.spd;
-      if(canWalk(nx,n.py))n.px=nx; else n.dir+=Math.PI+ri(-30,30)*0.05;
-      if(canWalk(n.px,ny))n.py=ny; else n.dir+=Math.PI+ri(-30,30)*0.05;
-      n.px=cl(n.px,TS,MAP_W*TS-TS);
-      n.py=cl(n.py,TS,MAP_H*TS-TS);
+      const nx=n.px+Math.cos(n.dir)*n.spd,ny=n.py+Math.sin(n.dir)*n.spd;
+      if(canWalk(nx,n.py))n.px=nx;else n.dir+=Math.PI+ri(-20,20)*.05;
+      if(canWalk(n.px,ny))n.py=ny;else n.dir+=Math.PI+ri(-20,20)*.05;
+      n.px=cl(n.px,TS,MW*TS-TS);n.py=cl(n.py,TS,MH*TS-TS);
     }
   });
 }
 
-// ===== PROXIMITY CHECK =====
-function checkProximity(){
-  nearNPC=null; nearBuilding=null;
-  // NPCとの距離チェック
-  let minD=Infinity;
+// ===== PROXIMITY =====
+function checkProx(){
+  nearNPC=null;nearBldg=null;
+  let md=Infinity;
   npcs.forEach(n=>{
-    const d=Math.hypot(n.px-player.px,n.py-player.py);
-    if(d<52&&d<minD){minD=d;nearNPC=n;}
+    const d=Math.hypot(n.px-pl.px,n.py-pl.py);
+    if(d<54&&d<md){md=d;nearNPC=n;}
   });
-  // 建物との距離チェック
   if(!nearNPC){
-    BUILDINGS.forEach(b=>{
-      const bx=b.tx*TS+b.tw*TS/2, by=b.ty*TS+b.th*TS/2;
-      const d=Math.hypot(bx-player.px,by-player.py);
-      if(d<b.tw*TS/2+30&&d<Infinity){
-        nearBuilding=b;
-      }
+    BLDGS.forEach(b=>{
+      const bx=b.tx*TS+b.tw*TS/2,by=b.ty*TS+b.th*TS/2;
+      if(Math.hypot(bx-pl.px,by-pl.py)<b.tw*TS/2+28)nearBldg=b;
     });
   }
-  const btn=document.getElementById('act-btn');
-  if(nearNPC){
-    btn.textContent=tx('talk');
-    btn.classList.add('show');
-  }else if(nearBuilding){
-    btn.textContent=tx('enter');
-    btn.classList.add('show');
-  }else{
-    btn.classList.remove('show');
-  }
+  const ab=document.getElementById('abtn');
+  if(nearNPC){ab.textContent=t('talk');ab.style.display='block';}
+  else if(nearBldg){ab.textContent=t('enter');ab.style.display='block';}
+  else ab.style.display='none';
 }
 
-// ===== INTERACTION =====
-function doInteract(){
+// ===== INTERACT =====
+function interact(){
   if(inBattle)return;
-  if(nearNPC){
-    startBattle(nearNPC);
-  }else if(nearBuilding){
-    doBuilding(nearBuilding);
-  }
+  if(nearNPC)startBattle(nearNPC);
+  else if(nearBldg)doEnter(nearBldg);
 }
-function doBuilding(b){
-  G.actCount++;
-  let ok=true;
+function doEnter(b){
+  G.ac++;
   switch(b.type){
     case'salon':
-      if(G.money<5000){setMsg(tx('poor_salon'));return;}
-      G.money-=5000;G.charm=cl(G.charm+15,0,100);G.ageM+=1;G.hp=cl(G.hp-5,0,G.maxHp);break;
+      if(G.money<5000){setMsg(t('poor5'));return;}
+      G.money-=5000;G.charm=cl(G.charm+15,0,100);G.ageM++;G.hp=cl(G.hp-5,0,G.mhp);
+      setMsg(LANG==='jp'?'美容院！魅力+15（-5,000円）':'Beauty salon! Charm+15 (-¥5k)');break;
     case'bar':
-      G.exp+=25;G.charm=cl(G.charm+5,0,100);G.ageM+=2;G.hp=cl(G.hp-20,0,G.maxHp);G.mp=cl(G.mp-10,0,G.maxMp);break;
+      G.exp+=25;G.charm=cl(G.charm+5,0,100);G.ageM+=2;G.hp=cl(G.hp-20,0,G.mhp);G.mp=cl(G.mp-10,0,G.mmp);
+      setMsg(LANG==='jp'?'バーで合コン！EXP+25（HP-20 -2ヶ月）':'Bar mixer! EXP+25 (HP-20 -2mo)');break;
     case'cafe':
-      G.hp=cl(G.hp+40,0,G.maxHp);G.mp=cl(G.mp+30,0,G.maxMp);G.ageM+=1;break;
+      G.hp=cl(G.hp+40,0,G.mhp);G.mp=cl(G.mp+30,0,G.mmp);G.ageM++;
+      setMsg(LANG==='jp'?'カフェで休憩！HP+40 MP+30':'Cafe break! HP+40 MP+30');break;
     case'shop':
-      G.money+=20000;G.exp+=10;G.ageM+=1;G.hp=cl(G.hp-15,0,G.maxHp);break;
+      G.money+=20000;G.exp+=10;G.ageM++;G.hp=cl(G.hp-15,0,G.mhp);
+      setMsg(LANG==='jp'?'バイト！+20,000円 EXP+10':'Part-time! +¥20k EXP+10');break;
     case'invest':
-      if(G.money<15000){setMsg(tx('poor_invest'));return;}
-      G.money-=15000;G.charm=cl(G.charm+25,0,100);G.exp+=15;G.ageM+=2;break;
+      if(G.money<15000){setMsg(t('poor15'));return;}
+      G.money-=15000;G.charm=cl(G.charm+25,0,100);G.exp+=15;G.ageM+=2;
+      setMsg(LANG==='jp'?'自己投資！魅力+25（-15,000円）':'Self-invest! Charm+25 (-¥15k)');break;
     case'food':
-      G.hp=cl(G.hp+25,0,G.maxHp);G.mp=cl(G.mp+15,0,G.maxMp);G.ageM+=1;break;
+      G.hp=cl(G.hp+25,0,G.mhp);G.mp=cl(G.mp+15,0,G.mmp);G.ageM++;
+      setMsg(LANG==='jp'?'麻布十番で食事！HP+25 MP+15':'Azabu dinner! HP+25 MP+15');break;
+    case'clinic':
+      if(G.money<100000){setMsg(t('surgery_ng'));return;}
+      G.money-=100000;G.charm=cl(G.charm+45,0,100);G.ageM+=3;G.hp=cl(G.hp-10,1,G.mhp);
+      setMsg(t('surgery_ok'));break;
+    case'park':
+      G.hp=cl(G.hp+50,0,G.mhp);G.mp=cl(G.mp+40,0,G.mmp);G.ageM++;
+      setMsg(LANG==='jp'?'公園でのんびり！HP+50 MP+40':'Park rest! HP+50 MP+40');break;
     case'hills':case'tower':case'odaiba':
       G.charm=cl(G.charm+(b.type==='tower'?10:b.type==='odaiba'?8:5),0,100);
-      G.exp+=b.type==='hills'?5:10;G.ageM+=1;break;
-    case'park':
-      G.hp=cl(G.hp+50,0,G.maxHp);G.mp=cl(G.mp+40,0,G.maxMp);G.ageM+=1;break;
+      G.exp+=b.type==='hills'?5:10;G.ageM++;
+      setMsg(LANG==='jp'?(b.type==='tower'?'東京タワー！魅力+10':b.type==='odaiba'?'お台場！魅力+8':'六本木ヒルズ！魅力+5'):(b.type==='tower'?'Tokyo Tower! Charm+10':b.type==='odaiba'?'Odaiba! Charm+8':'Roppongi Hills! Charm+5'));break;
   }
-  if(b.type==='clinic'){setMsg(tx('surgery_done'));}else if(b.type==='odaiba'){setMsg(typeof b.enter==='object'?b.enter[LANG]:b.enter);}else{setMsg(typeof b.enter==='object'?b.enter[LANG]:b.enter);}
-  checkLvUp();
-  updateHUD();
-  checkWinLose();
-  // 建物入ってもギャラ飲み抽選
-  if(Math.random()*100<inviteChance()&&!inBattle){
-    setTimeout(()=>{
-      const npc=npcs[ri(0,npcs.length-1)];
-      setMsg(tx('invite'));
-      setTimeout(()=>startBattle(npc),800);
-    },1200);
+  lvup();updateHUD();
+  if(checkEnd())return;
+  if(Math.random()*100<invChance()&&!inBattle){
+    setTimeout(()=>{setMsg(t('invite'));setTimeout(()=>startBattle(npcs[ri(0,npcs.length-1)]),700);},1000);
   }
 }
 
 // ===== WIN/LOSE =====
-function checkWinLose(){
+function checkEnd(){
   if(G.money>=GOAL){showWin();return true;}
-  if(G.ageM>=AGE_LIMIT*12||G.hp<=0){showLose();return true;}
+  if(G.ageM>=ALIM*12||G.hp<=0){showLose();return true;}
   return false;
 }
 function showWin(){
-  running=false;
-  document.getElementById('win-msg').textContent=tx('winSub',G.name,fmtAge(G.ageM));
-  document.getElementById('win-stats').innerHTML=
-    `<div>💰 ${fmtMoney(G.money)}</div><div>👤 ${fmtAge(G.ageM)}</div><div>📊 Lv${G.lv}</div><div>🍾 ギャラ飲み${G.battlesWon}回</div>`;
-  document.getElementById('win-screen').classList.add('active');
+  running=false;if(ageTimer)clearInterval(ageTimer);
+  document.getElementById('wm').textContent=tf('wsub',G.name,fage(G.ageM));
+  document.getElementById('wst').innerHTML=`<div>💰 ${fmoney(G.money)}</div><div>👤 ${fage(G.ageM)}</div><div>📊 Lv${G.lv}</div><div>🍾 ${G.bw}回</div>`;
+  document.getElementById('wt').textContent=t('win');
+  document.getElementById('wbtn').textContent=t('again');
+  document.getElementById('ws').style.display='flex';
 }
 function showLose(){
-  running=false;
-  const reason=G.hp<=0?tx('loseHP'):tx('loseAge',fmtAge(G.ageM));
-  document.getElementById('lose-msg').textContent=reason;
-  document.getElementById('lose-stats').innerHTML=
-    `<div>💰 ${fmtMoney(G.money)}</div><div>👤 ${fmtAge(G.ageM)}</div><div>📊 Lv${G.lv}</div><div>あと${fmtMoney(Math.max(0,GOAL-G.money))}</div>`;
-  document.getElementById('lose-screen').classList.add('active');
+  running=false;if(ageTimer)clearInterval(ageTimer);
+  document.getElementById('lm').textContent=G.hp<=0?t('lhp'):tf('lage',fage(G.ageM));
+  document.getElementById('lst').innerHTML=`<div>💰 ${fmoney(G.money)}</div><div>👤 ${fage(G.ageM)}</div><div>📊 Lv${G.lv}</div><div>あと${fmoney(Math.max(0,GOAL-G.money))}</div>`;
+  document.getElementById('lt').textContent=t('lose');
+  document.getElementById('lbtn').textContent=t('retry');
+  document.getElementById('ls').style.display='flex';
+}
+
+// ===== BATTLE =====
+function startBattle(npc){
+  const oji=OJIS[npc?npc.oi:ri(0,OJIS.length-1)];
+  const wallet=ri(oji.wMin,oji.wMax);
+  bat={oji,wallet,mood:Math.floor(oji.moodMax*.3),round:1,maxR:3,done:false};
+  inBattle=true;
+  document.getElementById('blog').innerHTML='';
+  document.getElementById('bic').textContent=oji.icon;
+  document.getElementById('bnm').textContent=LANG==='jp'?oji.jp:oji.en;
+  document.getElementById('bsb').textContent='💰 '+fmoney(wallet);
+  document.getElementById('bov').style.display='flex';
+  blog(tf('bs',LANG==='jp'?oji.jp:oji.en),'g');
+  blog(t('bh'),'');
+  renderBat();
+}
+function blog(msg,cls){
+  const d=document.createElement('div');d.className='bl '+(cls||'');d.textContent=msg;
+  const el=document.getElementById('blog');el.appendChild(d);el.scrollTop=el.scrollHeight;
+}
+function useSkill(id){
+  if(!bat||bat.done)return;
+  const sk=SKILLS.find(s=>s.id===id);
+  if(id==='makura'){
+    blog(t('makura_use'),'b');
+    G.hp=cl(G.hp-40,1,G.mhp);G.mp=0;G.charm=cl(G.charm-25,0,100);G.ageM+=2;G.exp+=50;
+    bat.mood=bat.oji.moodMax;bat.wallet=Math.floor(bat.wallet*3);
+    setTimeout(()=>blog(t('makura_res'),'g'),500);
+    setTimeout(()=>endBat(),1000);
+    renderBat();return;
+  }
+  if(!sk||G.mp<sk.mp){blog(t('nomp'),'b');return;}
+  G.mp-=sk.mp;
+  let gain=sk.gain;
+  if(id==='hype')gain+=ri(-10,10);
+  if(id==='cute')G.hp=cl(G.hp-5,0,G.mhp);
+  if(id==='real'&&Math.random()<.3){gain=-20;blog(t('toreal'),'b');}
+  if(id==='smile')G.charm=cl(G.charm+3,0,100);
+  if(id==='toast'&&bat.mood>=bat.oji.moodMax*.5)gain=60;
+  bat.mood=cl(bat.mood+gain,0,bat.oji.moodMax);
+  const nm=LANG==='jp'?sk.jp:sk.en;
+  if(gain>0)blog(`${sk.icon} ${nm}！ 機嫌+${gain}`,'g');
+  const pct=bat.mood/bat.oji.moodMax;
+  const say=OSAY[LANG]||OSAY.jp;
+  const pool=pct<.4?say.lo:pct<.7?say.mi:say.hi;
+  const onm=LANG==='jp'?bat.oji.jp:bat.oji.en;
+  blog(`${bat.oji.icon}「${pool[ri(0,pool.length-1)]}」`,'o');
+  bat.round++;
+  if(bat.round>bat.maxR){endBat();return;}
+  renderBat();
+}
+function endBat(){
+  const{oji,wallet,mood}=bat;
+  const pct=mood/oji.moodMax;
+  let pay=Math.floor(wallet*pct);
+  let bon='';
+  if(pct>=.8){pay=Math.floor(pay*1.2);bon=t('bonus');}
+  G.money+=pay;G.exp+=20+Math.floor(pct*30);G.bw++;
+  bat.done=true;inBattle=false;G.ageM++;
+  blog('──────────','');
+  blog(tf('be',Math.floor(pct*100)),'');
+  if(bon)blog(bon,'g');
+  blog(tf('got',fmoney(pay)),'g');
+  lvup();updateHUD();
+  setTimeout(()=>{
+    bat=null;
+    document.getElementById('bov').style.display='none';
+    const nm=LANG==='jp'?oji.jp:oji.en;
+    setMsg(tf('got2',nm,fmoney(pay))+(bon?' '+bon:''));
+    if(checkEnd())return;
+  },2200);
+}
+function renderBat(){
+  if(!bat)return;
+  const{oji,mood,round,maxR,wallet}=bat;
+  const pct=mood/oji.moodMax;
+  document.getElementById('mbf').style.width=(pct*100)+'%';
+  document.getElementById('mbv').textContent=`${mood}/${oji.moodMax}`;
+  document.getElementById('mpf').style.width=`${G.mp/G.mmp*100}%`;
+  document.getElementById('mpv').textContent=`${G.mp}/${G.mmp}`;
+  document.getElementById('bpay').textContent=`💰 ${LANG==='jp'?'予想':'Est.'}: ${fmoney(Math.floor(wallet*pct))}${pct>=.8?'🎊':''}`;
+  document.getElementById('brnd').textContent=`${LANG==='jp'?'ラウンド':'Round'} ${round}/${maxR}`;
+  const sg=document.getElementById('sgrid');sg.innerHTML='';
+  SKILLS.forEach(sk=>{
+    const ok=G.lv>=sk.lv&&(sk.id==='makura'||G.mp>=sk.mp);
+    const locked=G.lv<sk.lv;
+    const b=document.createElement('button');b.className='sk';b.disabled=!ok;
+    const nm=LANG==='jp'?sk.jp:sk.en;
+    const ds=LANG==='jp'?sk.djp:sk.den;
+    b.innerHTML=`<div class="sn">${sk.icon} ${nm}</div><div class="sm">MP:${sk.id==='makura'?'ALL':sk.mp}${locked?` 🔒Lv${sk.lv}`:''}</div><div class="sf">${ds}</div>`;
+    if(ok)b.onclick=()=>useSkill(sk.id);
+    sg.appendChild(b);
+  });
 }
 
 // ===== HUD =====
 function updateHUD(){
   if(!G.name)return;
-  document.getElementById('h-name').textContent=G.name;
-  document.getElementById('h-lv').textContent=G.lv;
-  document.getElementById('h-age').textContent=fmtAge(G.ageM);
-  document.getElementById('h-hp').textContent=G.hp;
-  document.getElementById('lang-btn').textContent=LANG==='jp'?'🌐→EN':'🌐→JP';
-  try{
-    document.getElementById('win-title').textContent=tx('win');
-    document.getElementById('win-retry').textContent=tx('retry');
-    document.getElementById('lose-title').textContent=tx('lose');
-    document.getElementById('lose-retry').textContent=tx('retry');
-  }catch(e){}
-  document.getElementById('h-mp').textContent=G.mp;
-  document.getElementById('h-charm').textContent=G.charm;
-  document.getElementById('h-money').textContent=fmtMoney(G.money);
-}
-
-// ===== BATTLE =====
-function startBattle(npc){
-  const ojiIdx=npc?npc.ojiIdx:ri(0,OJIS.length-1);
-  const oji=OJIS[ojiIdx];
-  const wallet=ri(oji.wMin,oji.wMax);
-  battle={oji,wallet,mood:Math.floor(oji.moodMax*0.3),round:1,maxRound:3,done:false};
-  inBattle=true;
-  document.getElementById('bt-log').innerHTML='';
-  document.getElementById('bt-icon').textContent=oji.icon;
-  document.getElementById('bt-name').textContent=typeof oji.name==='object'?oji.name[LANG]:oji.name;
-  document.getElementById('bt-sub').textContent='💰予算：'+fmtMoney(wallet);
-  document.getElementById('battle').classList.add('active');
-  const ojiNm=typeof oji.name==='object'?oji.name[LANG]:oji.name;
-  bLog(tx('battleStart',ojiNm),'g');
-  bLog(tx('battleHint'),'');
-  renderBattle();
-}
-function bLog(msg,cls){
-  const d=document.createElement('div');
-  d.className='bl '+(cls||'');d.textContent=msg;
-  const log=document.getElementById('bt-log');
-  log.appendChild(d);log.scrollTop=log.scrollHeight;
-}
-function useSkill(id){
-  if(!battle||battle.done)return;
-  const sk=SKILLS.find(s=>s.id===id);
-  // 枕営業は特別処理
-  if(id==='makura'){
-    bLog(tx('makura_use'),'b');
-    G.hp=cl(G.hp-40,1,G.maxHp);
-    G.mp=0;
-    G.charm=cl(G.charm-25,0,100);
-    G.ageM+=2;
-    G.exp+=50;
-    battle.mood=battle.oji.moodMax;
-    battle.wallet=Math.floor(battle.wallet*3);
-    setTimeout(()=>bLog(tx('makura_result'),'g'),400);
-    setTimeout(()=>endBattle(),900);
-    renderBattle();
-    return;
-  }
-  if(!sk||G.mp<sk.mp){bLog(tx('noMP'),'b');return;}
-  G.mp-=sk.mp;
-  let gain=sk.gain;
-  if(id==='hype')gain+=ri(-10,10);
-  if(id==='cute')G.hp=cl(G.hp-5,0,G.maxHp);
-  if(id==='real'&&Math.random()<0.3){gain=-20;bLog(tx('tooReal'),'b');}
-  if(id==='smile')G.charm=cl(G.charm+3,0,100);
-  if(id==='toast'&&battle.mood>=battle.oji.moodMax*0.5)gain=60;
-  battle.mood=cl(battle.mood+gain,0,battle.oji.moodMax);
-  if(gain>0){const snm2=typeof sk.name==='object'?sk.name[LANG]:sk.name;bLog(`${sk.icon} ${snm2}！ 機嫌+${gain}`,'g');}
-  const pct=battle.mood/battle.oji.moodMax;
-  const ojiSay=OJI_SAY[LANG]||OJI_SAY.jp;
-  const pool=pct<0.4?ojiSay.lo:pct<0.7?ojiSay.mi:ojiSay.hi;
-  const ojiNm2=typeof battle.oji.name==='object'?battle.oji.name[LANG]:battle.oji.name;bLog(`${ojiNm2}「${pool[ri(0,pool.length-1)]}」`,'o');
-  battle.round++;
-  if(battle.round>battle.maxRound){endBattle();return;}
-  renderBattle();
-}
-function endBattle(){
-  const{oji,wallet,mood}=battle;
-  const pct=mood/oji.moodMax;
-  let pay=Math.floor(wallet*pct);
-  let bonus='';
-  if(pct>=0.8){pay=Math.floor(pay*1.2);bonus='🎊 太っ腹ボーナス！(+20%)';}
-  G.money+=pay;G.exp+=20+Math.floor(pct*30);G.battlesWon++;
-  battle.done=true;inBattle=false;G.ageM+=1;
-  bLog('─────────────','');
-  bLog(tx('battleEnd',Math.floor(pct*100)),'');
-  const bonusTxt=pct>=0.8?tx('bonus'):'';if(bonusTxt)bLog(bonusTxt,'g');
-  bLog(tx('got',fmtMoney(pay)),'g');
-  checkLvUp();updateHUD();
-  setTimeout(()=>{
-    battle=null;
-    document.getElementById('battle').classList.remove('active');
-    const nm2=typeof oji.name==='object'?oji.name[LANG]:oji.name;
-    setMsg(tx('got2',nm2,fmtMoney(pay)));
-    if(checkWinLose())return;
-  },2200);
-}
-function renderBattle(){
-  if(!battle)return;
-  const{oji,mood,round,maxRound,wallet}=battle;
-  const pct=mood/oji.moodMax;
-  document.getElementById('mbar').style.width=(pct*100)+'%';
-  document.getElementById('mbar-val').textContent=`${mood} / ${oji.moodMax}`;
-  document.getElementById('bt-mp-bar').style.width=`${(G.mp/G.maxMp)*100}%`;
-  document.getElementById('bt-mp-val').textContent=`${G.mp} / ${G.maxMp}`;
-  document.getElementById('bt-pay').textContent=
-    `💰 予想ゲット額：${fmtMoney(Math.floor(wallet*pct))}${pct>=0.8?' 🎊ボーナス！':''}`;
-  document.getElementById('bt-rnd').textContent=`ラウンド ${round} / ${maxRound}`;
-  const grid=document.getElementById('sk-grid');
-  grid.innerHTML='';
-  SKILLS.forEach(sk=>{
-    const ok=G.lv>=sk.lv&&(sk.id==='makura'||G.mp>=sk.mp);
-    const locked=G.lv<sk.lv;
-    const b=document.createElement('button');
-    b.className='sk';b.disabled=!ok;
-    const snm=typeof sk.name==='object'?sk.name[LANG]:sk.name;
-    const sds=typeof sk.desc==='object'?sk.desc[LANG]:sk.desc;
-    b.innerHTML=`<div class="sk-nm">${sk.icon} ${snm}${sk.id==='makura'?' ⚠️':''}</div>
-<div class="sk-mp">MP:${sk.mp===0?'ALL':sk.mp}${locked?` 🔒Lv${sk.lv}`:''}</div>
-<div class="sk-fx">${sds}</div>`;
-    if(ok)b.onclick=()=>useSkill(sk.id);
-    grid.appendChild(b);
-  });
+  document.getElementById('hn').textContent=G.name;
+  document.getElementById('hlv').textContent=G.lv;
+  document.getElementById('hage').textContent=fage(G.ageM);
+  document.getElementById('hhp').textContent=G.hp;
+  document.getElementById('hmp').textContent=G.mp;
+  document.getElementById('hch').textContent=G.charm;
+  document.getElementById('hmn').textContent=fmoney(G.money);
 }
 
 // ===== RENDER =====
-const canvas=document.getElementById('map-canvas');
-const ctx=canvas.getContext('2d');
-// Tile colors and decorations
-const BUILD_PATTERNS={
-  salon:{grad:['#cc3388','#ff66bb']},
-  bar:{grad:['#4422bb','#7744ee']},
-  cafe:{grad:['#885522','#cc8844']},
-  shop:{grad:['#2266bb','#44aaff']},
-  invest:{grad:['#6622bb','#aa44ff']},
-  food:{grad:['#bb3322','#ee6644']},
-  hills:{grad:['#2244aa','#4488dd']},
-  park:{grad:['#226622','#44aa44']},
-  tower:{grad:['#cc3300','#ff6600']},
-  odaiba:{grad:['#1144aa','#2288ee']},
-  clinic:{grad:['#880060','#cc0088']},
-};
+const cv=document.getElementById('gc');
+const cx=cv.getContext('2d');
+function resizeCv(){
+  cv.width=cv.offsetWidth;cv.height=cv.offsetHeight;
+}
+window.addEventListener('resize',resizeCv);
 
 function render(){
-  ctx.fillStyle='#22203a';
-  ctx.fillRect(0,0,VW,VH);
-  // Camera
-  cam.x=cl(player.px-VW/2,0,MAP_W*TS-VW);
-  cam.y=cl(player.py-VH/2,0,MAP_H*TS-VH);
-
-  // Tiles
+  const W=cv.width,H=cv.height;
+  cx.fillStyle='#22203a';cx.fillRect(0,0,W,H);
+  cam.x=cl(pl.px-W/2,0,MW*TS-W);
+  cam.y=cl(pl.py-H/2,0,MH*TS-H);
   const tx0=Math.floor(cam.x/TS),ty0=Math.floor(cam.y/TS);
-  const tx1=Math.min(MAP_W,tx0+Math.ceil(VW/TS)+2);
-  const ty1=Math.min(MAP_H,ty0+Math.ceil(VH/TS)+2);
+  const tx1=Math.min(MW,tx0+Math.ceil(W/TS)+2);
+  const ty1=Math.min(MH,ty0+Math.ceil(H/TS)+2);
+  // Tiles
   for(let ty=ty0;ty<ty1;ty++){
     for(let tx=tx0;tx<tx1;tx++){
-      const t=mapTiles[ty][tx];
-      ctx.fillStyle=TILE_C[t];
-      const sx=tx*TS-cam.x, sy=ty*TS-cam.y;
-      ctx.fillRect(sx,sy,TS,TS);
-      // Road markings
-      if(t===T.RD){
-        ctx.fillStyle='rgba(255,255,100,0.18)';
-        ctx.fillRect(sx+TS/2-1,sy,2,TS);
-      }
-      // Grass texture
-      if(t===T.GR){
-        ctx.fillStyle='rgba(100,255,100,0.1)';
-        if((tx+ty)%2===0)ctx.fillRect(sx+2,sy+2,6,6);
-      }
-      // Water shimmer
-      if(t===T.WA){
-        ctx.fillStyle='rgba(100,200,255,0.2)';
-        ctx.fillRect(sx,sy+(Math.floor(Date.now()/300+tx*3))%TS,TS,4);
-      }
+      const tt=map[ty][tx];
+      cx.fillStyle=TC[tt];
+      const sx=tx*TS-cam.x,sy=ty*TS-cam.y;
+      cx.fillRect(sx,sy,TS,TS);
+      if(tt===TT.RD){cx.fillStyle='rgba(255,255,80,.18)';cx.fillRect(sx+TS/2-1,sy,2,TS);}
+      if(tt===TT.GR&&(tx+ty)%2===0){cx.fillStyle='rgba(80,255,80,.1)';cx.fillRect(sx+2,sy+2,6,6);}
+      if(tt===TT.WA){cx.fillStyle='rgba(100,200,255,.22)';cx.fillRect(sx,sy+(Math.floor(Date.now()/300+tx*3))%TS,TS,4);}
     }
   }
-
   // Buildings
-  BUILDINGS.forEach(b=>{
-    const bx=b.tx*TS-cam.x, by=b.ty*TS-cam.y;
-    const bw=b.tw*TS, bh=b.th*TS;
-    if(bx+bw<0||bx>VW||by+bh<0||by>VH)return;
-    const pat=BUILD_PATTERNS[b.type];
-    const g=ctx.createLinearGradient(bx,by,bx,by+bh);
-    g.addColorStop(0,pat.grad[0]);g.addColorStop(1,pat.grad[1]);
-    ctx.fillStyle=g;
-    roundRect(ctx,bx+1,by+1,bw-2,bh-2,4);
-    ctx.fill();
-    // Border
-    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;
-    roundRect(ctx,bx+1,by+1,bw-2,bh-2,4);ctx.stroke();
-    // Windows
-    ctx.fillStyle='rgba(255,255,180,0.25)';
-    for(let wy=by+5;wy<by+bh-8;wy+=10)
-      for(let wx=bx+5;wx<bx+bw-6;wx+=10)
-        ctx.fillRect(wx,wy,5,5);
-    // Label
-    ctx.fillStyle='rgba(0,0,0,0.6)';
-    ctx.fillRect(bx+2,by+bh-16,bw-4,14);
-    ctx.fillStyle='#fff';ctx.font='bold 9px sans-serif';
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    const bnm=typeof b.name==='object'?b.name[LANG]:b.name;
-    ctx.fillText(bnm,bx+bw/2,by+bh-9);
-  });
-
-  // NPCs
-  npcs.forEach(n=>{
-    const sx=n.px-cam.x, sy=n.py-cam.y;
-    if(sx<-32||sx>VW+32||sy<-32||sy>VH+32)return;
-    const c=NPC_COLORS[n.colorIdx];
-    // Shadow
-    ctx.fillStyle='rgba(0,0,0,0.3)';
-    ctx.beginPath();ctx.ellipse(sx,sy+10,8,4,0,0,Math.PI*2);ctx.fill();
-    // Body
-    ctx.fillStyle=c;
-    roundRect(ctx,sx-7,sy-4,14,16,4);ctx.fill();
-    // Head
-    ctx.fillStyle='#f5c89a';
-    ctx.beginPath();ctx.arc(sx,sy-10,9,0,Math.PI*2);ctx.fill();
-    // Hair
-    ctx.fillStyle=c;
-    ctx.beginPath();ctx.arc(sx,sy-16,6,Math.PI,0);ctx.fill();
-    // Eyes
-    ctx.fillStyle='#222';
-    ctx.fillRect(sx-4,sy-12,3,3);ctx.fillRect(sx+1,sy-12,3,3);
-    // NPC type emoji
-    ctx.font='9px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(OJIS[n.ojiIdx].icon,sx,sy+4);
-    // Talk bubble if near
-    if(nearNPC===n){
-      ctx.fillStyle='rgba(255,255,255,0.9)';
-      roundRect(ctx,sx-14,sy-34,28,14,4);ctx.fill();
-      ctx.fillStyle='#333';ctx.font='bold 8px sans-serif';
-      ctx.fillText('💬話せる',sx,sy-27);
+  BLDGS.forEach(b=>{
+    const bx=b.tx*TS-cam.x,by=b.ty*TS-cam.y,bw=b.tw*TS,bh=b.th*TS;
+    if(bx+bw<0||bx>W||by+bh<0||by>H)return;
+    const g=cx.createLinearGradient(bx,by,bx,by+bh);
+    g.addColorStop(0,b.col[0]);g.addColorStop(1,b.col[1]);
+    cx.fillStyle=g;rr(bx+1,by+1,bw-2,bh-2,5);cx.fill();
+    cx.strokeStyle='rgba(255,255,255,.25)';cx.lineWidth=1;rr(bx+1,by+1,bw-2,bh-2,5);cx.stroke();
+    cx.fillStyle='rgba(255,255,180,.22)';
+    for(let wy=by+5;wy<by+bh-8;wy+=10)for(let wx=bx+5;wx<bx+bw-6;wx+=10)cx.fillRect(wx,wy,5,5);
+    cx.fillStyle='rgba(0,0,0,.65)';cx.fillRect(bx+2,by+bh-15,bw-4,13);
+    cx.fillStyle='#fff';cx.font='bold 8px sans-serif';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText(LANG==='jp'?b.jp:b.en,bx+bw/2,by+bh-9);
+    // Highlight near building
+    if(nearBldg===b){
+      cx.strokeStyle='rgba(255,215,0,.8)';cx.lineWidth=2;rr(bx,by,bw,bh,5);cx.stroke();
     }
   });
-
-  // Player
-  drawPlayer(player.px-cam.x, player.py-cam.y);
-
-  // Minimap
-  drawMinimap();
-}
-
-function drawPlayer(sx,sy){
-  const bob=Math.sin(player.animFrame*1.5)*2;
-  // Shadow
-  ctx.fillStyle='rgba(0,0,0,0.35)';
-  ctx.beginPath();ctx.ellipse(sx,sy+12,9,4,0,0,Math.PI*2);ctx.fill();
-  // Body (dress)
-  const dg=ctx.createLinearGradient(sx-8,sy,sx+8,sy+16);
-  dg.addColorStop(0,'#ff69b4');dg.addColorStop(1,'#cc44aa');
-  ctx.fillStyle=dg;
-  roundRect(ctx,sx-8,sy-4+bob,16,18,5);ctx.fill();
-  // Head
-  ctx.fillStyle='#f5c89a';
-  ctx.beginPath();ctx.arc(sx,sy-12+bob,10,0,Math.PI*2);ctx.fill();
-  // Hair
-  const hg=ctx.createLinearGradient(sx-10,sy-22,sx+10,sy-10);
-  hg.addColorStop(0,'#2a1a00');hg.addColorStop(1,'#5a3a10');
-  ctx.fillStyle=hg;
-  ctx.beginPath();ctx.arc(sx,sy-17+bob,7,Math.PI,0);ctx.fill();
-  ctx.fillRect(sx-10,sy-18+bob,5,10);
-  ctx.fillRect(sx+5,sy-18+bob,5,10);
-  // Eyes
-  ctx.fillStyle='#222';
-  ctx.fillRect(sx-4,sy-14+bob,3,3);ctx.fillRect(sx+1,sy-14+bob,3,3);
-  // Mouth (smile)
-  ctx.strokeStyle='#cc6688';ctx.lineWidth=1.5;
-  ctx.beginPath();ctx.arc(sx,sy-10+bob,3,0.1,Math.PI-0.1);ctx.stroke();
-  // Name tag
-  ctx.fillStyle='rgba(255,105,180,0.8)';
-  roundRect(ctx,sx-18,sy-30+bob,36,12,4);ctx.fill();
-  ctx.fillStyle='#fff';ctx.font='bold 8px sans-serif';
-  ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(G.name||'?',sx,sy-24+bob);
-}
-
-function drawMinimap(){
-  const mw=60,mh=48,mx=VW-mw-6,my=6;
-  ctx.fillStyle='rgba(0,0,0,0.6)';
-  ctx.fillRect(mx,my,mw,mh);
-  ctx.strokeStyle='rgba(255,105,180,0.6)';ctx.lineWidth=1;
-  ctx.strokeRect(mx,my,mw,mh);
-  const scx=mw/MAP_W,scy=mh/MAP_H;
-  // Tiles
-  for(let y=0;y<MAP_H;y+=2)for(let x=0;x<MAP_W;x+=2){
-    const t=mapTiles[y][x];
-    ctx.fillStyle=t===T.RD?'#555':t===T.GR?'#2a5':t===T.WA?'#24a':t===T.BL?'#333':'#444';
-    ctx.fillRect(mx+x*scx,my+y*scy,scx*2,scy*2);
-  }
   // NPCs
-  ctx.fillStyle='#ffa500';
   npcs.forEach(n=>{
-    ctx.fillRect(mx+n.px/TS*scx-1,my+n.py/TS*scy-1,2,2);
+    const sx=n.px-cam.x,sy=n.py-cam.y;
+    if(sx<-40||sx>W+40||sy<-40||sy>H+40)return;
+    cx.fillStyle='rgba(0,0,0,.3)';cx.beginPath();cx.ellipse(sx,sy+10,8,4,0,0,Math.PI*2);cx.fill();
+    cx.fillStyle=NPC_C[n.ci];rr(sx-7,sy-4,14,16,4);cx.fill();
+    cx.fillStyle='#f5c89a';cx.beginPath();cx.arc(sx,sy-11,9,0,Math.PI*2);cx.fill();
+    cx.fillStyle=NPC_C[n.ci];cx.beginPath();cx.arc(sx,sy-17,6,Math.PI,0);cx.fill();
+    cx.fillStyle='#222';cx.fillRect(sx-4,sy-13,3,3);cx.fillRect(sx+1,sy-13,3,3);
+    cx.font='9px sans-serif';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText(OJIS[n.oi].icon,sx,sy+5);
+    if(nearNPC===n){
+      cx.fillStyle='rgba(255,255,255,.92)';rr(sx-16,sx-33,32,14,4);cx.fill();
+      // rewrite as bubble above
+      cx.fillStyle='rgba(255,255,255,.92)';cx.beginPath();
+      cx.roundRect?cx.roundRect(sx-20,sy-38,40,15,4):cx.rect(sx-20,sy-38,40,15);cx.fill();
+      cx.fillStyle='#333';cx.font='bold 8px sans-serif';
+      cx.fillText(LANG==='jp'?'💬話せる':'💬Talk',sx,sy-30);
+    }
   });
   // Player
-  ctx.fillStyle='#ff69b4';
-  ctx.fillRect(mx+player.px/TS*scx-2,my+player.py/TS*scy-2,4,4);
+  const bob=Math.sin(pl.af*1.5)*2;
+  cx.fillStyle='rgba(0,0,0,.35)';cx.beginPath();cx.ellipse(pl.px-cam.x,pl.py-cam.y+12,9,4,0,0,Math.PI*2);cx.fill();
+  const dg=cx.createLinearGradient(0,pl.py-cam.y-4,0,pl.py-cam.y+14);
+  dg.addColorStop(0,'#ff69b4');dg.addColorStop(1,'#cc44aa');
+  cx.fillStyle=dg;rr(pl.px-cam.x-8,pl.py-cam.y-4+bob,16,18,5);cx.fill();
+  cx.fillStyle='#f5c89a';cx.beginPath();cx.arc(pl.px-cam.x,pl.py-cam.y-12+bob,10,0,Math.PI*2);cx.fill();
+  const hg=cx.createLinearGradient(0,pl.py-cam.y-22,0,pl.py-cam.y-10);
+  hg.addColorStop(0,'#2a1a00');hg.addColorStop(1,'#5a3a10');
+  cx.fillStyle=hg;cx.beginPath();cx.arc(pl.px-cam.x,pl.py-cam.y-17+bob,7,Math.PI,0);cx.fill();
+  cx.fillRect(pl.px-cam.x-10,pl.py-cam.y-18+bob,5,10);cx.fillRect(pl.px-cam.x+5,pl.py-cam.y-18+bob,5,10);
+  cx.fillStyle='#222';cx.fillRect(pl.px-cam.x-4,pl.py-cam.y-14+bob,3,3);cx.fillRect(pl.px-cam.x+1,pl.py-cam.y-14+bob,3,3);
+  cx.strokeStyle='#cc6688';cx.lineWidth=1.5;cx.beginPath();cx.arc(pl.px-cam.x,pl.py-cam.y-10+bob,3,.1,Math.PI-.1);cx.stroke();
+  // Name tag
+  cx.fillStyle='rgba(255,105,180,.85)';rr(pl.px-cam.x-20,pl.py-cam.y-30+bob,40,13,4);cx.fill();
+  cx.fillStyle='#fff';cx.font='bold 8px sans-serif';cx.textAlign='center';cx.textBaseline='middle';
+  cx.fillText(G.name||'?',pl.px-cam.x,pl.py-cam.y-23+bob);
+  // Minimap
+  const mw=58,mh=46,mx=W-mw-5,my=5;
+  cx.fillStyle='rgba(0,0,0,.65)';cx.fillRect(mx,my,mw,mh);
+  cx.strokeStyle='rgba(255,105,180,.55)';cx.lineWidth=1;cx.strokeRect(mx,my,mw,mh);
+  const sx2=mw/MW,sy2=mh/MH;
+  for(let y=0;y<MH;y+=2)for(let x=0;x<MW;x+=2){
+    const tt=map[y][x];
+    cx.fillStyle=tt===TT.RD?'#666':tt===TT.GR?'#2a7':tt===TT.WA?'#28c':tt===TT.BL?'#333':'#505';
+    cx.fillRect(mx+x*sx2,my+y*sy2,sx2*2,sy2*2);
+  }
+  npcs.forEach(n=>{cx.fillStyle='#fa0';cx.fillRect(mx+n.px/TS*sx2-1,my+n.py/TS*sy2-1,2,2);});
+  cx.fillStyle='#ff69b4';cx.fillRect(mx+pl.px/TS*sx2-2,my+pl.py/TS*sy2-2,4,4);
 }
-
-function roundRect(ctx,x,y,w,h,r){
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
-  ctx.closePath();
+function rr(x,y,w,h,r){
+  cx.beginPath();cx.moveTo(x+r,y);cx.lineTo(x+w-r,y);cx.quadraticCurveTo(x+w,y,x+w,y+r);
+  cx.lineTo(x+w,y+h-r);cx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  cx.lineTo(x+r,y+h);cx.quadraticCurveTo(x,y+h,x,y+h-r);
+  cx.lineTo(x,y+r);cx.quadraticCurveTo(x,y,x+r,y);cx.closePath();
 }
 
 // ===== GAME LOOP =====
-let lastTime=0;
-function gameLoop(ts){
+let lastT=0;
+function loop(ts){
   if(!running)return;
-  requestAnimationFrame(gameLoop);
-  if(ts-lastTime<16){return;}lastTime=ts;
-  updatePlayer();
-  updateNPCs();
-  checkProximity();
-  render();
-  updateHUD();
+  requestAnimationFrame(loop);
+  if(ts-lastT<16)return;lastT=ts;
+  updatePlayer();updateNPCs();checkProx();render();updateHUD();
 }
 
 // ===== START / RESET =====
 function startGame(){
-  const name=document.getElementById('player-name').value.trim()||'みなと';
+  const name=document.getElementById('pname').value.trim()||'みなと';
   G=initG(name);
-  buildMap();
-  buildRoadSpots();
-  spawnNPCs();
-  player={px:9*TS,py:9*TS,facing:'d',animFrame:0,animTimer:0};
-  inBattle=false;battle=null;
-  document.getElementById('start-screen').classList.remove('active');
+  buildMap();buildRoads();spawnNPCs();
+  pl={px:9*TS,py:9*TS,af:0,at:0,steps:0};
+  inBattle=false;bat=null;
+  document.getElementById('ss').style.display='none';
+  resizeCv();
   running=true;
-  setMsg(tx('welcome'));
-  // 自動時間経過（20秒=1ヶ月）
-  if(G._ageTimer)clearInterval(G._ageTimer);
-  G._ageTimer=setInterval(()=>{
+  if(ageTimer)clearInterval(ageTimer);
+  ageTimer=setInterval(()=>{
     if(!running||inBattle)return;
-    G.ageM++;
-    setMsg(tx('timePass',1));
-    updateHUD();
-    if(checkWinLose()){clearInterval(G._ageTimer);}
+    G.ageM++;setMsg(tf('tp',1));updateHUD();
+    if(checkEnd())clearInterval(ageTimer);
   },20000);
-  requestAnimationFrame(gameLoop);
+  setMsg(t('welcome'));
+  requestAnimationFrame(loop);
 }
 function resetGame(){
-  if(G._ageTimer)clearInterval(G._ageTimer);
-  running=false;inBattle=false;battle=null;
-  document.getElementById('win-screen').classList.remove('active');
-  document.getElementById('lose-screen').classList.remove('active');
-  document.getElementById('battle').classList.remove('active');
-  document.getElementById('player-name').value='';
-  document.getElementById('start-screen').classList.add('active');
+  running=false;if(ageTimer)clearInterval(ageTimer);
+  inBattle=false;bat=null;G={};
+  document.getElementById('ws').style.display='none';
+  document.getElementById('ls').style.display='none';
+  document.getElementById('bov').style.display='none';
+  document.getElementById('pname').value='';
+  document.getElementById('ss').style.display='flex';
+}
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
 </script>
-</body>
-</html>
+</body></html>
