@@ -149,7 +149,7 @@ html,body{height:100%;overflow:hidden;background:#0a0010;font-size:clamp(15px,4.
 <div id="app">
   <div id="hud">
     <button id="lang-btn">🌐JP</button>
-    <div class="hb">👤 <span id="hn" class="hv">-</span><br>Lv<span id="hlv">1</span> <span id="hage">20歳</span></div>
+    <div class="hb">👤 <span id="hn" class="hv">-</span><br>Lv<span id="hlv">1</span> <span id="hage">20</span><br><span id="hcnt" style="font-size:0.85em;color:#ff8888">⏱ 10y</span></div>
     <div class="hb">❤<span id="hhp" class="hv">100</span> ⚡<span id="hmp" class="hv">60</span></div>
     <div class="hb">✨<span id="hch" class="hv">50</span></div>
     <div class="hb">💰<span id="hmn" class="hm">0円</span></div>
@@ -726,6 +726,13 @@ function updateHUD(){
   document.getElementById('hmp').textContent=G.mp;
   document.getElementById('hch').textContent=G.charm;
   document.getElementById('hmn').textContent=fmoney(G.money);
+  const rem=ALIM*12-G.ageM;
+  const ry=Math.floor(rem/12),rm=rem%12;
+  const cntEl=document.getElementById('hcnt');
+  cntEl.textContent=LANG==='jp'
+    ?(rm?`⏱ あと${ry}年${rm}ヶ月`:`⏱ あと${ry}年`)
+    :(rm?`⏱ ${ry}y${rm}m left`:`⏱ ${ry}y left`);
+  cntEl.style.color=rem<=24?'#ff3333':rem<=60?'#ff7722':'#ff8888';
 }
 
 // ===== RENDER =====
