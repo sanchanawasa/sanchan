@@ -404,7 +404,7 @@ function updatePlayer(){
   if(dx||dy){
     pl.at++;if(pl.at%8===0)pl.af=(pl.af+1)%4;
     pl.steps++;
-    if(pl.steps>=500){pl.steps=0;G.ageM++;setMsg(t('walk'));updateHUD();checkEnd();}
+    if(pl.steps>=120){pl.steps=0;G.ageM++;setMsg(t('walk'));updateHUD();checkEnd();}
   }
   const nx=pl.px+dx*spd,ny=pl.py+dy*spd;
   if(canWalk(nx,pl.py))pl.px=nx;
@@ -599,11 +599,13 @@ function useSkill(id){
   bat.hp=cl(bat.hp-dmg,0,bat.maxHp);
   const nm=LANG==='jp'?sk.jp:sk.en;
   blog(`${sk.icon} ${nm}！ 💢-${dmg}`,'g');
-  // 撃破！
+  // 撃破！バーをゼロにしてからKO表示
   if(bat.hp<=0){
-    blog(LANG==='jp'?'💥 KO！！':'💥 KO!!','g');
-    setTimeout(()=>endBat(),600);
-    renderBat();return;
+    bat.hp=0;
+    renderBat(); // HPバーを0%にアニメーション
+    setTimeout(()=>blog(LANG==='jp'?'💥 KO！！全額ゲット！':'💥 KO!! Full payout!','g'),450);
+    setTimeout(()=>endBat(),1300);
+    return;
   }
   const damagePct=1-(bat.hp/bat.maxHp);
   const say=OSAY[LANG]||OSAY.jp;
@@ -838,7 +840,7 @@ function startGame(){
     if(!running||inBattle)return;
     G.ageM++;setMsg(tf('tp',1));updateHUD();
     if(checkEnd())clearInterval(ageTimer);
-  },20000);
+  },4000);
   setMsg(t('welcome'));
   requestAnimationFrame(loop);
 }
