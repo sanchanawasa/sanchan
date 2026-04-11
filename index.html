@@ -115,17 +115,14 @@ html,body{height:100%;overflow:hidden;background:#0a0010;font-size:clamp(15px,4.
 <body>
 <!-- START -->
 <div class="oscreen" id="ss" style="display:flex">
-  <div class="logo">🌊 港クエスト</div>
-  <div class="sublogo" id="ss-sub">〜ギャラ飲みで100万円を目指せ！〜</div>
+  <button id="ss-lang" style="position:absolute;top:14px;right:14px;background:rgba(255,105,180,0.3);border:2px solid #ff69b4;color:#fff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:1em;font-weight:bold">🌐EN</button>
+  <div class="logo" id="ss-logo">🌊 Minato Quest</div>
+  <div class="sublogo" id="ss-sub"></div>
   <div class="card">
-    <h2 id="ss-title">NEWGAME</h2>
-    <p id="ss-info">⭐ キンピカ光る<b>黄金おじ</b>を探せ！<br>
-      捕まえたら一発<b>50〜90万円</b>！<br>
-      👔 普通のおじからも稼いで<b>100万円</b>達成！<br>
-      🏠 建物でHP/魅力を回復しよう<br>
-      ⏱ 30歳になる前にクリア！</p>
-    <input type="text" class="nin" id="pname" placeholder="あなたの名前を入力" maxlength="8">
-    <button class="bbtn" id="sbtn">スタート！</button>
+    <h2 id="ss-title"></h2>
+    <p id="ss-info"></p>
+    <input type="text" class="nin" id="pname" placeholder="Enter your name" maxlength="8">
+    <button class="bbtn" id="sbtn">Start!</button>
   </div>
 </div>
 <!-- WIN -->
@@ -202,6 +199,10 @@ html,body{height:100%;overflow:hidden;background:#0a0010;font-size:clamp(15px,4.
 let LANG='en';
 const L={
   jp:{
+    sslogo:'🌊 港クエスト',
+    sssub:'〜ギャラ飲みで100万円を目指せ！〜',
+    ssnewgame:'NEWGAME',
+    ssinfo:'⭐ キンピカ光る<b>黄金おじ</b>を探せ！<br>捕まえたら一発<b>50〜90万円</b>！<br>👔 普通のおじからも稼いで<b>100万円</b>達成！<br>🏠 建物でHP/魅力を回復しよう<br>⏱ 30歳になる前にクリア！',
     sub:'〜ギャラ飲みで100万円を目指せ！〜',start:'スタート！',ph:'あなたの名前を入力',
     talk:'💬 話しかける',enter:'🚪 入る',
     tp:m=>`${m}ヶ月経った…`,walk:'歩きすぎて時間が経った…',
@@ -224,6 +225,10 @@ const L={
     rare_catch:'⭐ 黄金おじ捕獲！1ラウンド即決着！',
   },
   en:{
+    sslogo:'🌊 Minato Quest',
+    sssub:'~Earn ¥1M through paid drinking!~',
+    ssnewgame:'NEW GAME',
+    ssinfo:'⭐ Find the shining <b>Gold Uncle</b>!<br>Catch him for <b>¥500k–900k</b> at once!<br>👔 Earn from regular uncles too — hit <b>¥1M</b>!<br>🏠 Enter buildings to restore HP & Charm<br>⏱ Clear before you turn 30!',
     sub:'~Earn ¥1M through paid drinking!~',start:'Start!',ph:'Enter your name',
     talk:'💬 Talk',enter:'🚪 Enter',
     tp:m=>`${m} month(s) passed…`,walk:'Time passed while walking…',
@@ -387,16 +392,29 @@ window.addEventListener('keyup',e=>{keys[e.key]=false;});
 });
 
 document.getElementById('sbtn').addEventListener('click',startGame);
+document.getElementById('ss-lang').addEventListener('click',toggleLang);
 document.getElementById('wbtn').addEventListener('click',resetGame);
 document.getElementById('lbtn').addEventListener('click',resetGame);
 document.getElementById('abtn').addEventListener('click',interact);
 document.getElementById('lang-btn').addEventListener('click',toggleLang);
 
+function updateStartScreen(){
+  document.getElementById('ss-logo').textContent=t('sslogo');
+  document.getElementById('ss-sub').textContent=t('sssub');
+  document.getElementById('ss-title').textContent=t('ssnewgame');
+  document.getElementById('ss-info').innerHTML=t('ssinfo');
+  document.getElementById('pname').placeholder=t('ph');
+  document.getElementById('sbtn').textContent=t('start');
+  const isJP=LANG==='jp';
+  document.getElementById('ss-lang').textContent=isJP?'🌐JP':'🌐EN';
+  document.getElementById('lang-btn').textContent=isJP?'🌐JP':'🌐EN';
+}
 function toggleLang(){
   LANG=LANG==='jp'?'en':'jp';
-  document.getElementById('lang-btn').textContent=LANG==='jp'?'🌐JP':'🌐EN';
+  updateStartScreen();
   updateHUD();
 }
+updateStartScreen();
 
 // ===== COLLISION =====
 function canWalk(px,py){
