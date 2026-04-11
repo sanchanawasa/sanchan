@@ -56,9 +56,10 @@ html,body{height:100%;overflow:hidden;background:#0a0010;font-size:clamp(15px,4.
 .bcn{color:#cc88ff;font-weight:bold;font-size:1.05em;margin:3px 0}
 .bcs{font-size:0.82em;color:#aaa}
 .bbar{margin-top:7px}
-.bbg{background:#333;border-radius:5px;height:14px;overflow:hidden}
-.bfill{background:linear-gradient(90deg,#ff69b4,#ff4488);height:100%;border-radius:5px;transition:width 0.35s}
-.bval{font-size:0.9em;color:#ff69b4;margin-top:2px}
+.blabel{font-size:0.82em;color:#ff8888;font-weight:bold;margin-bottom:3px}
+.bbg{background:#333;border-radius:5px;height:16px;overflow:hidden}
+.bfill{background:linear-gradient(90deg,#ff4444,#ff8800);height:100%;border-radius:5px;transition:width 0.4s}
+.bval{font-size:0.95em;color:#ff8888;font-weight:bold;margin-top:3px}
 .mpbar{background:rgba(68,136,255,0.1);border:1px solid #4488ff;border-radius:9px;
   padding:6px 10px;width:100%;max-width:400px;margin-bottom:5px}
 .mpbg{background:#333;border-radius:4px;height:10px;margin-top:3px;overflow:hidden}
@@ -69,14 +70,13 @@ html,body{height:100%;overflow:hidden;background:#0a0010;font-size:clamp(15px,4.
 .bl{padding:3px 0;color:#ddd}.bl.g{color:#88ff88}.bl.b{color:#ff8888}.bl.o{color:#cc88ff;font-style:italic}
 .bpay{text-align:center;font-size:0.9em;color:#daa520;padding:3px}
 .brnd{text-align:center;font-size:0.82em;color:#aaa;margin-bottom:5px}
-.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:400px;padding-bottom:8px}
-.sk{background:rgba(136,68,255,0.15);border:1px solid #8844ff;border-radius:10px;
-  padding:10px 6px;cursor:pointer;text-align:center;color:#fff;touch-action:manipulation}
-.sk:active:not(:disabled){background:rgba(136,68,255,0.4)}
-.sk:disabled{opacity:0.28;cursor:not-allowed}
-.sn{font-size:0.96em;font-weight:bold}
-.sm{font-size:0.8em;color:#88aaff;margin-top:2px}
-.sf{font-size:0.73em;color:#aaa}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%;max-width:400px;padding-bottom:8px}
+.sk{background:rgba(136,68,255,0.18);border:2px solid #8844ff;border-radius:12px;
+  padding:12px 8px;cursor:pointer;text-align:center;color:#fff;touch-action:manipulation}
+.sk:active:not(:disabled){background:rgba(136,68,255,0.5);transform:scale(0.97)}
+.sk:disabled{opacity:0.25;cursor:not-allowed}
+.sn{font-size:1.05em;font-weight:bold}
+.sm{font-size:0.84em;color:#aaccff;margin-top:4px}
 
 /* Start/End screens */
 .oscreen{display:none;position:absolute;inset:0;background:linear-gradient(135deg,#08001a,#18002e);
@@ -161,18 +161,21 @@ html,body{height:100%;overflow:hidden;background:#0a0010;font-size:clamp(15px,4.
     <div class="bcard">
       <div class="bci" id="bic">👔</div>
       <div class="bcn" id="bnm">おじ</div>
-      <div class="bcs" id="bsb">タイプ</div>
-      <div class="bbar"><div class="bbg"><div class="bfill" id="mbf" style="width:30%"></div></div>
-        <div class="bval" id="mbv">30/80</div></div>
+      <div class="bcs" id="bsb">💰 ---</div>
+      <div class="bbar">
+        <div class="blabel">💢 HP</div>
+        <div class="bbg"><div class="bfill" id="mbf" style="width:100%"></div></div>
+        <div class="bval" id="mbv">80/80</div>
+      </div>
     </div>
     <div class="mpbar">
-      <div style="font-size:0.7em;color:#88aaff">⚡ テンション</div>
+      <div style="font-size:0.82em;color:#88aaff;font-weight:bold">⚡ MP（技ポイント）</div>
       <div class="mpbg"><div class="mpfill" id="mpf"></div></div>
-      <div style="font-size:0.68em;color:#88aaff;margin-top:2px" id="mpv"></div>
+      <div style="font-size:0.8em;color:#88aaff;margin-top:2px" id="mpv"></div>
     </div>
     <div class="blog" id="blog"></div>
     <div class="bpay" id="bpay">💰 予想：---</div>
-    <div class="brnd" id="brnd">ラウンド 1/3</div>
+    <div class="brnd" id="brnd">残り3ターン</div>
     <div class="sgrid" id="sgrid"></div>
   </div>
 </div>
@@ -192,9 +195,9 @@ const L={
     surgery_ok:'💉 整形完了！魅力爆上がり！（-100,000円 +3ヶ月）',
     surgery_ng:'💸 整形には100,000円必要！',
     bonus:'🎊 太っ腹ボーナス！(+20%)',
-    bs:n=>`${n}との飲み会開始！`,bh:'機嫌を上げて稼ごう！',
-    be:p=>`🍾 飲み会終了！機嫌${p}%`,got:m=>`💰 ゲット：${m}！`,
-    toreal:'💬 本音言いすぎ！おじが怒った！',nomp:'⚡ テンション不足！',
+    bs:n=>`${n}との飲み会開始！`,bh:'HPをゼロにしてギャラをもぎとれ！',
+    be:p=>p>=100?'🎉 KO！ギャラ全額ゲット！':`🍾 終了！ダメージ${p}%`,got:m=>`💰 ゲット：${m}！`,
+    toreal:'💬 本音言いすぎ！おじのHP回復した！',nomp:'⚡ MPが足りない！',
     welcome:'🌊 港区へようこそ！おじに近づいて話しかけよう！',
     invite:'📩 ギャラ飲みのお誘いが来た！',
     got2:(n,m)=>`🍾 ${n}から${m}もらった！`,
@@ -214,9 +217,9 @@ const L={
     surgery_ok:'💉 Surgery done! Charm exploded! (-¥100k +3mo)',
     surgery_ng:'💸 Need ¥100,000 for surgery!',
     bonus:'🎊 Big Spender Bonus! (+20%)',
-    bs:n=>`Party with ${n} started!`,bh:'Raise their mood and earn!',
-    be:p=>`🍾 Party over! Mood ${p}%`,got:m=>`💰 Got: ${m}!`,
-    toreal:'💬 Too honest! He got upset!',nomp:'⚡ Not enough tension!',
+    bs:n=>`Party with ${n} started!`,bh:'Drain HP to zero and get paid!',
+    be:p=>p>=100?'🎉 KO! Full payout!':`🍾 Over! Dealt ${p}%`,got:m=>`💰 Got: ${m}!`,
+    toreal:'💬 Too real! His HP recovered!',nomp:'⚡ Not enough MP!',
     welcome:'🌊 Welcome to Minato! Find uncles and talk to them!',
     invite:'📩 Gala drinking invitation!',
     got2:(n,m)=>`🍾 Got ${m} from ${n}!`,
@@ -244,22 +247,22 @@ const OJIS=[
   {icon:'⭐',jp:'✨黄金おじ✨',en:'✨Gold Uncle✨',moodMax:40,wMin:600000,wMax:900000,rare:true},
 ];
 const OSAY={
-  jp:{lo:['うーん…','まあそうだな','（スマホ見る）','次の予定が…'],
-      mi:['なかなかいいじゃない','もっと飲もうよ','楽しいね！'],
-      hi:['きみ最高！','また誘っていい？','これ持ってって！']},
-  en:{lo:['Hmm…','Well sure','(checks phone)','I have plans…'],
-      mi:["Not bad!","Let's drink more!","Fun!"],
-      hi:["You're amazing!","Can I invite you again?","Take this!"]}
+  jp:{lo:['まだまだだな','余裕だよ','（スマホ見る）','ふーん'],
+      mi:['なかなかやるね！','お、いい感じ！','ちょっと効いた…'],
+      hi:['まいった！','す、すごい…！','わかった払う！']},
+  en:{lo:["Still fine…","Too easy","(checks phone)","Meh"],
+      mi:["Not bad!","Oh, that worked!","I felt that…"],
+      hi:["I'm done!","A-amazing!","Ok, I'll pay!"]}
 };
 const SKILLS=[
-  {id:'home',jp:'褒める',en:'Praise',icon:'⭐',mp:8,gain:18,lv:1,djp:'機嫌+18',den:'Mood+18'},
-  {id:'smile',jp:'笑顔MAX',en:'Big Smile',icon:'😊',mp:12,gain:22,lv:1,djp:'機嫌+22 魅力+3',den:'Mood+22 Charm+3'},
-  {id:'listen',jp:'話を聞く',en:'Listen',icon:'👂',mp:3,gain:12,lv:1,djp:'機嫌+12（低コスト）',den:'Mood+12 (cheap)'},
-  {id:'hype',jp:'盛り上げる',en:'Hype Up',icon:'🎉',mp:15,gain:28,lv:3,djp:'機嫌+18〜38',den:'Mood+18~38'},
-  {id:'cute',jp:'甘える',en:'Act Cute',icon:'🥺',mp:20,gain:35,lv:5,djp:'機嫌+35 HP-5',den:'Mood+35 HP-5'},
-  {id:'real',jp:'本音トーク',en:'Real Talk',icon:'💬',mp:25,gain:45,lv:7,djp:'機嫌+45（失敗あり）',den:'Mood+45 (risky)'},
-  {id:'toast',jp:'伝説の乾杯',en:'Epic Toast',icon:'🥂',mp:40,gain:60,lv:10,djp:'機嫌+60（最強）',den:'Mood+60 (max)'},
-  {id:'makura',jp:'枕営業🌙',en:'ULTIMATE🌙',icon:'🌙',mp:0,gain:0,lv:10,djp:'全ST激減・報酬×3即勝利⚠️',den:'All stats drop, Payout×3⚠️'},
+  {id:'listen',jp:'話を聞く',en:'Listen',icon:'👂',mp:3,gain:12,lv:1},
+  {id:'home',jp:'褒める',en:'Praise',icon:'⭐',mp:8,gain:18,lv:1},
+  {id:'smile',jp:'笑顔MAX',en:'Big Smile',icon:'😊',mp:12,gain:22,lv:1},
+  {id:'hype',jp:'盛り上げる',en:'Hype Up',icon:'🎉',mp:15,gain:28,lv:3},
+  {id:'cute',jp:'甘える',en:'Act Cute',icon:'🥺',mp:20,gain:35,lv:5},
+  {id:'real',jp:'本音トーク',en:'Real Talk',icon:'💬',mp:25,gain:45,lv:7},
+  {id:'toast',jp:'伝説の乾杯',en:'Epic Toast',icon:'🥂',mp:40,gain:80,lv:10},
+  {id:'makura',jp:'枕営業🌙',en:'ULTIMATE🌙',icon:'🌙',mp:0,gain:0,lv:10},
 ];
 const BLDGS=[
   {tx:1,ty:1,tw:5,th:3,jp:'💆 美容院',en:'💆 Beauty Salon',col:['#cc3388','#ff66bb'],type:'salon'},
@@ -536,9 +539,7 @@ function startBattle(npc){
   const wallet=ri(oji.wMin,oji.wMax);
   const isRare=oji.rare||false;
   const maxR=isRare?1:3;
-  const initMood=isRare?Math.floor(oji.moodMax*.7):Math.floor(oji.moodMax*.3);
-  bat={oji,wallet,mood:initMood,round:1,maxR,done:false,isRare};
-  // 黄金おじを捕まえたらNPC一覧から消す（後で復活）
+  bat={oji,wallet,hp:oji.moodMax,maxHp:oji.moodMax,round:1,maxR,done:false,isRare};
   if(npc&&npc.rare){
     const idx=npcs.indexOf(npc);if(idx>=0)npcs.splice(idx,1);
     setTimeout(()=>{
@@ -556,10 +557,10 @@ function startBattle(npc){
   document.getElementById('bsb').textContent='💰 '+fmoney(wallet);
   const bov=document.getElementById('bov');
   bov.style.display='flex';
-  bov.style.background=isRare?'rgba(20,15,0,0.97)':'rgba(0,0,12,0.97)';
+  bov.style.background=isRare?'rgba(20,12,0,0.98)':'rgba(0,0,12,0.97)';
   if(isRare){
     blog(t('rare_catch'),'g');
-    blog(LANG==='jp'?'✨スキル1回で終わる！全力で！':'✨One skill ends it! Go all out!','g');
+    blog(LANG==='jp'?'✨HPを削れば全額ゲット！':'✨Drain HP for full payout!','g');
   } else {
     blog(tf('bs',LANG==='jp'?oji.jp:oji.en),'g');
     blog(t('bh'),'');
@@ -573,44 +574,55 @@ function blog(msg,cls){
 function useSkill(id){
   if(!bat||bat.done)return;
   const sk=SKILLS.find(s=>s.id===id);
+  // 枕営業：即勝利
   if(id==='makura'){
     blog(t('makura_use'),'b');
     G.hp=cl(G.hp-40,1,G.mhp);G.mp=0;G.charm=cl(G.charm-25,0,100);G.ageM+=2;G.exp+=50;
-    bat.mood=bat.oji.moodMax;bat.wallet=Math.floor(bat.wallet*3);
+    bat.hp=0;bat.wallet=Math.floor(bat.wallet*3);
     setTimeout(()=>blog(t('makura_res'),'g'),500);
     setTimeout(()=>endBat(),1000);
     renderBat();return;
   }
   if(!sk||G.mp<sk.mp){blog(t('nomp'),'b');return;}
   G.mp-=sk.mp;
-  let gain=sk.gain;
-  if(id==='hype')gain+=ri(-10,10);
-  if(id==='cute')G.hp=cl(G.hp-5,0,G.mhp);
-  if(id==='real'&&Math.random()<.3){gain=-20;blog(t('toreal'),'b');}
+  let dmg=sk.gain;
+  if(id==='hype')dmg+=ri(-8,12);
+  if(id==='cute'){G.hp=cl(G.hp-5,0,G.mhp);}
+  if(id==='real'&&Math.random()<.3){
+    bat.hp=cl(bat.hp+20,0,bat.maxHp);
+    blog(t('toreal'),'b');
+    blog(`${bat.oji.icon}「${(OSAY[LANG]||OSAY.jp).lo[ri(0,3)]}」`,'o');
+    bat.round++;if(bat.round>bat.maxR){endBat();return;}
+    renderBat();return;
+  }
   if(id==='smile')G.charm=cl(G.charm+3,0,100);
-  if(id==='toast'&&bat.mood>=bat.oji.moodMax*.5)gain=60;
-  bat.mood=cl(bat.mood+gain,0,bat.oji.moodMax);
+  bat.hp=cl(bat.hp-dmg,0,bat.maxHp);
   const nm=LANG==='jp'?sk.jp:sk.en;
-  if(gain>0)blog(`${sk.icon} ${nm}！ 機嫌+${gain}`,'g');
-  const pct=bat.mood/bat.oji.moodMax;
+  blog(`${sk.icon} ${nm}！ 💢-${dmg}`,'g');
+  // 撃破！
+  if(bat.hp<=0){
+    blog(LANG==='jp'?'💥 KO！！':'💥 KO!!','g');
+    setTimeout(()=>endBat(),600);
+    renderBat();return;
+  }
+  const damagePct=1-(bat.hp/bat.maxHp);
   const say=OSAY[LANG]||OSAY.jp;
-  const pool=pct<.4?say.lo:pct<.7?say.mi:say.hi;
-  const onm=LANG==='jp'?bat.oji.jp:bat.oji.en;
+  const pool=damagePct<.4?say.lo:damagePct<.7?say.mi:say.hi;
   blog(`${bat.oji.icon}「${pool[ri(0,pool.length-1)]}」`,'o');
   bat.round++;
   if(bat.round>bat.maxR){endBat();return;}
   renderBat();
 }
 function endBat(){
-  const{oji,wallet,mood}=bat;
-  const pct=mood/oji.moodMax;
-  let pay=Math.floor(wallet*pct);
+  const{oji,wallet,hp,maxHp}=bat;
+  const pct=cl(1-hp/maxHp,0,1);
+  let pay=hp<=0?wallet:Math.floor(wallet*pct);
   let bon='';
-  if(pct>=.8){pay=Math.floor(pay*1.2);bon=t('bonus');}
+  if(pct>=.8&&hp>0){pay=Math.floor(pay*1.2);bon=t('bonus');}
   G.money+=pay;G.exp+=20+Math.floor(pct*30);G.bw++;
   bat.done=true;inBattle=false;G.ageM++;
   blog('──────────','');
-  blog(tf('be',Math.floor(pct*100)),'');
+  blog(tf('be',hp<=0?100:Math.floor(pct*100)),'');
   if(bon)blog(bon,'g');
   blog(tf('got',fmoney(pay)),'g');
   lvup();updateHUD();
@@ -624,23 +636,31 @@ function endBat(){
 }
 function renderBat(){
   if(!bat)return;
-  const{oji,mood,round,maxR,wallet,isRare}=bat;
-  const pct=mood/oji.moodMax;
-  document.getElementById('mbf').style.width=(pct*100)+'%';
-  if(isRare)document.getElementById('mbf').style.background='linear-gradient(90deg,#ffd700,#ff8800)';
-  document.getElementById('mbv').textContent=`${mood}/${oji.moodMax}`;
+  const{oji,hp,maxHp,round,maxR,wallet,isRare}=bat;
+  const hpPct=hp/maxHp;
+  const damagePct=1-hpPct;
+  const mbf=document.getElementById('mbf');
+  mbf.style.width=(hpPct*100)+'%';
+  mbf.style.background=isRare?'linear-gradient(90deg,#ffd700,#ff8800)':
+    hpPct>.5?'linear-gradient(90deg,#ff4444,#ff8800)':'linear-gradient(90deg,#ff2222,#ff4400)';
+  document.getElementById('mbv').textContent=`${hp} / ${maxHp}`;
   document.getElementById('mpf').style.width=`${G.mp/G.mmp*100}%`;
-  document.getElementById('mpv').textContent=`${G.mp}/${G.mmp}`;
-  document.getElementById('bpay').textContent=`💰 ${LANG==='jp'?'予想':'Est.'}: ${fmoney(Math.floor(wallet*pct))}${pct>=.8?'🎊':''}`;
-  document.getElementById('brnd').textContent=isRare?(LANG==='jp'?'⭐ラスト1ラウンド！':'⭐Last Round!'):`${LANG==='jp'?'ラウンド':'Round'} ${round}/${maxR}`;
+  document.getElementById('mpv').textContent=`${G.mp} / ${G.mmp}`;
+  const estPay=hp<=0?wallet:Math.floor(wallet*damagePct);
+  document.getElementById('bpay').textContent=`💰 ${LANG==='jp'?'ゲット予想':'Est.'}: ${fmoney(estPay)}`;
+  const rem=maxR-round+1;
+  document.getElementById('brnd').textContent=isRare
+    ?(LANG==='jp'?'⭐ ラスト1ターン！':'⭐ Last Turn!')
+    :(LANG==='jp'?`残り ${rem} ターン`:`${rem} turn(s) left`);
   const sg=document.getElementById('sgrid');sg.innerHTML='';
   SKILLS.forEach(sk=>{
-    const ok=G.lv>=sk.lv&&(sk.id==='makura'||G.mp>=sk.mp);
     const locked=G.lv<sk.lv;
+    const ok=!locked&&(sk.id==='makura'||G.mp>=sk.mp);
     const b=document.createElement('button');b.className='sk';b.disabled=!ok;
     const nm=LANG==='jp'?sk.jp:sk.en;
-    const ds=LANG==='jp'?sk.djp:sk.den;
-    b.innerHTML=`<div class="sn">${sk.icon} ${nm}</div><div class="sm">MP:${sk.id==='makura'?'ALL':sk.mp}${locked?` 🔒Lv${sk.lv}`:''}</div><div class="sf">${ds}</div>`;
+    const dmgLabel=sk.id==='makura'?(LANG==='jp'?'即KO×3💰':'Instant×3💰'):`💢${sk.gain}`;
+    const mpLabel=sk.id==='makura'?'MP:ALL':`MP:${sk.mp}`;
+    b.innerHTML=`<div class="sn">${sk.icon} ${nm}</div><div class="sm">${mpLabel}　${locked?`🔒Lv${sk.lv}`:dmgLabel}</div>`;
     if(ok)b.onclick=()=>useSkill(sk.id);
     sg.appendChild(b);
   });
