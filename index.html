@@ -314,7 +314,7 @@ function spawnNPCs(){
 let G={},running=false,inBattle=false,bat=null,ageTimer=null;
 let keys={},dpad={};
 let cam={x:0,y:0};
-let pl={px:9*TS,py:9*TS,af:0,at:0,steps:0};
+let pl={px:7*TS+16,py:13*TS+16,af:0,at:0,steps:0};
 let nearNPC=null,nearBldg=null;
 
 function initG(name){
@@ -729,7 +729,7 @@ function startGame(){
   const name=document.getElementById('pname').value.trim()||'みなと';
   G=initG(name);
   buildMap();buildRoads();spawnNPCs();
-  pl={px:9*TS,py:9*TS,af:0,at:0,steps:0};
+  pl={px:7*TS+16,py:13*TS+16,af:0,at:0,steps:0};
   inBattle=false;bat=null;
   document.getElementById('ss').style.display='none';
   resizeCv();
