@@ -98,6 +98,18 @@ html,body{height:100%;overflow:hidden;background:#0a0010;font-size:clamp(15px,4.
 .etitle{font-size:1.6em;font-weight:bold;margin-bottom:8px;text-align:center}
 .estats{background:rgba(255,255,255,0.07);border-radius:9px;padding:12px;margin:10px 0;font-size:0.9em}
 .estats div{padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.08)}
+
+/* KO Banner */
+#koban{display:none;position:absolute;inset:0;z-index:80;
+  flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.88);text-align:center;gap:10px;pointer-events:none}
+#ko-icon{font-size:4.5em;animation:kopop .4s cubic-bezier(.17,.67,.5,1.4)}
+#ko-txt{font-size:2.8em;font-weight:bold;color:#ffd700;
+  text-shadow:0 0 24px #ffd700,0 0 8px #ff8800;
+  animation:kopop .4s .1s cubic-bezier(.17,.67,.5,1.4) both}
+#ko-pay{font-size:1.5em;color:#fff;font-weight:bold;margin-top:4px;
+  animation:kopop .4s .25s cubic-bezier(.17,.67,.5,1.4) both}
+@keyframes kopop{from{transform:scale(0.3);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
@@ -157,10 +169,10 @@ html,body{height:100%;overflow:hidden;background:#0a0010;font-size:clamp(15px,4.
   </div>
   <!-- Battle -->
   <div id="bov">
-    <div class="bh" id="btit">⚔️ ギャラ飲みバトル！</div>
+    <div class="bh" id="btit">⚔️ Battle!</div>
     <div class="bcard">
       <div class="bci" id="bic">👔</div>
-      <div class="bcn" id="bnm">おじ</div>
+      <div class="bcn" id="bnm">Uncle</div>
       <div class="bcs" id="bsb">💰 ---</div>
       <div class="bbar">
         <div class="blabel">💢 HP</div>
@@ -169,19 +181,25 @@ html,body{height:100%;overflow:hidden;background:#0a0010;font-size:clamp(15px,4.
       </div>
     </div>
     <div class="mpbar">
-      <div style="font-size:0.82em;color:#88aaff;font-weight:bold">⚡ MP（技ポイント）</div>
+      <div style="font-size:0.82em;color:#88aaff;font-weight:bold">⚡ MP</div>
       <div class="mpbg"><div class="mpfill" id="mpf"></div></div>
       <div style="font-size:0.8em;color:#88aaff;margin-top:2px" id="mpv"></div>
     </div>
     <div class="blog" id="blog"></div>
-    <div class="bpay" id="bpay">💰 予想：---</div>
-    <div class="brnd" id="brnd">残り3ターン</div>
+    <div class="bpay" id="bpay">💰 Est: ---</div>
+    <div class="brnd" id="brnd">3 turns left</div>
     <div class="sgrid" id="sgrid"></div>
+    <!-- KO Banner -->
+    <div id="koban">
+      <div id="ko-icon">💥</div>
+      <div id="ko-txt">KO!!</div>
+      <div id="ko-pay"></div>
+    </div>
   </div>
 </div>
 <script>
 // ===== LANGUAGE =====
-let LANG='jp';
+let LANG='en';
 const L={
   jp:{
     sub:'〜ギャラ飲みで100万円を目指せ！〜',start:'スタート！',ph:'あなたの名前を入力',
@@ -599,12 +617,24 @@ function useSkill(id){
   bat.hp=cl(bat.hp-dmg,0,bat.maxHp);
   const nm=LANG==='jp'?sk.jp:sk.en;
   blog(`${sk.icon} ${nm}！ 💢-${dmg}`,'g');
-  // 撃破！バーをゼロにしてからKO表示
+  // 撃破！① バーを0に ② 450ms後KOバナー ③ 2500ms後に報酬
   if(bat.hp<=0){
     bat.hp=0;
-    renderBat(); // HPバーを0%にアニメーション
-    setTimeout(()=>blog(LANG==='jp'?'💥 KO！！全額ゲット！':'💥 KO!! Full payout!','g'),450);
-    setTimeout(()=>endBat(),1300);
+    renderBat();
+    setTimeout(()=>{
+      document.getElementById('ko-txt').textContent=LANG==='jp'?'KO！！勝った！':'KO!! YOU WIN!';
+      document.getElementById('ko-pay').textContent='💰 '+fmoney(bat.wallet);
+      const kb=document.getElementById('koban');
+      kb.style.display='flex';
+      // アニメーションリセット
+      kb.querySelectorAll('#ko-icon,#ko-txt,#ko-pay').forEach(el=>{
+        el.style.animation='none';el.offsetHeight;el.style.animation='';
+      });
+    },450);
+    setTimeout(()=>{
+      document.getElementById('koban').style.display='none';
+      endBat();
+    },2600);
     return;
   }
   const damagePct=1-(bat.hp/bat.maxHp);
