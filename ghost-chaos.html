@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a0030">
+<title>さんちゃんの神判決ショー👻</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{height:100%;overflow:hidden;background:#0d001a;
+  font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Segoe UI',sans-serif;color:#fff;
+  touch-action:manipulation}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;overflow:hidden}
+
+/* ===== BG ===== */
+#bg{position:absolute;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;
+  animation:twinkle var(--t,2s) ease-in-out infinite alternate;opacity:var(--o,0.5)}
+@keyframes twinkle{to{opacity:0.1;transform:scale(0.5)}}
+.bg-split-light{position:absolute;inset:0;background:linear-gradient(135deg,
+  rgba(200,220,255,0.08) 0%,transparent 50%);pointer-events:none}
+.bg-split-dark{position:absolute;inset:0;background:linear-gradient(315deg,
+  rgba(80,0,120,0.3) 0%,transparent 50%);pointer-events:none}
+
+/* ===== SCREENS ===== */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:16px;z-index:10;
+  transition:opacity 0.4s,transform 0.4s}
+.screen.hidden{opacity:0;pointer-events:none;transform:scale(0.95)}
+
+/* ===== TITLE ===== */
+#title-screen{gap:12px;text-align:center}
+.title-logo{font-size:clamp(1.8rem,7vw,2.6rem);font-weight:900;
+  background:linear-gradient(135deg,#ffe066,#ff99cc,#aa66ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  text-shadow:none;filter:drop-shadow(0 0 20px #ff66aa);
+  line-height:1.2;letter-spacing:-1px}
+.title-sub{font-size:clamp(0.75rem,3vw,1rem);color:#ccaaff;letter-spacing:2px;margin-top:4px}
+.title-ghost{font-size:clamp(4rem,16vw,7rem);animation:float 2s ease-in-out infinite;
+  filter:drop-shadow(0 0 30px rgba(255,200,255,0.6))}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-20px) rotate(3deg)}}
+.title-desc{font-size:clamp(0.78rem,3.2vw,0.95rem);color:#eeddff;max-width:320px;
+  line-height:1.6;background:rgba(255,255,255,0.07);border-radius:12px;padding:12px 16px;
+  border:1px solid rgba(255,255,255,0.15)}
+.start-btn{
+  background:linear-gradient(135deg,#ff44aa,#aa00ff);
+  border:none;color:#fff;font-size:clamp(1.1rem,4.5vw,1.4rem);font-weight:900;
+  padding:16px 48px;border-radius:50px;cursor:pointer;
+  box-shadow:0 0 30px rgba(255,50,150,0.6),0 4px 15px rgba(0,0,0,0.4);
+  animation:pulse-btn 1.5s ease-in-out infinite;letter-spacing:1px;
+  font-family:inherit}
+@keyframes pulse-btn{0%,100%{transform:scale(1);box-shadow:0 0 30px rgba(255,50,150,0.6)}
+  50%{transform:scale(1.05);box-shadow:0 0 50px rgba(255,50,150,0.9)}}
+.start-btn:active{transform:scale(0.95)!important}
+.lang-toggle{display:flex;gap:8px;margin-top:8px}
+.lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);
+  color:#fff;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:0.8rem;
+  font-family:inherit}
+.lang-btn.active{background:rgba(255,100,200,0.4);border-color:#ff88cc}
+.lang-btn:active{transform:scale(0.93)}
+
+/* ===== GAME SCREEN ===== */
+#game-screen{gap:0;padding:0;justify-content:space-between}
+#hud{width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:max(12px,env(safe-area-inset-top)) 16px 8px;
+  background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);flex-shrink:0;z-index:20}
+.hud-score{font-size:clamp(1rem,4vw,1.2rem);font-weight:900;
+  background:linear-gradient(135deg,#ffe066,#ffaa00);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hud-round{font-size:0.8rem;color:#ccaaff}
+.hud-meter{flex:1;max-width:120px;margin:0 12px}
+.meter-label{font-size:0.6rem;color:#ff88cc;text-align:center;margin-bottom:2px}
+.meter-bar{height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden}
+.meter-fill{height:100%;width:0%;border-radius:4px;transition:width 0.5s ease;
+  background:linear-gradient(90deg,#44ffaa,#ffff44,#ff4444)}
+
+#ghost-zone{flex:1;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;cursor:pointer;min-height:0}
+
+/* Ghost SVG drawn via CSS */
+.ghost-wrap{position:relative;display:inline-block;animation:ghost-bob 1.8s ease-in-out infinite}
+@keyframes ghost-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.ghost-svg{width:clamp(130px,35vw,180px);height:auto;filter:drop-shadow(var(--gshadow,0 0 20px rgba(255,255,255,0.4)))}
+.ghost-accessory{position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+  font-size:clamp(1.8rem,7vw,2.5rem);transition:all 0.5s;pointer-events:none}
+.ghost-aura{position:absolute;inset:-20px;border-radius:50%;
+  background:var(--gaura,rgba(255,255,255,0.1));
+  filter:blur(20px);animation:aura-pulse 2s ease-in-out infinite;z-index:-1}
+@keyframes aura-pulse{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:1;transform:scale(1.1)}}
+.tap-hint{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);
+  font-size:0.7rem;color:rgba(255,255,255,0.5);animation:fade-hint 2s ease-in-out infinite;
+  white-space:nowrap}
+@keyframes fade-hint{0%,100%{opacity:0.3}50%{opacity:0.8}}
+
+#scenario-zone{width:100%;padding:0 12px 8px;flex-shrink:0}
+.scenario-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);
+  border-radius:16px;padding:14px 16px;margin-bottom:10px;text-align:center;
+  animation:card-in 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  backdrop-filter:blur(6px)}
+@keyframes card-in{from{opacity:0;transform:translateY(30px) scale(0.9)}to{opacity:1;transform:none}}
+.scenario-text{font-size:clamp(0.85rem,3.5vw,1.05rem);line-height:1.5;font-weight:600;
+  color:#fff;margin-bottom:4px}
+.scenario-sub{font-size:clamp(0.65rem,2.5vw,0.78rem);color:#aaaacc;line-height:1.4}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+.choice-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);
+  color:#fff;font-size:clamp(0.72rem,2.8vw,0.88rem);font-weight:700;
+  padding:12px 8px;border-radius:12px;cursor:pointer;line-height:1.3;
+  font-family:inherit;transition:all 0.15s;position:relative;overflow:hidden}
+.choice-btn:active{transform:scale(0.94)}
+.choice-btn.angel-choice{border-color:#aaddff;background:rgba(100,180,255,0.1)}
+.choice-btn.demon-choice{border-color:#ff88aa;background:rgba(255,50,100,0.1)}
+.choice-btn.chaos-choice{border-color:#ffcc00;background:rgba(255,200,0,0.1)}
+.choice-btn.selected{animation:flash-select 0.4s ease}
+@keyframes flash-select{0%{transform:scale(1.05)}50%{transform:scale(0.95)}100%{transform:scale(1)}}
+.choice-btn::before{content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,0.15);opacity:0;transition:opacity 0.15s}
+.choice-btn:active::before{opacity:1}
+
+/* ===== RESULT ===== */
+#result-screen{gap:14px;text-align:center;padding:20px}
+.result-title{font-size:clamp(1.6rem,6vw,2.2rem);font-weight:900;
+  background:linear-gradient(135deg,#ffe066,#ff99cc,#aa66ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2}
+.result-ghost{font-size:clamp(4rem,15vw,6rem);animation:float 2s ease-in-out infinite}
+.result-type{font-size:clamp(1.1rem,4.5vw,1.4rem);font-weight:900;
+  padding:10px 24px;border-radius:30px;border:2px solid}
+.result-score{font-size:clamp(2rem,8vw,3rem);font-weight:900;
+  background:linear-gradient(135deg,#ffe066,#ffaa00);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.result-comment{font-size:clamp(0.8rem,3.2vw,0.95rem);color:#eeddff;
+  max-width:300px;line-height:1.6;background:rgba(255,255,255,0.07);
+  border-radius:12px;padding:12px}
+.result-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.result-btn{padding:12px 28px;border-radius:30px;border:none;
+  font-size:clamp(0.85rem,3.5vw,1rem);font-weight:900;cursor:pointer;font-family:inherit}
+.share-btn{background:linear-gradient(135deg,#00ccff,#0066ff);color:#fff}
+.retry-btn{background:linear-gradient(135deg,#ff44aa,#aa00ff);color:#fff}
+.result-btn:active{transform:scale(0.93)}
+
+/* ===== CHAOS EVENT OVERLAY ===== */
+#chaos-overlay{position:fixed;inset:0;z-index:100;pointer-events:all;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.85);opacity:0;transition:opacity 0.3s;
+  gap:16px;text-align:center;padding:20px}
+#chaos-overlay.active{opacity:1}
+#chaos-overlay.hidden{pointer-events:none}
+.chaos-icon{font-size:clamp(4rem,15vw,6rem);animation:spin-chaos 0.5s linear infinite}
+@keyframes spin-chaos{to{transform:rotate(360deg)}}
+.chaos-title{font-size:clamp(1.4rem,6vw,2rem);font-weight:900;
+  color:#ff4444;text-shadow:0 0 20px #ff0000;animation:shake-text 0.1s linear infinite}
+@keyframes shake-text{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.chaos-msg{font-size:clamp(0.9rem,3.5vw,1.1rem);color:#fff;max-width:280px;line-height:1.5}
+.chaos-ok{background:#ff4444;border:none;color:#fff;padding:14px 40px;border-radius:30px;
+  font-size:1rem;font-weight:900;cursor:pointer;font-family:inherit;
+  animation:pulse-btn 1s infinite}
+.chaos-ok:active{transform:scale(0.93)}
+
+/* ===== PARTICLES ===== */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.particle{position:absolute;font-size:var(--ps,1.5rem);animation:particle-fly var(--pt,1s) ease-out forwards;
+  pointer-events:none;will-change:transform,opacity}
+@keyframes particle-fly{
+  0%{opacity:1;transform:translate(0,0) scale(1) rotate(0deg)}
+  100%{opacity:0;transform:translate(var(--px,0px),var(--py,-200px)) scale(0.3) rotate(var(--pr,360deg))}}
+
+/* ===== SHAKE ===== */
+@keyframes screen-shake{
+  0%,100%{transform:translate(0,0)}10%{transform:translate(-8px,4px)}20%{transform:translate(8px,-4px)}
+  30%{transform:translate(-6px,6px)}40%{transform:translate(6px,-6px)}50%{transform:translate(-4px,4px)}
+  60%{transform:translate(4px,-4px)}70%{transform:translate(-2px,2px)}80%{transform:translate(2px,-2px)}
+  90%{transform:translate(-1px,1px)}}
+.shaking{animation:screen-shake 0.5s ease}
+
+/* ===== SCORE POP ===== */
+.score-pop{position:fixed;font-size:1.5rem;font-weight:900;
+  animation:score-rise 1s ease-out forwards;pointer-events:none;z-index:60;
+  color:#ffe066;text-shadow:0 0 10px #ffaa00}
+@keyframes score-rise{0%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-80px) scale(1.5)}}
+
+/* ===== EVOLVE FLASH ===== */
+#evolve-flash{position:fixed;inset:0;z-index:90;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,0.9),transparent 70%);
+  opacity:0;transition:opacity 0.2s}
+#evolve-flash.active{opacity:1}
+
+/* ===== PROGRESS DOTS ===== */
+.progress-dots{display:flex;gap:6px;align-items:center}
+.progress-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);
+  transition:all 0.3s}
+.progress-dot.done{background:#ffe066;box-shadow:0 0 6px #ffaa00}
+.progress-dot.current{background:#ff88cc;box-shadow:0 0 8px #ff44aa;transform:scale(1.3)}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="bg">
+    <div class="bg-split-light"></div>
+    <div class="bg-split-dark"></div>
+  </div>
+
+  <!-- TITLE -->
+  <div class="screen" id="title-screen">
+    <div class="title-ghost" id="title-ghost">👻</div>
+    <div class="title-logo" id="title-logo">さんちゃんの<br>神判決ショー</div>
+    <div class="title-sub" id="title-sub">SANCHAN'S DIVINE CHAOS SHOW</div>
+    <div class="title-desc" id="title-desc">
+      神様があなたにしょーもない裁判を押しつけてきた。<br>
+      10個の意味不明な事件を裁け！<br>
+      <small style="color:#ff88cc">あなたのさんちゃんは天使か？悪魔か？</small>
+    </div>
+    <button class="start-btn" id="start-btn" onclick="startGame()">
+      <span id="start-text">⚖️ 裁判開始！</span>
+    </button>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-ja" onclick="setLang('ja')">🇯🇵 日本語</button>
+      <button class="lang-btn" id="lang-en" onclick="setLang('en')">🇺🇸 English</button>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div class="screen hidden" id="game-screen">
+    <div id="hud">
+      <div>
+        <div class="hud-score">✨ <span id="score-display">0</span></div>
+        <div class="hud-round" id="round-display">Q1/10</div>
+      </div>
+      <div class="hud-meter">
+        <div class="meter-label" id="chaos-label">😇 HOLY</div>
+        <div class="meter-bar"><div class="meter-fill" id="chaos-meter"></div></div>
+      </div>
+      <div class="progress-dots" id="progress-dots"></div>
+    </div>
+
+    <div id="ghost-zone" onclick="ghostTap()">
+      <div class="ghost-wrap" id="ghost-wrap">
+        <div class="ghost-aura" id="ghost-aura"></div>
+        <svg class="ghost-svg" id="ghost-svg" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+          <!-- ghost body -->
+          <path id="ghost-body" d="M15,65 Q15,20 60,15 Q105,20 105,65 L105,115 Q95,105 85,115 Q75,125 65,115 Q55,125 45,115 Q35,105 25,115 Q15,105 15,100 Z" fill="#f0f0f0" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+          <!-- face -->
+          <circle id="eye-l" cx="43" cy="65" r="8" fill="#222"/>
+          <circle id="eye-r" cx="77" cy="65" r="8" fill="#222"/>
+          <circle cx="46" cy="62" r="3" fill="#fff"/>
+          <circle cx="80" cy="62" r="3" fill="#fff"/>
+          <ellipse id="mouth" cx="60" cy="83" rx="10" ry="7" fill="#222"/>
+          <ellipse cx="60" cy="85" rx="7" ry="4" fill="#ff9999"/>
+          <!-- cheeks -->
+          <ellipse id="cheek-l" cx="30" cy="75" rx="8" ry="5" fill="rgba(255,150,150,0.4)"/>
+          <ellipse id="cheek-r" cx="90" cy="75" rx="8" ry="5" fill="rgba(255,150,150,0.4)"/>
+          <!-- extras rendered by JS -->
+          <g id="ghost-extras"></g>
+        </svg>
+        <div class="ghost-accessory" id="ghost-acc">😇</div>
+      </div>
+      <div class="tap-hint" id="tap-hint">👆 タップ！/ TAP!</div>
+    </div>
+
+    <div id="scenario-zone">
+      <div class="scenario-card" id="scenario-card">
+        <div class="scenario-text" id="scenario-text">読み込み中…</div>
+        <div class="scenario-sub" id="scenario-sub"></div>
+      </div>
+      <div class="choices" id="choices"></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen hidden" id="result-screen">
+    <div class="result-title" id="result-title">判決！</div>
+    <div class="result-ghost" id="result-ghost">👻</div>
+    <div class="result-type" id="result-type"></div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-comment" id="result-comment"></div>
+    <div class="result-btns">
+      <button class="result-btn share-btn" onclick="shareResult()">📤 シェア / Share</button>
+      <button class="result-btn retry-btn" onclick="retryGame()">🔄 もう一回 / Retry</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAOS OVERLAY -->
+<div id="chaos-overlay" class="hidden">
+  <div class="chaos-icon" id="chaos-icon">💥</div>
+  <div class="chaos-title" id="chaos-title">混乱イベント！</div>
+  <div class="chaos-msg" id="chaos-msg"></div>
+  <button class="chaos-ok" id="chaos-ok" onclick="dismissChaos()">わかった！ / GOT IT!</button>
+</div>
+
+<!-- PARTICLES -->
+<div id="particles"></div>
+<div id="evolve-flash"></div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let lang = 'ja';
+let score = 0;
+let chaosMeter = 0; // 0-100, 100 = full demon
+let round = 0;
+let totalRounds = 10;
+let ghostLevel = 0; // 0=pure angel 1=angel 2=neutral 3=gray demon 4=dark demon 5=full demon
+let tapCount = 0;
+let gameActive = false;
+let currentScenario = null;
+
+// ============================================================
+// GHOST CONFIGS (5 evolution stages + secret demon lord)
+// ============================================================
+const GHOSTS = [
+  {
+    emoji:'👼', acc:'😇✨',
+    bodyFill:'#fffdf5', eyeFill:'#334',
+    aura:'rgba(255,240,150,0.25)', shadow:'0 0 30px rgba(255,220,100,0.5)',
+    ja:'天使さんちゃん', en:'Angel Sanchan',
+    extras:`<path d="M25,50 Q15,35 20,25 Q30,15 35,30" fill="none" stroke="#ffe082" stroke-width="3" stroke-linecap="round"/>
+            <path d="M95,50 Q105,35 100,25 Q90,15 85,30" fill="none" stroke="#ffe082" stroke-width="3" stroke-linecap="round"/>
+            <ellipse cx="60" cy="10" rx="20" ry="5" fill="none" stroke="#ffd700" stroke-width="3"/>`
+  },
+  {
+    emoji:'😊', acc:'🌟',
+    bodyFill:'#e8e8f0', eyeFill:'#223',
+    aura:'rgba(200,200,255,0.2)', shadow:'0 0 25px rgba(180,180,255,0.4)',
+    ja:'ふつうさんちゃん', en:'Normal Sanchan',
+    extras:''
+  },
+  {
+    emoji:'😏', acc:'💜',
+    bodyFill:'#c8c8d8', eyeFill:'#112',
+    aura:'rgba(150,100,200,0.2)', shadow:'0 0 25px rgba(150,100,255,0.4)',
+    ja:'うさんくさいさんちゃん', en:'Sketchy Sanchan',
+    extras:`<path d="M45,55 L60,60 L75,55" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round"/>`
+  },
+  {
+    emoji:'😈', acc:'👹',
+    bodyFill:'#888898', eyeFill:'#600',
+    aura:'rgba(200,50,50,0.25)', shadow:'0 0 30px rgba(255,50,50,0.5)',
+    ja:'小悪魔さんちゃん', en:'Devil Sanchan',
+    extras:`<path d="M40,20 L45,5 L50,20" fill="#cc3333" stroke="#aa0000" stroke-width="1"/>
+            <path d="M70,20 L75,5 L80,20" fill="#cc3333" stroke="#aa0000" stroke-width="1"/>
+            <ellipse cx="60" cy="83" rx="12" ry="8" fill="#aa0000"/>`
+  },
+  {
+    emoji:'👿', acc:'🔥',
+    bodyFill:'#444455', eyeFill:'#ff3300',
+    aura:'rgba(255,50,0,0.3)', shadow:'0 0 40px rgba(255,100,0,0.7)',
+    ja:'本物の悪魔さんちゃん', en:'True Demon Sanchan',
+    extras:`<path d="M35,15 L43,0 L48,18" fill="#ff2200" stroke="#cc0000" stroke-width="1"/>
+            <path d="M72,15 L80,0 L85,18" fill="#ff2200" stroke="#cc0000" stroke-width="1"/>
+            <path d="M30,90 Q35,110 25,120 Q20,125 15,118" stroke="#ff4400" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M90,90 Q85,110 95,120 Q100,125 105,118" stroke="#ff4400" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <ellipse cx="60" cy="83" rx="13" ry="9" fill="#880000"/>
+            <path d="M50,80 L55,86 L60,80 L65,86 L70,80" stroke="#fff" stroke-width="1.5" fill="none"/>`
+  },
+  {
+    emoji:'💀', acc:'👑🔥',
+    bodyFill:'#111122', eyeFill:'#ff0000',
+    aura:'rgba(200,0,255,0.4)', shadow:'0 0 60px rgba(200,0,255,0.8)',
+    ja:'さんちゃん魔王', en:'DEMON LORD SANCHAN',
+    extras:`<path d="M35,15 L40,-5 L48,18" fill="#9900ff" stroke="#6600cc" stroke-width="1"/>
+            <path d="M72,15 L80,-5 L85,18" fill="#9900ff" stroke="#6600cc" stroke-width="1"/>
+            <path d="M20,50 Q5,65 10,85" stroke="#9900ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M100,50 Q115,65 110,85" stroke="#9900ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="60" cy="83" rx="14" ry="9" fill="#440066"/>
+            <path d="M49,78 L53,86 L57,78 L60,86 L63,78 L67,86 L71,78" stroke="#cc88ff" stroke-width="1.5" fill="none"/>
+            <circle cx="43" cy="65" r="9" fill="#ff0000" opacity="0.8"/>
+            <circle cx="77" cy="65" r="9" fill="#ff0000" opacity="0.8"/>
+            <circle cx="43" cy="65" r="4" fill="#fff"/>
+            <circle cx="77" cy="65" r="4" fill="#fff"/>`
+  }
+];
+
+// ============================================================
+// SCENARIOS (the glorious absurdity)
+// ============================================================
+const SCENARIOS = [
+  {
+    ja: '神様がLINEをブロックした。どうする？',
+    en: 'God blocked you on LINE. What do you do?',
+    sub_ja: '既読スルーされてた歴12億年…',
+    sub_en: 'You\'ve been left on read for 1.2 billion years...',
+    choices: [
+      {ja:'Instagramでフォロー申請する',en:'Send an Instagram follow request',type:'angel',pts:300,chaos:5},
+      {ja:'天国をGoogleレビュー1★にする',en:'Leave a 1-star Google review of Heaven',type:'demon',pts:800,chaos:25},
+      {ja:'新しい神様をAmazonで注文する',en:'Order a new God on Amazon',type:'chaos',pts:1500,chaos:40},
+      {ja:'許す（大人の対応）',en:'Forgive them (mature response)',type:'angel',pts:200,chaos:0}
+    ]
+  },
+  {
+    ja: '悪魔がビーガンになった。どうする？',
+    en: 'The devil went vegan. What do you do?',
+    sub_ja: '地獄のメニューから肉料理が全部消えた…',
+    sub_en: 'All meat dishes vanished from Hell\'s menu...',
+    choices: [
+      {ja:'応援する（偉い）',en:'Support them (good for them)',type:'angel',pts:250,chaos:0},
+      {ja:'地獄にアサイーボウルを届ける',en:'Deliver acai bowls to Hell',type:'angel',pts:400,chaos:8},
+      {ja:'肉を隠す',en:'Hide meat from them',type:'demon',pts:700,chaos:20},
+      {ja:'自分も悪魔ビーガンになる',en:'Become a demon vegan yourself',type:'chaos',pts:1200,chaos:35}
+    ]
+  },
+  {
+    ja: '太陽が「もう照らすのやめたい」と言い出した。どう説得する？',
+    en: 'The sun said "I quit shining." How do you convince it?',
+    sub_ja: '全宇宙が暗くなってきた…残り15分…',
+    sub_en: 'The universe is going dark... 15 minutes left...',
+    choices: [
+      {ja:'頑張ってと励ます',en:'Cheer it up',type:'angel',pts:300,chaos:5},
+      {ja:'太陽にボーナスを出す',en:'Give the sun a bonus',type:'angel',pts:500,chaos:8},
+      {ja:'月に残業させる',en:'Make the moon work overtime',type:'demon',pts:800,chaos:22},
+      {ja:'自分が太陽の代わりになる（燃える）',en:'Become the sun yourself (burn up)',type:'chaos',pts:2000,chaos:50}
+    ]
+  },
+  {
+    ja: '犬があなたの宿題を食べた。でもあなたはゴーストなので宿題は存在しない。',
+    en: 'A dog ate your homework. But you\'re a ghost, so homework doesn\'t exist.',
+    sub_ja: '犬が「え？」ってなってる…',
+    sub_en: 'The dog is confused...',
+    choices: [
+      {ja:'哲学的すぎて何もしない',en:'Too philosophical, do nothing',type:'angel',pts:400,chaos:0},
+      {ja:'犬に宿題を作ってもらう',en:'Make the dog do homework',type:'angel',pts:600,chaos:10},
+      {ja:'犬を裁判に訴える',en:'Sue the dog in court',type:'demon',pts:900,chaos:28},
+      {ja:'自分も犬の宿題を食べる（無敵の反撃）',en:'Eat the dog\'s homework (ultimate counter)',type:'chaos',pts:1800,chaos:45}
+    ]
+  },
+  {
+    ja: '地獄にWi-Fiが開通した。パスワードを決めろ。',
+    en: 'Hell just got WiFi. Choose the password.',
+    sub_ja: '悪魔たちが「早く！繋がらない！」って騒いでる',
+    sub_en: 'Demons screaming "It won\'t connect!" everywhere',
+    choices: [
+      {ja:'password123（定番）',en:'password123 (classic)',type:'angel',pts:200,chaos:5},
+      {ja:'YameteKudastop!!1',en:'YameteKudastop!!1',type:'angel',pts:500,chaos:8},
+      {ja:'BossIsDumb666',en:'BossIsDumb666',type:'demon',pts:1000,chaos:30},
+      {ja:'パスワードを「パスワードなし」にする（最悪のセキュリティ）',en:'"NoPassword" as the password (worst security)',type:'chaos',pts:1500,chaos:45}
+    ]
+  },
+  {
+    ja: '天使がAmazonで偽の翼を注文して空から落ちた。どうする？',
+    en: 'An angel ordered fake wings on Amazon and fell from the sky. What do you do?',
+    sub_ja: 'レビュー：★1「翼が来なかった、代わりに猫が来た」',
+    sub_en: 'Review: ★1 "Wings never arrived, got a cat instead"',
+    choices: [
+      {ja:'助ける（良い人）',en:'Help them (good person)',type:'angel',pts:400,chaos:0},
+      {ja:'その猫を引き取る',en:'Adopt the cat',type:'angel',pts:600,chaos:5},
+      {ja:'同じ翼を注文してみる',en:'Order the same wings yourself',type:'demon',pts:900,chaos:25},
+      {ja:'猫に翼をつけて新しい天使にする',en:'Attach wings to the cat, make a new angel',type:'chaos',pts:2000,chaos:40}
+    ]
+  },
+  {
+    ja: '神様がガチャを引いて「天国SSRレア」を外した。慰めろ。',
+    en: 'God pulled a gacha and missed the SSR. Console them.',
+    sub_ja: '神様が号泣しながらリセマラしてる…課金額：∞円',
+    sub_en: 'God is crying and doing save-scum loops... spent: ∞ yen',
+    choices: [
+      {ja:'「次こそは！」と励ます',en:'"You\'ll get it next time!" cheer',type:'angel',pts:300,chaos:5},
+      {ja:'課金してあげる（無限ループ）',en:'Pay for more rolls (infinite loop)',type:'demon',pts:700,chaos:20},
+      {ja:'「神様なら自分でSSR作れば」とアドバイス',en:'"You\'re God, just make your own SSR"',type:'chaos',pts:1200,chaos:35},
+      {ja:'一緒に号泣する（共感力100）',en:'Cry together (max empathy)',type:'angel',pts:500,chaos:8}
+    ]
+  },
+  {
+    ja: '閻魔大王がTikTokデビューした。コンテンツのアドバイスを頼まれた。',
+    en: 'The King of Hell debuted on TikTok. They want content advice.',
+    sub_ja: 'フォロワー0人…動画「地獄の日常」再生数：3回（自撮り含む）',
+    sub_en: '0 followers... video "Daily Hell Life" got 3 views (including selfies)',
+    choices: [
+      {ja:'ダンス動画を勧める',en:'Recommend dance videos',type:'angel',pts:400,chaos:8},
+      {ja:'「地獄ASMR」を提案する',en:'Suggest "Hell ASMR"',type:'demon',pts:800,chaos:22},
+      {ja:'「魂コレクション開封動画」を提案する',en:'Suggest "Soul Collection Unboxing"',type:'chaos',pts:1500,chaos:38},
+      {ja:'自分がプロデューサーになる（独占契約）',en:'Become their producer (exclusive deal)',type:'chaos',pts:2000,chaos:50}
+    ]
+  },
+  {
+    ja: '宇宙人が地球に来たが「なんか違う」と帰ろうとしている。引き止めろ。',
+    en: 'Aliens arrived on Earth but said "Nah, pass" and are leaving. Stop them.',
+    sub_ja: '宇宙人「思ってたより人間が面白くなかった」',
+    sub_en: 'Alien: "Humans were less entertaining than expected"',
+    choices: [
+      {ja:'地球の良いところを紹介する',en:'Show them Earth\'s highlights',type:'angel',pts:300,chaos:5},
+      {ja:'ラーメンを食べさせる',en:'Feed them ramen',type:'angel',pts:600,chaos:8},
+      {ja:'YouTubeのコメント欄を見せる（カオスの証拠）',en:'Show them YouTube comments (proof of chaos)',type:'demon',pts:1000,chaos:30},
+      {ja:'宇宙船に乗り込んで一緒に逃げる',en:'Jump in their ship and escape with them',type:'chaos',pts:2500,chaos:60}
+    ]
+  },
+  {
+    ja: '最終判決！あなた自身が天使か悪魔か神様に問われた。どう答える？',
+    en: 'FINAL JUDGMENT! God asks if you\'re angel or demon. Your answer?',
+    sub_ja: '神様「どっち？正直に言え。嘘ついたらわかる（全知全能なので）」',
+    sub_en: 'God: "Which one? Be honest. I\'ll know if you lie (omniscient)"',
+    choices: [
+      {ja:'「天使です！🙏」（嘘かも）',en:'"I\'m an angel! 🙏" (maybe lying)',type:'angel',pts:500,chaos:5},
+      {ja:'「悪魔です😈」（正直者）',en:'"I\'m a demon 😈" (honest)',type:'demon',pts:800,chaos:20},
+      {ja:'「どっちでもない、さんちゃんです」',en:'"Neither — I\'m Sanchan"',type:'chaos',pts:3000,chaos:0},
+      {ja:'「あなたが作ったんだからあなたのせいでは？」',en:'"You made me, so isn\'t this YOUR fault?"',type:'chaos',pts:5000,chaos:50}
+    ]
+  }
+];
+
+// ============================================================
+// CHAOS EVENTS (random interrupts)
+// ============================================================
+const CHAOS_EVENTS = [
+  {
+    icon:'🌋',
+    ja_title:'緊急事態！', en_title:'EMERGENCY!',
+    ja_msg:'閻魔大王が「判決遅すぎ！」とクレームを入れてきた。\nスコアが少し増えた（なぜか）',
+    en_msg:'The King of Hell complained "You\'re too slow!"\nScore bonus added (somehow)',
+    bonus: 500
+  },
+  {
+    icon:'🐟',
+    ja_title:'魚が現れた！', en_title:'A FISH APPEARED!',
+    ja_msg:'どこからか魚が降ってきた。\n理由は不明。スコア+300',
+    en_msg:'Fish fell from nowhere.\nReason unknown. Score +300',
+    bonus: 300
+  },
+  {
+    icon:'📱',
+    ja_title:'神様からLINE！', en_title:'LINE FROM GOD!',
+    ja_msg:'神様「ゲームやってる場合か」\nあなた「…」\nスコア+200',
+    en_msg:'God: "Shouldn\'t you be doing something else?"\nYou: "..."\nScore +200',
+    bonus: 200
+  },
+  {
+    icon:'🦆',
+    ja_title:'アヒルの反乱！', en_title:'DUCK REVOLUTION!',
+    ja_msg:'アヒルたちが裁判所を占拠した。\n「クワックワック（我々の権利を認めよ）」\nスコア+800',
+    en_msg:'Ducks have occupied the courthouse.\n"Quack quack (recognize our rights)"\nScore +800',
+    bonus: 800
+  },
+  {
+    icon:'🌈',
+    ja_title:'虹が喋った！', en_title:'THE RAINBOW TALKED!',
+    ja_msg:'虹が急に「俺の色が足りない」と言い出した。\n8色目を追加する権限があなたに与えられた。\nスコア+1000',
+    en_msg:'The rainbow suddenly said "I need more colors."\nYou\'ve been granted authority to add an 8th color.\nScore +1000',
+    bonus: 1000
+  }
+];
+
+// ============================================================
+// LANG
+// ============================================================
+function setLang(l) {
+  lang = l;
+  document.getElementById('lang-ja').classList.toggle('active', l==='ja');
+  document.getElementById('lang-en').classList.toggle('active', l==='en');
+  if (l === 'ja') {
+    document.getElementById('title-logo').innerHTML = 'さんちゃんの<br>神判決ショー';
+    document.getElementById('title-sub').textContent = 'SANCHAN\'S DIVINE CHAOS SHOW';
+    document.getElementById('title-desc').innerHTML = '神様があなたにしょーもない裁判を押しつけてきた。<br>10個の意味不明な事件を裁け！<br><small style="color:#ff88cc">あなたのさんちゃんは天使か？悪魔か？</small>';
+    document.getElementById('start-text').textContent = '⚖️ 裁判開始！';
+  } else {
+    document.getElementById('title-logo').innerHTML = 'SANCHAN\'S<br>DIVINE CHAOS SHOW';
+    document.getElementById('title-sub').textContent = 'さんちゃんの神判決ショー';
+    document.getElementById('title-desc').innerHTML = 'God dumped 10 absurd cases on you.<br>Judge them all!<br><small style="color:#ff88cc">Will your Sanchan be angel or demon?</small>';
+    document.getElementById('start-text').textContent = '⚖️ Start Trial!';
+  }
+}
+
+// ============================================================
+// GAME START
+// ============================================================
+function startGame() {
+  score = 0; chaosMeter = 0; round = 0; ghostLevel = 0; tapCount = 0; gameActive = true;
+  updateGhost();
+  buildProgressDots();
+  showScreen('game-screen');
+  setTimeout(() => loadScenario(), 400);
+}
+
+function buildProgressDots() {
+  const c = document.getElementById('progress-dots');
+  c.innerHTML = '';
+  for (let i = 0; i < totalRounds; i++) {
+    const d = document.createElement('div');
+    d.className = 'progress-dot' + (i===0?' current':'');
+    d.id = `dot-${i}`;
+    c.appendChild(d);
+  }
+}
+
+function updateProgressDots() {
+  for (let i = 0; i < totalRounds; i++) {
+    const d = document.getElementById(`dot-${i}`);
+    if (!d) continue;
+    d.className = 'progress-dot' + (i < round ? ' done' : i === round ? ' current' : '');
+  }
+}
+
+// ============================================================
+// GHOST TAP (easter egg / bonus)
+// ============================================================
+function ghostTap() {
+  tapCount++;
+  spawnParticles(getGhostCenter(), ['✨','💫','⭐','🌟'], 5);
+  showScorePop('+10 タップボーナス!', getGhostCenter());
+  score += 10;
+  updateScoreDisplay();
+  // Secret: 10 taps triggers mini chaos
+  if (tapCount % 10 === 0) {
+    triggerRandomTapEvent();
+  }
+}
+
+function triggerRandomTapEvent() {
+  const msgs_ja = [
+    'さんちゃんが気持ちよさそう…+500点！',
+    '連打しすぎて時空が歪んだ…+300点！',
+    'さんちゃんが「もうやめて😭」と言っている…+700点！'
+  ];
+  const msgs_en = [
+    'Sanchan looks... pleased? +500pts!',
+    'Too many taps, spacetime warped... +300pts!',
+    'Sanchan says "Stop it 😭"... +700pts!'
+  ];
+  const bonus = [500,300,700][Math.floor(Math.random()*3)];
+  const idx = Math.floor(Math.random()*3);
+  score += bonus;
+  updateScoreDisplay();
+  showChaosOverlay({
+    icon:'👻',
+    ja_title:'タップ暴走！', en_title:'TAP FRENZY!',
+    ja_msg: msgs_ja[idx], en_msg: msgs_en[idx],
+    bonus: 0 // already added
+  });
+}
+
+function getGhostCenter() {
+  const gz = document.getElementById('ghost-zone');
+  const r = gz.getBoundingClientRect();
+  return {x: r.left + r.width/2, y: r.top + r.height/2};
+}
+
+// ============================================================
+// SCENARIO LOADING
+// ============================================================
+function loadScenario() {
+  if (round >= totalRounds) { endGame(); return; }
+  updateProgressDots();
+  document.getElementById('round-display').textContent = `Q${round+1}/${totalRounds}`;
+
+  // Maybe trigger chaos event (rounds 3,6)
+  if ((round === 3 || round === 6) && Math.random() < 0.8) {
+    const ev = CHAOS_EVENTS[Math.floor(Math.random()*CHAOS_EVENTS.length)];
+    showChaosOverlay(ev, true);
+    return;
+  }
+
+  currentScenario = SCENARIOS[round];
+  const card = document.getElementById('scenario-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = '';
+
+  document.getElementById('scenario-text').textContent =
+    lang==='ja' ? currentScenario.ja : currentScenario.en;
+  document.getElementById('scenario-sub').textContent =
+    lang==='ja' ? (currentScenario.sub_ja||'') : (currentScenario.sub_en||'');
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  currentScenario.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = `choice-btn ${c.type}-choice`;
+    btn.textContent = lang==='ja' ? c.ja : c.en;
+    btn.onclick = () => selectChoice(i);
+    choicesEl.appendChild(btn);
+  });
+}
+
+// ============================================================
+// CHOICE SELECTION
+// ============================================================
+function selectChoice(idx) {
+  if (!gameActive || !currentScenario) return;
+  const c = currentScenario.choices[idx];
+
+  // Disable all buttons
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.onclick = null; b.style.opacity='0.5';
+  });
+  const selected = document.querySelectorAll('.choice-btn')[idx];
+  selected.classList.add('selected');
+  selected.style.opacity='1';
+  selected.style.border='2px solid #ffe066';
+
+  // Award points
+  score += c.pts;
+  chaosMeter = Math.min(100, chaosMeter + c.chaos);
+  updateScoreDisplay();
+  updateChaosMeter();
+
+  // Particles
+  const btnRect = selected.getBoundingClientRect();
+  const center = {x: btnRect.left + btnRect.width/2, y: btnRect.top + btnRect.height/2};
+  const emojis = c.type==='angel'?['😇','✨','💛','🌟']:
+                 c.type==='demon'?['😈','🔥','💜','👿']:
+                 ['💥','🌀','❓','🎲'];
+  spawnParticles(center, emojis, 8);
+
+  // Score pop
+  showScorePop(`+${c.pts.toLocaleString()}`, center);
+
+  // Check ghost evolution
+  const newLevel = Math.floor(chaosMeter / 17); // 0-5
+  if (newLevel > ghostLevel) {
+    ghostLevel = Math.min(5, newLevel);
+    setTimeout(() => evolveGhost(), 400);
+  }
+
+  round++;
+  setTimeout(() => loadScenario(), 900);
+}
+
+// ============================================================
+// GHOST EVOLUTION
+// ============================================================
+function evolveGhost() {
+  const flash = document.getElementById('evolve-flash');
+  flash.classList.add('active');
+  shakeScreen();
+  spawnParticles(getGhostCenter(), ['💥','✨','🌟','💫','🔥'], 15);
+  setTimeout(() => {
+    flash.classList.remove('active');
+    updateGhost();
+    showScorePop(lang==='ja'?'進化！':'EVOLVED!', getGhostCenter());
+  }, 200);
+}
+
+function updateGhost() {
+  const g = GHOSTS[Math.min(ghostLevel, GHOSTS.length-1)];
+  document.getElementById('ghost-body').setAttribute('fill', g.bodyFill);
+  document.getElementById('eye-l').setAttribute('fill', g.eyeFill);
+  document.getElementById('eye-r').setAttribute('fill', g.eyeFill);
+  document.getElementById('ghost-extras').innerHTML = g.extras;
+  document.getElementById('ghost-aura').style.background = g.aura;
+  document.getElementById('ghost-svg').style.filter = `drop-shadow(${g.shadow})`;
+  document.getElementById('ghost-acc').textContent = g.acc;
+  // Ghost emoji in title
+  document.getElementById('title-ghost').textContent = g.emoji;
+}
+
+function updateScoreDisplay() {
+  document.getElementById('score-display').textContent = score.toLocaleString();
+}
+
+function updateChaosMeter() {
+  document.getElementById('chaos-meter').style.width = chaosMeter+'%';
+  const label = document.getElementById('chaos-label');
+  if (chaosMeter < 20) label.textContent = '😇 HOLY';
+  else if (chaosMeter < 40) label.textContent = '😐 MEH';
+  else if (chaosMeter < 60) label.textContent = '😏 SKETCHY';
+  else if (chaosMeter < 80) label.textContent = '😈 EVIL';
+  else label.textContent = '💀 CHAOS';
+}
+
+// ============================================================
+// CHAOS OVERLAY
+// ============================================================
+let chaosCallback = null;
+function showChaosOverlay(ev, afterCallback = false) {
+  const ov = document.getElementById('chaos-overlay');
+  document.getElementById('chaos-icon').textContent = ev.icon;
+  document.getElementById('chaos-title').textContent = lang==='ja' ? ev.ja_title : ev.en_title;
+  document.getElementById('chaos-msg').textContent = lang==='ja' ? ev.ja_msg : ev.en_msg;
+
+  if (ev.bonus > 0) {
+    score += ev.bonus;
+    updateScoreDisplay();
+  }
+
+  ov.classList.remove('hidden');
+  requestAnimationFrame(() => ov.classList.add('active'));
+  shakeScreen();
+  spawnParticles({x:window.innerWidth/2, y:window.innerHeight/2},
+    ['💥','🌟','✨','🔥','⚡'], 12);
+
+  chaosCallback = afterCallback ? () => loadScenario() : null;
+}
+
+function dismissChaos() {
+  const ov = document.getElementById('chaos-overlay');
+  ov.classList.remove('active');
+  setTimeout(() => ov.classList.add('hidden'), 300);
+  if (chaosCallback) { setTimeout(chaosCallback, 350); chaosCallback = null; }
+}
+
+// ============================================================
+// PARTICLES
+// ============================================================
+function spawnParticles(center, emojis, count) {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    const angle = (Math.PI * 2 * i / count) + Math.random()*0.5;
+    const dist = 80 + Math.random()*120;
+    const px = Math.cos(angle)*dist;
+    const py = Math.sin(angle)*dist - 80;
+    const dur = 0.7 + Math.random()*0.6;
+    const rot = (Math.random()-0.5)*720;
+    p.style.cssText = `left:${center.x}px;top:${center.y}px;
+      --px:${px}px;--py:${py}px;--pt:${dur}s;--pr:${rot}deg;
+      --ps:${0.9+Math.random()*0.8}rem;transform:translate(-50%,-50%)`;
+    container.appendChild(p);
+    setTimeout(() => p.remove(), dur*1000+100);
+  }
+}
+
+// ============================================================
+// SCORE POP
+// ============================================================
+function showScorePop(text, pos) {
+  const el = document.createElement('div');
+  el.className = 'score-pop';
+  el.textContent = text;
+  el.style.left = (pos.x - 40) + 'px';
+  el.style.top = (pos.y - 20) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1000);
+}
+
+// ============================================================
+// SCREEN SHAKE
+// ============================================================
+function shakeScreen() {
+  const app = document.getElementById('app');
+  app.classList.remove('shaking');
+  void app.offsetWidth;
+  app.classList.add('shaking');
+  setTimeout(() => app.classList.remove('shaking'), 500);
+}
+
+// ============================================================
+// SCREEN TRANSITIONS
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.toggle('hidden', s.id !== id);
+  });
+}
+
+// ============================================================
+// END GAME
+// ============================================================
+function endGame() {
+  gameActive = false;
+  // Determine ghost type
+  const finalGhost = GHOSTS[Math.min(ghostLevel, GHOSTS.length-1)];
+  const types = [
+    {ja:'超聖人級天使👼',en:'ULTRA HOLY ANGEL 👼',color:'#ffe066',border:'#ffcc00',
+     ja_c:'あなたは神様も「えっ、なんで？」って言うほど善良でした。怖い。',
+     en_c:'You were so holy even God said "Wait, why?" Kinda scary.'},
+    {ja:'ぼちぼち良い人😊',en:'DECENT PERSON 😊',color:'#aaffaa',border:'#44cc44',
+     ja_c:'悪くない判決でした。普通すぎてつまらないとも言う。',
+     en_c:'Not bad rulings. Some would say too boring though.'},
+    {ja:'グレーゾーン住人😏',en:'GRAY ZONE RESIDENT 😏',color:'#ccaaff',border:'#8844cc',
+     ja_c:'白でも黒でもない。あなたはグレーという名の自由人。',
+     en_c:'Not white, not black. You live in the gray zone of freedom.'},
+    {ja:'小悪魔認定😈',en:'CERTIFIED MINI-DEVIL 😈',color:'#ff88aa',border:'#ff2266',
+     ja_c:'悪魔の素質あり。閻魔大王からスカウト来てるよ。',
+     en_c:'Devil potential confirmed. The King of Hell is recruiting you.'},
+    {ja:'本物の悪魔👿',en:'AUTHENTIC DEMON 👿',color:'#ff4444',border:'#cc0000',
+     ja_c:'地獄があなたのために新しいフロアを作りました。おめでとう（？）',
+     en_c:'Hell built a new floor just for you. Congrats (?)'},
+    {ja:'魔王伝説始動💀',en:'DEMON LORD RISES 💀',color:'#cc88ff',border:'#8800ff',
+     ja_c:'神様が震えています。あなたのせいで天国と地獄の境界線が消えました。',
+     en_c:'God is trembling. The boundary between Heaven and Hell dissolved because of you.'}
+  ];
+
+  const typeInfo = types[Math.min(ghostLevel, types.length-1)];
+
+  showScreen('result-screen');
+  document.getElementById('result-title').textContent = lang==='ja' ? '最終判決！' : 'FINAL VERDICT!';
+  document.getElementById('result-ghost').textContent = finalGhost.emoji;
+  document.getElementById('result-type').textContent = lang==='ja' ? typeInfo.ja : typeInfo.en;
+  document.getElementById('result-type').style.color = typeInfo.color;
+  document.getElementById('result-type').style.borderColor = typeInfo.border;
+  document.getElementById('result-score').textContent = score.toLocaleString() + ' pt';
+  document.getElementById('result-comment').textContent = lang==='ja' ? typeInfo.ja_c : typeInfo.en_c;
+
+  // Big celebration
+  setTimeout(() => {
+    shakeScreen();
+    spawnParticles({x:window.innerWidth/2, y:window.innerHeight/3},
+      ['🎉','🎊','✨','💫','👻','🌟','🔥','💥'], 25);
+  }, 500);
+}
+
+// ============================================================
+// SHARE
+// ============================================================
+function shareResult() {
+  const ghost = GHOSTS[Math.min(ghostLevel, GHOSTS.length-1)];
+  const typeName = ghostLevel <= 1 ? (lang==='ja'?'天使系':'Angel type') :
+                   ghostLevel <= 3 ? (lang==='ja'?'グレーゾーン':'Gray zone') :
+                                     (lang==='ja'?'悪魔系':'Demon type');
+  const text = lang==='ja'
+    ? `さんちゃんの神判決ショー🎭\n\n${ghost.emoji} 私の判決タイプ：${ghost.ja}\nスコア：${score.toLocaleString()}pt\nカオス度：${chaosMeter}%\n\n10問の意味不明な裁判を裁きました！\n#さんちゃん #神判決 #意味不明ゲーム`
+    : `SANCHAN'S DIVINE CHAOS SHOW 🎭\n\n${ghost.emoji} My verdict type: ${ghost.en}\nScore: ${score.toLocaleString()}pt\nChaos: ${chaosMeter}%\n\nJudged 10 absolutely unhinged court cases!\n#SanchanGame #DivineChaosCourt`;
+
+  if (navigator.share) {
+    navigator.share({ title: "さんちゃんの神判決ショー", text });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.share-btn');
+      const orig = btn.textContent;
+      btn.textContent = lang==='ja'?'コピーした！':'Copied!';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  }
+}
+
+// ============================================================
+// RETRY
+// ============================================================
+function retryGame() {
+  spawnParticles({x:window.innerWidth/2, y:window.innerHeight/2},
+    ['🔄','💫','✨'], 8);
+  showScreen('title-screen');
+  ghostLevel = 0;
+  updateGhost();
+}
+
+// ============================================================
+// STARS BG
+// ============================================================
+(function buildStars() {
+  const bg = document.getElementById('bg');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;
+      --t:${1.5+Math.random()*3}s;--o:${0.3+Math.random()*0.7}`;
+    bg.appendChild(s);
+  }
+})();
+
+// ============================================================
+// AUDIO (Web Audio API - lo-fi sound effects)
+// ============================================================
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playBeep(freq=440, type='sine', dur=0.1, vol=0.15) {
+  try {
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+dur);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+dur);
+  } catch(e){}
+}
+
+// Patch selectChoice to play sounds
+const _orig = window.selectChoice;
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('choice-btn')) playBeep(600,'square',0.08,0.1);
+  if (e.target.classList.contains('start-btn')) playBeep(880,'sine',0.2,0.12);
+});
+
+// Init lang
+setLang('ja');
+</script>
+</body>
+</html>
