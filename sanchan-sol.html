@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080010">
+<title>さんちゃん SOL予言師 👻</title>
+<style>
+:root{--sol-purple:#9945FF;--sol-green:#14F195;--sol-dark:#080010;--sol-card:rgba(153,69,255,0.08)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--sol-dark);font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Segoe UI',sans-serif;color:#fff;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}
+#bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 50% at 20% -10%,rgba(153,69,255,0.15),transparent),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(20,241,149,0.08),transparent),linear-gradient(170deg,#080010 0%,#100020 60%,#060018 100%)}
+.grid-line{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(153,69,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(153,69,255,0.04) 1px,transparent 1px);background-size:40px 40px}
+#app{position:relative;z-index:10;height:100%;display:flex;flex-direction:column;align-items:center;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));gap:0;overflow:hidden}
+.screen{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:0;transition:opacity 0.35s,transform 0.35s}
+.screen.off{opacity:0;pointer-events:none;transform:scale(0.97)}
+.t-ghost{font-size:clamp(4rem,15vw,6rem);animation:gfloat 2.5s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(153,69,255,0.6));margin-bottom:6px;line-height:1}
+@keyframes gfloat{0%,100%{transform:translateY(0)rotate(-2deg)}50%{transform:translateY(-16px)rotate(2deg)}}
+.t-logo{font-size:clamp(1.7rem,6.5vw,2.4rem);font-weight:900;line-height:1.15;text-align:center;background:linear-gradient(135deg,#fff 0%,var(--sol-purple) 50%,var(--sol-green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.t-sub{font-size:0.62rem;letter-spacing:4px;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:20px}
+.t-card{background:var(--sol-card);border:1px solid rgba(153,69,255,0.2);border-radius:18px;padding:16px 20px;font-size:clamp(0.78rem,3vw,0.9rem);line-height:1.75;color:rgba(255,255,255,0.62);text-align:center;max-width:320px;margin-bottom:22px;backdrop-filter:blur(12px)}
+.t-card em{color:var(--sol-green);font-style:normal}
+.t-card b{color:var(--sol-purple)}
+.phantom-btn{width:100%;max-width:300px;padding:15px;border:none;border-radius:16px;font-size:clamp(0.9rem,3.3vw,1rem);font-weight:800;cursor:pointer;font-family:inherit;background:linear-gradient(135deg,#AB9FF2,#9945FF);color:#fff;box-shadow:0 8px 32px rgba(153,69,255,0.45);display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;letter-spacing:0.3px}
+.phantom-btn:active{transform:scale(0.95)}
+.skip-btn{width:100%;max-width:300px;padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);font-size:0.88rem;font-weight:700;cursor:pointer;font-family:inherit}
+.skip-btn:active{transform:scale(0.95)}
+.t-lang{display:flex;gap:10px;margin-top:14px}
+.t-lang button{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.4);padding:7px 18px;border-radius:20px;font-size:0.76rem;cursor:pointer;font-family:inherit}
+.t-lang button.on{background:rgba(153,69,255,0.25);border-color:var(--sol-purple);color:#fff}
+#wallet-strip{width:100%;max-width:420px;background:rgba(153,69,255,0.1);border:1px solid rgba(153,69,255,0.22);border-radius:12px;padding:8px 14px;display:none;align-items:center;gap:10px;margin-bottom:8px;flex-shrink:0}
+#wallet-strip.show{display:flex}
+.ws-dot{width:7px;height:7px;border-radius:50%;background:var(--sol-green);box-shadow:0 0 8px var(--sol-green);flex-shrink:0}
+.ws-addr{font-size:0.72rem;color:rgba(255,255,255,0.5);flex:1;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ws-bal{font-size:0.82rem;font-weight:800;color:var(--sol-green);flex-shrink:0}
+#game-ui{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:0;flex:1;min-height:0;position:relative;z-index:10;padding-top:max(16px,env(safe-area-inset-top))}
+#price-section{width:100%;text-align:center;margin-bottom:6px;flex-shrink:0}
+.price-label{font-size:0.55rem;letter-spacing:4px;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:2px}
+#price-num{font-size:clamp(2.4rem,9vw,3.4rem);font-weight:900;line-height:1;letter-spacing:-2px;transition:color 0.4s}
+#price-num.up{background:linear-gradient(135deg,#14F195,#00cc77);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#price-num.down{background:linear-gradient(135deg,#ff4444,#cc0000);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#price-num.neutral{background:linear-gradient(135deg,#fff,#ccaaff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#price-change{font-size:0.82rem;font-weight:700;margin-top:2px}
+#price-change.up{color:var(--sol-green)}
+#price-change.down{color:#ff5555}
+#chart-wrap{width:100%;height:70px;margin-bottom:8px;flex-shrink:0;position:relative}
+#chart-canvas{width:100%;height:100%;border-radius:10px}
+#countdown-wrap{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px;flex-shrink:0}
+#countdown-ring{position:relative;width:52px;height:52px;flex-shrink:0}
+#cd-svg{width:100%;height:100%;transform:rotate(-90deg)}
+#cd-bg{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:4}
+#cd-fill{fill:none;stroke:var(--sol-purple);stroke-width:4;stroke-linecap:round;stroke-dasharray:138.23;stroke-dashoffset:0;transition:stroke 0.3s}
+#cd-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;color:rgba(255,255,255,0.9)}
+.cd-label{font-size:0.72rem;color:rgba(255,255,255,0.38);line-height:1.3}
+#streak-badge{display:flex;align-items:center;gap:5px;background:rgba(20,241,149,0.12);border:1px solid rgba(20,241,149,0.3);border-radius:20px;padding:5px 12px;font-size:0.78rem;font-weight:800;color:var(--sol-green);transition:all 0.3s}
+#streak-badge.off{opacity:0}
+#score-strip{width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 4px;margin-bottom:8px;flex-shrink:0}
+.ss-block{display:flex;flex-direction:column;align-items:flex-start}
+.ss-label{font-size:0.52rem;letter-spacing:3px;color:rgba(255,255,255,0.25);text-transform:uppercase}
+.ss-val{font-size:clamp(1.2rem,4.5vw,1.55rem);font-weight:900;background:linear-gradient(135deg,#fff,#ffd966);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+#sim-sol{align-items:flex-end}
+.sol-val{font-size:clamp(1.1rem,4vw,1.4rem);font-weight:900;color:var(--sol-green);line-height:1}
+#ghost-zone{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;width:100%}
+#ghost-container{position:relative;display:flex;align-items:center;justify-content:center;animation:gfloat 2.5s ease-in-out infinite}
+#ghost-svg-el{width:clamp(110px,28vw,150px);height:auto;filter:drop-shadow(var(--glow,0 0 24px rgba(153,69,255,0.5)));transition:filter 0.8s}
+#ghost-aura-el{position:absolute;inset:-24px;border-radius:50%;background:var(--gaura,rgba(153,69,255,0.15));filter:blur(20px);animation:aura-pulse 2.5s ease-in-out infinite;z-index:-1}
+@keyframes aura-pulse{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}
+#ghost-acc-el{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:clamp(1.2rem,4.5vw,1.7rem);transition:all 0.5s;pointer-events:none}
+.ghost-pop{animation:gpop 0.4s cubic-bezier(0.36,0.07,0.19,0.97)}
+@keyframes gpop{0%{transform:scale(1)}35%{transform:scale(1.25,0.8)}70%{transform:scale(0.88,1.18)}100%{transform:scale(1)}}
+#result-banner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;pointer-events:none;opacity:0;transition:opacity 0.3s;z-index:30}
+#result-banner.show{opacity:1}
+.rb-emoji{font-size:clamp(2.5rem,9vw,3.5rem);animation:rbpop 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+.rb-text{font-size:clamp(1.3rem,5vw,1.8rem);font-weight:900;text-align:center;text-shadow:0 0 20px currentColor}
+@keyframes rbpop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+#choice-area{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0;margin-bottom:4px}
+.choice-btn{padding:clamp(14px,4vw,18px) 12px;border:none;border-radius:16px;font-size:clamp(0.88rem,3.3vw,1rem);font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:0.3px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform 0.15s,box-shadow 0.15s;position:relative;overflow:hidden}
+.choice-btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.12);opacity:0;transition:opacity 0.15s}
+.choice-btn:active::before{opacity:1}
+.choice-btn:active{transform:scale(0.95)}
+.choice-btn:disabled{opacity:0.35;cursor:not-allowed}
+#btn-up{background:linear-gradient(135deg,rgba(20,241,149,0.18),rgba(0,180,100,0.1));border:1.5px solid rgba(20,241,149,0.45);color:var(--sol-green);box-shadow:0 4px 20px rgba(20,241,149,0.2)}
+#btn-up .btn-icon{font-size:1.5em}
+#btn-down{background:linear-gradient(135deg,rgba(255,80,80,0.18),rgba(180,0,0,0.1));border:1.5px solid rgba(255,80,80,0.45);color:#ff6666;box-shadow:0 4px 20px rgba(255,60,60,0.2)}
+#btn-down .btn-icon{font-size:1.5em}
+.btn-main-text{font-size:clamp(0.75rem,2.8vw,0.88rem);opacity:0.75;font-weight:600}
+#status-bar{width:100%;text-align:center;font-size:clamp(0.68rem,2.5vw,0.78rem);color:rgba(255,255,255,0.32);flex-shrink:0;padding-bottom:2px}
+.par{position:fixed;pointer-events:none;z-index:60;font-size:var(--s,1rem);animation:par-fly var(--t,0.9s) ease-out forwards}
+@keyframes par-fly{from{opacity:1;transform:translate(0,0)scale(1)rotate(0deg)}to{opacity:0;transform:translate(var(--x),var(--y))scale(0.3)rotate(var(--r))}}
+.pts-pop{position:fixed;pointer-events:none;z-index:61;font-weight:900;font-size:clamp(1.1rem,4vw,1.4rem);animation:pts-rise 0.9s ease-out forwards}
+@keyframes pts-rise{0%{opacity:1;transform:translateY(0)scale(0.8)}40%{opacity:1;transform:translateY(-28px)scale(1.1)}100%{opacity:0;transform:translateY(-80px)scale(0.9)}}
+#flash{position:fixed;inset:0;z-index:55;pointer-events:none;opacity:0;transition:opacity 0.15s}
+#flash.a{opacity:1;transition:none}
+#flash.f{opacity:0;transition:opacity 0.55s}
+#loading{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--sol-dark)}
+.spin{width:36px;height:36px;border:3px solid rgba(153,69,255,0.2);border-top-color:var(--sol-purple);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-text{font-size:0.75rem;letter-spacing:3px;color:rgba(255,255,255,0.3);text-transform:uppercase}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div class="grid-line"></div>
+<div id="flash"></div>
+<div id="loading">
+  <div style="font-size:3rem;animation:gfloat 2s ease-in-out infinite">👻</div>
+  <div class="spin"></div>
+  <div class="load-text" id="load-txt">SOL価格を取得中…</div>
+</div>
+<div class="screen off" id="sc-title">
+  <div class="t-ghost" id="tg-emoji">👻</div>
+  <div class="t-logo" id="t-logo">さんちゃん<br>SOL予言師</div>
+  <div class="t-sub">SANCHAN SOL ORACLE</div>
+  <div class="t-card" id="t-card">リアルタイムの<b>SOL価格</b>を使ったゲーム。<br>30秒後に価格が<em>上がる</em>か<em>下がる</em>かを予測！<br>予測が当たるとゴーストが<em>天使に進化</em>し、<br>外れると<em>悪魔</em>になる…</div>
+  <button class="phantom-btn" id="btn-phantom" onclick="connectPhantom()"><span>👻</span><span id="phantom-btn-txt">Phantomウォレットで接続</span></button>
+  <button class="skip-btn" id="btn-skip" onclick="startWithoutWallet()"><span id="skip-txt">ウォレットなしでプレイ</span></button>
+  <div class="t-lang"><button id="lj" class="on" onclick="setLang('ja')">🇯🇵 JP</button><button id="le" onclick="setLang('en')">🇺🇸 EN</button></div>
+</div>
+<div id="game-ui" style="display:none">
+  <div id="wallet-strip"><div class="ws-dot"></div><div class="ws-addr" id="ws-addr"></div><div class="ws-bal" id="ws-bal"></div></div>
+  <div id="price-section"><div class="price-label">SOL / USD</div><div id="price-num" class="neutral">$—</div><div id="price-change"></div></div>
+  <div id="chart-wrap"><canvas id="chart-canvas"></canvas></div>
+  <div id="countdown-wrap">
+    <div id="countdown-ring"><svg id="cd-svg" viewBox="0 0 48 48"><circle id="cd-bg" cx="24" cy="24" r="22"/><circle id="cd-fill" cx="24" cy="24" r="22"/></svg><div id="cd-num">—</div></div>
+    <div class="cd-label" id="cd-label">次の価格更新まで</div>
+    <div id="streak-badge" class="off"><span>🔥</span><span id="streak-num">0</span><span id="streak-suffix">連続正解</span></div>
+  </div>
+  <div id="score-strip">
+    <div class="ss-block"><div class="ss-label" id="ssl-score">SCORE</div><div class="ss-val" id="ss-score">0</div></div>
+    <div class="ss-block"><div class="ss-label" id="ssl-round">ROUND</div><div class="ss-val" id="ss-round">1</div></div>
+    <div class="ss-block" id="sim-sol"><div class="ss-label">SIM SOL</div><div class="sol-val" id="ss-sol">0.10</div></div>
+  </div>
+  <div id="ghost-zone">
+    <div id="ghost-container">
+      <div id="ghost-aura-el"></div>
+      <svg id="ghost-svg-el" viewBox="0 0 120 145" xmlns="http://www.w3.org/2000/svg">
+        <defs><radialGradient id="gg" cx="38%" cy="32%" r="68%"><stop id="gs1" offset="0%" stop-color="#ffffff"/><stop id="gs2" offset="100%" stop-color="#e0dcf8"/></radialGradient></defs>
+        <path id="gbody" d="M18,70 Q18,16 60,12 Q102,16 102,70 L102,116 Q94,106 86,116 Q78,126 68,116 Q60,126 52,116 Q42,106 34,116 Q26,106 18,116 Z" fill="url(#gg)"/>
+        <circle id="gel" cx="44" cy="70" r="9" fill="#1a1a30"/><circle id="ger" cx="76" cy="70" r="9" fill="#1a1a30"/>
+        <circle cx="47" cy="67" r="3.5" fill="#fff"/><circle cx="79" cy="67" r="3.5" fill="#fff"/>
+        <ellipse id="gbl" cx="30" cy="80" rx="8" ry="5" fill="rgba(255,150,150,0.32)"/><ellipse id="gbr" cx="90" cy="80" rx="8" ry="5" fill="rgba(255,150,150,0.32)"/>
+        <path id="gmouth" d="M50,90 Q60,100 70,90" stroke="#1a1a30" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <g id="gextra"></g>
+      </svg>
+      <div id="ghost-acc-el">✨</div>
+    </div>
+    <div id="result-banner"><div class="rb-emoji" id="rb-emoji"></div><div class="rb-text" id="rb-text"></div></div>
+  </div>
+  <div id="choice-area">
+    <button class="choice-btn" id="btn-up" onclick="predict('up')"><span class="btn-icon">🚀</span><span id="up-txt">UP!</span><span class="btn-main-text" id="up-sub">上がる</span></button>
+    <button class="choice-btn" id="btn-down" onclick="predict('down')"><span class="btn-icon">📉</span><span id="dn-txt">DOWN!</span><span class="btn-main-text" id="dn-sub">下がる</span></button>
+  </div>
+  <div id="status-bar"><span id="status-txt">リアルタイムSOL価格でプレイ中 · CoinGecko</span></div>
+</div>
+<script>
+'use strict';
+const GS=[
+  {body1:'#ffffff',body2:'#d4ccff',eyes:'#1a1a30',aura:'rgba(153,69,255,0.18)',glow:'0 0 28px rgba(153,69,255,0.55)',acc:'😇',emoji:'👼',extra:`<ellipse cx="60" cy="6" rx="22" ry="5.5" fill="none" stroke="#ffd700" stroke-width="3"/><path d="M22,52 Q8,34 16,20 Q30,10 36,28" fill="rgba(255,240,190,0.5)" stroke="#ffe090" stroke-width="1.5"/><path d="M98,52 Q112,34 104,20 Q90,10 84,28" fill="rgba(255,240,190,0.5)" stroke="#ffe090" stroke-width="1.5"/>`},
+  {body1:'#fffce0',body2:'#d8d090',eyes:'#1a1820',aura:'rgba(255,220,80,0.2)',glow:'0 0 28px rgba(255,210,80,0.55)',acc:'🌟',emoji:'✨',extra:`<ellipse cx="60" cy="6" rx="18" ry="4" fill="none" stroke="#ffd700" stroke-width="2.5"/>`},
+  {body1:'#f0f0f8',body2:'#c8c8e0',eyes:'#1a1a28',aura:'rgba(180,180,255,0.15)',glow:'0 0 22px rgba(160,160,255,0.4)',acc:'🌙',emoji:'😊',extra:''},
+  {body1:'#d0c8e8',body2:'#a090c0',eyes:'#100010',aura:'rgba(140,100,220,0.18)',glow:'0 0 24px rgba(140,100,220,0.45)',acc:'💜',emoji:'😏',extra:`<path d="M42,60 L50,67 L58,60" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M62,60 L70,67 L78,60" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round"/>`},
+  {body1:'#a888c8',body2:'#604878',eyes:'#600000',aura:'rgba(200,60,200,0.2)',glow:'0 0 28px rgba(200,60,200,0.5)',acc:'😈',emoji:'😈',extra:`<path d="M36,22 L42,5 L50,24" fill="#cc2222" stroke="#990000" stroke-width="1"/><path d="M70,22 L78,5 L84,24" fill="#cc2222" stroke="#990000" stroke-width="1"/>`},
+  {body1:'#604878',body2:'#2a1830',eyes:'#ff1100',aura:'rgba(255,40,0,0.25)',glow:'0 0 36px rgba(255,60,0,0.65)',acc:'🔥',emoji:'👿',extra:`<path d="M30,18 L38,0 L48,20" fill="#ff1111" stroke="#cc0000" stroke-width="1"/><path d="M72,18 L82,0 L90,20" fill="#ff1111" stroke="#cc0000" stroke-width="1"/><path d="M20,90 Q14,112 10,120" stroke="#ff4400" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M100,90 Q106,112 110,120" stroke="#ff4400" stroke-width="3.5" fill="none" stroke-linecap="round"/>`},
+  {body1:'#180820',body2:'#060008',eyes:'#ff0000',aura:'rgba(200,0,255,0.35)',glow:'0 0 55px rgba(200,0,255,0.8)',acc:'👑🔥',emoji:'💀',extra:`<path d="M28,16 L36,-4 L48,18" fill="#8800ff" stroke="#6600cc" stroke-width="1"/><path d="M72,16 L84,-4 L92,18" fill="#8800ff" stroke="#6600cc" stroke-width="1"/><path d="M14,65 Q4,82 8,96" stroke="#9900ff" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M106,65 Q116,82 112,96" stroke="#9900ff" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle cx="44" cy="70" r="10" fill="#ff0000" opacity="0.85"/><circle cx="76" cy="70" r="10" fill="#ff0000" opacity="0.85"/><circle cx="44" cy="70" r="4" fill="#fff"/><circle cx="76" cy="70" r="4" fill="#fff"/><path d="M47,90 L51,99 L56,90 L60,99 L64,90 L69,99 L73,90" stroke="rgba(220,120,255,0.7)" stroke-width="1.5" fill="none"/>`}
+];
+let ghostLv=3,lang='ja',solPrice=null,prevPrice=null,priceHistory=[],prediction=null,predPrice=null,timeLeft=30,interval=null,round=1,score=0,streak=0,simSol=0.10,walletAddr=null,walletBal=null,waiting=false,secToNext=30,priceLoopTimer=null;
+const CG_URL='https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd&include_24hr_change=true';
+async function fetchPrice(){try{const r=await fetch(CG_URL);const d=await r.json();return d.solana?.usd??null;}catch{return null;}}
+async function initPrice(){
+  document.getElementById('load-txt').textContent=lang==='ja'?'SOL価格を取得中…':'Fetching SOL price...';
+  const p=await fetchPrice();
+  if(!p){solPrice=145.23+(Math.random()-0.5)*10;document.getElementById('load-txt').textContent=lang==='ja'?'オフライン：デモ価格使用':'Offline: using demo price';await new Promise(r=>setTimeout(r,1000));}else{solPrice=p;}
+  priceHistory=[solPrice];updatePriceDisplay();drawChart();hidePage('loading');showTitle();
+}
+async function connectPhantom(){
+  const ph=window.solana;
+  if(!ph?.isPhantom){alert(lang==='ja'?'Phantomがインストールされていません。':'Phantom is not installed.');return;}
+  try{
+    document.getElementById('phantom-btn-txt').textContent=lang==='ja'?'接続中…':'Connecting...';
+    const resp=await ph.connect();walletAddr=resp.publicKey.toString();
+    try{const rpcResp=await fetch('https://api.mainnet-beta.solana.com',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'getBalance',params:[walletAddr]})});const rpc=await rpcResp.json();walletBal=(rpc.result?.value??0)/1e9;}catch{walletBal=null;}
+    startWithWallet();
+  }catch(e){document.getElementById('phantom-btn-txt').textContent=lang==='ja'?'Phantomウォレットで接続':'Connect Phantom Wallet';if(e.code!==4001)console.error(e);}
+}
+function startWithWallet(){
+  hidePage('sc-title');showGameUI();
+  if(walletAddr){const strip=document.getElementById('wallet-strip');strip.classList.add('show');document.getElementById('ws-addr').textContent=walletAddr.slice(0,6)+'…'+walletAddr.slice(-4);document.getElementById('ws-bal').textContent=walletBal!=null?walletBal.toFixed(4)+' SOL':'? SOL';}
+  startGame();
+}
+function startWithoutWallet(){hidePage('sc-title');showGameUI();startGame();}
+function startGame(){round=1;score=0;streak=0;simSol=0.10;ghostLv=3;prediction=null;waiting=false;updateGhost();updateHUD();enableButtons();startCountdown();priceLoop();}
+function startCountdown(){
+  secToNext=30;updateCountdown();
+  if(interval)clearInterval(interval);
+  interval=setInterval(()=>{secToNext--;updateCountdown();if(secToNext<=0){secToNext=30;if(prediction&&!waiting)onTimeUp();}},1000);
+}
+function updateCountdown(){
+  document.getElementById('cd-num').textContent=secToNext;
+  const pct=secToNext/30,circ=138.23;
+  document.getElementById('cd-fill').style.strokeDashoffset=circ*(1-pct);
+  const col=secToNext>15?'var(--sol-purple)':secToNext>8?'#ffcc00':'#ff4444';
+  document.getElementById('cd-fill').style.stroke=col;
+}
+async function priceLoop(){
+  if(priceLoopTimer)clearTimeout(priceLoopTimer);
+  const newPrice=await fetchPrice();
+  if(newPrice){prevPrice=solPrice;solPrice=newPrice;priceHistory.push(solPrice);if(priceHistory.length>30)priceHistory.shift();updatePriceDisplay();drawChart();if(waiting&&prediction)resolveRound();}
+  priceLoopTimer=setTimeout(priceLoop,30000);
+}
+function onTimeUp(){if(!prediction)return;waiting=true;fetchPrice().then(p=>{if(p){prevPrice=solPrice;solPrice=p;priceHistory.push(p);if(priceHistory.length>30)priceHistory.shift();updatePriceDisplay();drawChart();}resolveRound();});}
+function resolveRound(){waiting=false;if(!prediction||!predPrice){nextRound();return;}const win=(prediction==='up'&&solPrice>predPrice)||(prediction==='down'&&solPrice<predPrice);prediction=null;predPrice=null;enableButtons();if(win)onWin();else onLoss();}
+function onWin(){streak++;const mult=streakMult(),pts=Math.round(100*mult),solGain=+(0.01*mult).toFixed(4);score+=pts;simSol=+(simSol+solGain).toFixed(4);ghostLv=Math.max(0,ghostLv-1);updateGhost();updateHUD();spawnPts(`+${pts} (×${mult})`,'#14F195');showResultBanner(true);flashScreen('rgba(20,241,149,0.2)');spawnPars(window.innerWidth/2,window.innerHeight/2,['✨','🚀','💫','⭐','🌟'],14);popGhost();setTimeout(()=>hideResultBanner(),1600);round++;document.getElementById('ss-round').textContent=round;}
+function onLoss(){streak=0;score=Math.max(0,score-20);simSol=Math.max(0,+(simSol-0.005).toFixed(4));ghostLv=Math.min(6,ghostLv+1);updateGhost();updateHUD();spawnPts('-0.005 SOL','#ff5555');showResultBanner(false);flashScreen('rgba(255,50,30,0.2)');spawnPars(window.innerWidth/2,window.innerHeight/2,['💀','😈','🔥','💔','⚡'],10);popGhost();setTimeout(()=>hideResultBanner(),1600);round++;document.getElementById('ss-round').textContent=round;}
+function nextRound(){round++;document.getElementById('ss-round').textContent=round;}
+function streakMult(){if(streak>=10)return 5;if(streak>=6)return 3;if(streak>=3)return 2;if(streak>=2)return 1.5;return 1;}
+function predict(dir){if(prediction||waiting||!solPrice)return;prediction=dir;predPrice=solPrice;disableButtons();const j=lang==='ja';document.getElementById('status-txt').textContent=j?`${dir==='up'?'🚀 上昇':'📉 下落'}を予測！30秒後の価格を確認…`:`Predicted ${dir==='up'?'🚀 UP':'📉 DOWN'}! Checking price in 30s…`;document.getElementById('btn-'+dir).style.opacity='1';document.getElementById('btn-'+dir).style.boxShadow=dir==='up'?'0 0 30px rgba(20,241,149,0.6)':'0 0 30px rgba(255,80,80,0.6)';}
+function disableButtons(){document.getElementById('btn-up').disabled=true;document.getElementById('btn-down').disabled=true;}
+function enableButtons(){['btn-up','btn-down'].forEach(id=>{const b=document.getElementById(id);b.disabled=false;b.style.opacity='';b.style.boxShadow='';});const j=lang==='ja';document.getElementById('status-txt').textContent=j?'上がる・下がるを予測してタップ！':'Tap to predict UP or DOWN!';}
+function updatePriceDisplay(){if(!solPrice)return;const el=document.getElementById('price-num');el.textContent='$'+solPrice.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});const dir=prevPrice?(solPrice>prevPrice?'up':solPrice<prevPrice?'down':'neutral'):'neutral';el.className=dir;const chg=document.getElementById('price-change');if(prevPrice){const diff=solPrice-prevPrice,pct=(diff/prevPrice*100).toFixed(3);chg.textContent=(diff>=0?'▲ +':'▼ ')+Math.abs(diff).toFixed(2)+' ('+pct+'%)';chg.className=diff>=0?'up':'down';}else{chg.textContent='';}}
+function drawChart(){const canvas=document.getElementById('chart-canvas'),wrap=document.getElementById('chart-wrap'),dpr=window.devicePixelRatio||1;canvas.width=wrap.clientWidth*dpr;canvas.height=wrap.clientHeight*dpr;canvas.style.width=wrap.clientWidth+'px';canvas.style.height=wrap.clientHeight+'px';const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);const W=wrap.clientWidth,H=wrap.clientHeight,data=priceHistory;if(data.length<2)return;const min=Math.min(...data)*0.9995,max=Math.max(...data)*1.0005,toY=v=>H-(v-min)/(max-min)*(H-8)-4,toX=(i,n)=>i/(n-1)*(W-4)+2;const grad=ctx.createLinearGradient(0,0,0,H),isUp=data[data.length-1]>=data[0];grad.addColorStop(0,isUp?'rgba(20,241,149,0.25)':'rgba(255,80,80,0.22)');grad.addColorStop(1,'rgba(0,0,0,0)');ctx.beginPath();ctx.moveTo(toX(0,data.length),H);data.forEach((v,i)=>ctx.lineTo(toX(i,data.length),toY(v)));ctx.lineTo(toX(data.length-1,data.length),H);ctx.closePath();ctx.fillStyle=grad;ctx.fill();ctx.beginPath();data.forEach((v,i)=>{if(i===0)ctx.moveTo(toX(0,data.length),toY(v));else ctx.lineTo(toX(i,data.length),toY(v));});ctx.strokeStyle=isUp?'#14F195':'#ff5555';ctx.lineWidth=2;ctx.lineJoin='round';ctx.shadowBlur=8;ctx.shadowColor=isUp?'rgba(20,241,149,0.6)':'rgba(255,80,80,0.6)';ctx.stroke();ctx.shadowBlur=0;if(prediction&&predPrice){const predY=toY(predPrice);ctx.strokeStyle='rgba(255,220,0,0.6)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(0,predY);ctx.lineTo(W,predY);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#ffd700';ctx.font='bold 9px sans-serif';ctx.textAlign='right';ctx.fillText('$'+predPrice.toFixed(2),W-4,predY-3);ctx.textAlign='left';}}
+function updateGhost(){const g=GS[Math.min(ghostLv,GS.length-1)];document.getElementById('gs1').setAttribute('stop-color',g.body1);document.getElementById('gs2').setAttribute('stop-color',g.body2);document.getElementById('gel').setAttribute('fill',g.eyes);document.getElementById('ger').setAttribute('fill',g.eyes);document.getElementById('gextra').innerHTML=g.extra;document.getElementById('ghost-aura-el').style.background=g.aura;document.getElementById('ghost-svg-el').style.filter=`drop-shadow(${g.glow})`;document.getElementById('ghost-acc-el').textContent=g.acc;document.getElementById('tg-emoji').textContent=g.emoji;}
+function popGhost(){const gc=document.getElementById('ghost-container');gc.classList.remove('ghost-pop');void gc.offsetWidth;gc.classList.add('ghost-pop');gc.addEventListener('animationend',()=>gc.classList.remove('ghost-pop'),{once:true});}
+function showResultBanner(win){const j=lang==='ja',b=document.getElementById('result-banner');document.getElementById('rb-emoji').textContent=win?'🎉':'💀';document.getElementById('rb-text').textContent=win?(j?'予言的中！🚀':'CORRECT! 🚀'):(j?'外れた…😈':'WRONG... 😈');document.getElementById('rb-text').style.color=win?'#14F195':'#ff5555';b.classList.add('show');}
+function hideResultBanner(){document.getElementById('result-banner').classList.remove('show');}
+function updateHUD(){document.getElementById('ss-score').textContent=score.toLocaleString();document.getElementById('ss-sol').textContent=simSol.toFixed(3);const sb=document.getElementById('streak-badge');if(streak>=2){sb.classList.remove('off');document.getElementById('streak-num').textContent=streak;const mult=streakMult();sb.style.borderColor=mult>=3?'#ffd700':'rgba(20,241,149,0.3)';sb.style.background=mult>=3?'rgba(255,210,0,0.15)':'rgba(20,241,149,0.12)';sb.style.color=mult>=3?'#ffd700':'var(--sol-green)';}else{sb.classList.add('off');}}
+function spawnPars(cx,cy,emojis,n){for(let i=0;i<n;i++){const p=document.createElement('div');p.className='par';const angle=(Math.PI*2*i/n)+Math.random()*0.8,d=70+Math.random()*140,t=0.6+Math.random()*0.6;p.textContent=emojis[~~(Math.random()*emojis.length)];p.style.cssText=`left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);--x:${Math.cos(angle)*d}px;--y:${Math.sin(angle)*d-50}px;--t:${t}s;--r:${(Math.random()-.5)*600}deg;--s:${0.8+Math.random()*0.8}rem;animation-delay:${Math.random()*0.1}s`;document.body.appendChild(p);setTimeout(()=>p.remove(),(t+0.15)*1000);}}
+function spawnPts(text,color){const el=document.createElement('div');el.className='pts-pop';el.textContent=text;el.style.cssText=`left:50%;top:45%;transform:translateX(-50%);color:${color};text-shadow:0 0 12px ${color}`;document.body.appendChild(el);setTimeout(()=>el.remove(),950);}
+function flashScreen(bg){const f=document.getElementById('flash');f.style.background=bg;f.classList.add('a');setTimeout(()=>{f.classList.remove('a');f.classList.add('f');setTimeout(()=>f.classList.remove('f'),600);},120);}
+function hidePage(id){document.getElementById(id).style.display='none';}
+function showTitle(){document.getElementById('sc-title').classList.remove('off');}
+function showGameUI(){document.getElementById('game-ui').style.display='flex';}
+function setLang(l){lang=l;document.getElementById('lj').classList.toggle('on',l==='ja');document.getElementById('le').classList.toggle('on',l==='en');const j=l==='ja';document.getElementById('t-logo').innerHTML=j?'さんちゃん<br>SOL予言師':'Sanchan<br>SOL Oracle';document.getElementById('t-card').innerHTML=j?'リアルタイムの<b>SOL価格</b>を使ったゲーム。<br>30秒後に価格が<em>上がる</em>か<em>下がる</em>かを予測！<br>予測が当たるとゴーストが<em>天使に進化</em>し、<br>外れると<em>悪魔</em>になる…':'A game using <b>live SOL price</b>.<br>Predict if SOL goes <em>UP</em> or <em>DOWN</em> in 30s!<br>Correct = ghost <em>evolves toward angel</em>,<br>Wrong = becomes a <em>demon</em>…';document.getElementById('phantom-btn-txt').textContent=j?'Phantomウォレットで接続':'Connect Phantom Wallet';document.getElementById('skip-txt').textContent=j?'ウォレットなしでプレイ':'Play without wallet';document.getElementById('up-txt').textContent='UP!';document.getElementById('dn-txt').textContent='DOWN!';document.getElementById('up-sub').textContent=j?'上がる':'Goes up';document.getElementById('dn-sub').textContent=j?'下がる':'Goes down';document.getElementById('ssl-score').textContent='SCORE';document.getElementById('ssl-round').textContent=j?'ラウンド':'ROUND';document.getElementById('cd-label').textContent=j?'次の更新まで':'Next update';document.getElementById('streak-suffix').textContent=j?'連続':'streak';document.getElementById('status-txt').textContent=j?'上がる・下がるを予測してタップ！':'Tap to predict UP or DOWN!';document.getElementById('load-txt').textContent=j?'SOL価格を取得中…':'Fetching SOL price...';}
+window.addEventListener('resize',drawChart);
+setLang('ja');
+initPrice();
+</script>
+</body>
+</html>
