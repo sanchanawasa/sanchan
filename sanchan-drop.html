@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#08001c">
+<title>さんちゃんドロップ 👻</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  height:100%;overflow:hidden;
+  background:#08001c;
+  font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Segoe UI',sans-serif;
+  color:#fff;
+  touch-action:none;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#c{position:fixed;inset:0;display:block;touch-action:none}
+
+/* ── HUD ── */
+#hud{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:max(14px,env(safe-area-inset-top)) 18px 10px;
+  pointer-events:none;
+  background:linear-gradient(to bottom,rgba(8,0,28,0.92) 0%,transparent 100%);
+}
+.hb{display:flex;flex-direction:column}
+.hl{font-size:0.55rem;letter-spacing:3px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:1px}
+.hv{
+  font-size:clamp(1.6rem,5.5vw,2.1rem);font-weight:900;line-height:1;
+  background:linear-gradient(135deg,#fff 0%,#ffd966 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:-1px;
+}
+#hb-right{align-items:flex-end}
+
+/* Next preview */
+#next-box{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+#next-label{font-size:0.52rem;letter-spacing:3px;color:rgba(255,255,255,0.28);text-transform:uppercase}
+#next-frame{
+  width:56px;height:56px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(12px);
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+#nc{border-radius:12px}
+
+/* ── SCREENS ── */
+.screen{
+  position:fixed;inset:0;z-index:50;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;
+  background:linear-gradient(160deg,#06000f 0%,#130030 60%,#08001c 100%);
+}
+.screen.off{display:none}
+
+/* stars on screens */
+.screen::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,0.6),transparent),
+    radial-gradient(1px 1px at 75% 8%,rgba(255,255,255,0.5),transparent),
+    radial-gradient(2px 2px at 40% 65%,rgba(255,255,255,0.4),transparent),
+    radial-gradient(1px 1px at 90% 45%,rgba(255,255,255,0.5),transparent),
+    radial-gradient(1px 1px at 25% 80%,rgba(255,255,255,0.3),transparent),
+    radial-gradient(2px 2px at 60% 30%,rgba(255,255,255,0.4),transparent),
+    radial-gradient(1px 1px at 85% 75%,rgba(255,255,255,0.3),transparent),
+    radial-gradient(1px 1px at 5% 55%,rgba(255,255,255,0.4),transparent),
+    radial-gradient(2px 2px at 50% 90%,rgba(255,255,255,0.3),transparent);
+  pointer-events:none;
+}
+
+.sg{
+  font-size:clamp(4.5rem,17vw,7rem);
+  animation:sg-float 2.8s ease-in-out infinite;
+  filter:drop-shadow(0 0 30px rgba(180,140,255,0.5));
+  margin-bottom:4px;line-height:1;
+}
+@keyframes sg-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-18px) rotate(2deg)}}
+
+.s-title{
+  font-size:clamp(2rem,8vw,3rem);font-weight:900;
+  background:linear-gradient(135deg,#fff 0%,#cc88ff 45%,#ffd966 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  text-align:center;line-height:1.1;margin-bottom:4px;
+}
+.s-sub{
+  font-size:clamp(0.62rem,2.3vw,0.78rem);letter-spacing:4px;
+  color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:22px;
+}
+.s-card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.09);
+  border-radius:18px;padding:16px 20px;
+  font-size:clamp(0.78rem,3vw,0.9rem);line-height:1.75;
+  color:rgba(255,255,255,0.62);text-align:center;max-width:310px;
+  margin-bottom:22px;backdrop-filter:blur(12px);
+}
+.s-card em{color:#ffcc66;font-style:normal}
+.s-btn{
+  width:100%;max-width:270px;
+  padding:17px;border:none;border-radius:16px;
+  font-size:clamp(0.95rem,3.5vw,1.1rem);font-weight:800;
+  cursor:pointer;font-family:inherit;letter-spacing:0.5px;
+  background:linear-gradient(135deg,#7722ff,#ff2266);
+  color:#fff;
+  box-shadow:0 8px 36px rgba(120,0,255,0.45);
+  animation:gbtn 2s ease-in-out infinite;
+}
+@keyframes gbtn{
+  0%,100%{box-shadow:0 8px 30px rgba(120,0,255,0.45)}
+  50%{box-shadow:0 8px 52px rgba(220,0,120,0.6)}
+}
+.s-btn:active{transform:scale(0.95)}
+.s-btn.sec{
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.14);
+  box-shadow:none;animation:none;margin-top:8px;
+  font-size:0.85rem;
+}
+.s-lang{display:flex;gap:10px;margin-top:14px}
+.s-lang button{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.45);padding:7px 18px;border-radius:20px;
+  font-size:0.77rem;cursor:pointer;font-family:inherit;
+}
+.s-lang button.on{
+  background:rgba(110,40,255,0.3);border-color:rgba(150,90,255,0.55);color:#fff;
+}
+
+/* Game over specific */
+.go-pts{font-size:clamp(2.8rem,10vw,4.2rem);font-weight:900;line-height:1;
+  background:linear-gradient(135deg,#fff,#ffd966);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-2px}
+.go-pl{font-size:0.6rem;letter-spacing:4px;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:4px}
+.go-best{font-size:0.82rem;color:rgba(255,255,255,0.38);margin-top:5px}
+.go-best.new{color:#ffd700;font-weight:700}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hb">
+    <div class="hl" id="hl-sc">SCORE</div>
+    <div class="hv" id="hv-sc">0</div>
+  </div>
+  <div id="next-box">
+    <div id="next-label">NEXT</div>
+    <div id="next-frame"><canvas id="nc" width="52" height="52"></canvas></div>
+  </div>
+  <div class="hb" id="hb-right">
+    <div class="hl" id="hl-bs">BEST</div>
+    <div class="hv" id="hv-bs">0</div>
+  </div>
+</div>
+
+<!-- TITLE -->
+<div class="screen" id="sc-title">
+  <div class="sg" id="tg">👻</div>
+  <div class="s-title" id="t-ttl">さんちゃん<br>ドロップ</div>
+  <div class="s-sub">SANCHAN DROP</div>
+  <div class="s-card" id="t-desc">
+    同じゴーストが触れると<em>合体</em>して進化！<br>
+    天使さんちゃんが悪魔になり…<em>魔王</em>を目指せ。<br>
+    積みすぎると<em>GAME OVER</em> 👑
+  </div>
+  <button class="s-btn" onclick="startGame()"><span id="t-st">👻 はじめる</span></button>
+  <div class="s-lang">
+    <button id="lj" class="on" onclick="setLang('ja')">🇯🇵 JP</button>
+    <button id="le"           onclick="setLang('en')">🇺🇸 EN</button>
+  </div>
+</div>
+
+<!-- GAMEOVER -->
+<div class="screen off" id="sc-go">
+  <div class="sg" id="go-ghost">😵</div>
+  <div class="s-title" id="go-ttl" style="margin-bottom:14px">GAME<br>OVER</div>
+  <div class="go-pl" id="go-pl">SCORE</div>
+  <div class="go-pts" id="go-sc">0</div>
+  <div class="go-best" id="go-bs"></div>
+  <div class="s-card" id="go-cm" style="margin-top:16px;margin-bottom:16px"></div>
+  <button class="s-btn" onclick="startGame()"><span id="go-rt">🔄 もう一回</span></button>
+  <button class="s-btn sec" onclick="shareScore()">📤 Share</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script>
+'use strict';
+const {Engine,Runner,Bodies,Body,Composite,Events} = Matter;
+
+/* ══════════════════════════════════════
+   GHOST DATA  (10 levels: 0→9)
+══════════════════════════════════════ */
+const GD = [
+  // r=physics radius, dr=visual ghost radius
+  {ja:'ちびさんちゃん', en:'Micro Sanchan',
+   r:17, c1:'#f8f8ff', c2:'#d0d0f0', glow:'200,200,255', pts:10,  acc:'none',     lv_emoji:'👻'},
+  {ja:'しろさんちゃん', en:'White Sanchan',
+   r:25, c1:'#ffffff', c2:'#dcdcf8', glow:'220,230,255', pts:30,  acc:'halo_s',   lv_emoji:'👻'},
+  {ja:'てんしさんちゃん',en:'Angel Sanchan',
+   r:34, c1:'#fffde8', c2:'#e8e0c0', glow:'255,240,140', pts:60,  acc:'halo',     lv_emoji:'👼'},
+  {ja:'きんいろさんちゃん',en:'Golden Sanchan',
+   r:44, c1:'#fff5a0', c2:'#d0c040', glow:'255,220,80',  pts:100, acc:'halo_l',   lv_emoji:'✨'},
+  {ja:'ふつうさんちゃん', en:'Normal Sanchan',
+   r:56, c1:'#e4e4f4', c2:'#b8b8d8', glow:'180,170,255', pts:160, acc:'none',     lv_emoji:'😊'},
+  {ja:'あやしいさんちゃん',en:'Shady Sanchan',
+   r:68, c1:'#c0b8d8', c2:'#908098', glow:'180,140,220', pts:250, acc:'none',     lv_emoji:'😏'},
+  {ja:'こあくまさんちゃん',en:'Mini-Devil',
+   r:82, c1:'#b090c8', c2:'#704880', glow:'200,80,200',  pts:400, acc:'horn_s',   lv_emoji:'😈'},
+  {ja:'あくまさんちゃん', en:'Devil Sanchan',
+   r:97, c1:'#8060a0', c2:'#401860', glow:'220,50,160',  pts:650, acc:'horn',     lv_emoji:'👿'},
+  {ja:'だーくさんちゃん', en:'Dark Sanchan',
+   r:113,c1:'#401860', c2:'#180828', glow:'160,0,240',   pts:1000,acc:'horn_l',   lv_emoji:'💀'},
+  {ja:'まおうさんちゃん', en:'DEMON LORD 👑',
+   r:130,c1:'#180028', c2:'#060010', glow:'200,0,255',   pts:2000,acc:'crown',    lv_emoji:'👑'},
+];
+const MAX_LV = GD.length - 1;
+const SPAWN_LVS = [0,0,0,1,1,2,3]; // weighted: small ones more likely
+
+/* ══════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════ */
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+const nc     = document.getElementById('nc');
+const nctx   = nc.getContext('2d');
+const DPR    = window.devicePixelRatio || 1;
+
+let SW,SH,BOX_X,BOX_W,BOX_Y,BOX_H,WALL,DROP_Y,DANGER_Y;
+
+function layout(){
+  SW = window.innerWidth; SH = window.innerHeight;
+  canvas.width  = SW*DPR; canvas.height = SH*DPR;
+  canvas.style.width  = SW+'px'; canvas.style.height = SH+'px';
+  ctx.scale(DPR,DPR);
+
+  const hudH = parseInt(getComputedStyle(document.getElementById('hud')).height)||76;
+  BOX_W  = Math.min(370, SW - 12);
+  BOX_X  = (SW - BOX_W) / 2;
+  BOX_Y  = hudH + 8;
+  BOX_H  = SH - BOX_Y - max(18, parseInt(getComputedStyle(document.body).paddingBottom||0));
+  WALL   = 6;
+  DROP_Y = BOX_Y + 36;
+  DANGER_Y = BOX_Y + 55;
+}
+const max = Math.max;
+
+/* ══════════════════════════════════════
+   PHYSICS
+══════════════════════════════════════ */
+let engine, world, runner;
+const mergeQ   = [];
+const pending  = new Set();
+let   bodies   = [];  // cache of all non-wall bodies
+
+function physicsSetup(){
+  if(engine){ Runner.stop(runner); Composite.clear(world,false); Engine.clear(engine); }
+  engine = Engine.create({gravity:{y:1.6}});
+  world  = engine.world;
+  runner = Runner.create({delta:1000/60});
+
+  const wo = {isStatic:true,friction:0.4,label:'wall'};
+  const wL = Bodies.rectangle(BOX_X - WALL/2,          BOX_Y+BOX_H/2, WALL, BOX_H*2, wo);
+  const wR = Bodies.rectangle(BOX_X+BOX_W + WALL/2,    BOX_Y+BOX_H/2, WALL, BOX_H*2, wo);
+  const wB = Bodies.rectangle(BOX_X+BOX_W/2, BOX_Y+BOX_H+WALL/2, BOX_W+WALL*2, WALL, wo);
+  Composite.add(world,[wL,wR,wB]);
+
+  Events.on(engine,'collisionStart', onCollide);
+  Events.on(engine,'afterUpdate',    onAfterUpdate);
+  Runner.run(runner,engine);
+  bodies = [];
+}
+
+function onCollide(e){
+  for(const p of e.pairs){
+    const {bodyA:a, bodyB:b} = p;
+    if(a.label==='wall'||b.label==='wall') continue;
+    if(pending.has(a.id)||pending.has(b.id)) continue;
+    if(a.ghostLv===undefined||b.ghostLv===undefined) continue;
+    if(a.ghostLv!==b.ghostLv) continue;
+    if(a.ghostLv>=MAX_LV) continue;
+    pending.add(a.id); pending.add(b.id);
+    mergeQ.push({a,b,lv:a.ghostLv});
+  }
+}
+
+function onAfterUpdate(){
+  while(mergeQ.length){
+    const {a,b,lv} = mergeQ.shift();
+    if(!Composite.get(world,a.id,'body')||!Composite.get(world,b.id,'body')) continue;
+    const mx = (a.position.x+b.position.x)/2;
+    const my = (a.position.y+b.position.y)/2;
+    Composite.remove(world,a); Composite.remove(world,b);
+    pending.delete(a.id); pending.delete(b.id);
+    bodies = bodies.filter(x=>x!==a&&x!==b);
+    const nb = addGhost(mx, Math.min(my, BOX_Y+BOX_H-GD[lv+1].r-5), lv+1);
+    Body.setVelocity(nb,{x:0,y:-3});
+    onMerge(mx,my,lv+1);
+  }
+  // cache bodies
+  bodies = Composite.allBodies(world).filter(b=>b.label!=='wall');
+  checkDanger();
+}
+
+function addGhost(x,y,lv){
+  const g = GD[lv];
+  const b = Bodies.circle(x,y,g.r,{
+    restitution:0.3, friction:0.5, frictionAir:0.012, density:0.002,
+    label:String(lv)
+  });
+  b.ghostLv = lv;
+  Composite.add(world,b);
+  bodies.push(b);
+  return b;
+}
+
+/* ══════════════════════════════════════
+   GAME STATE
+══════════════════════════════════════ */
+let lang     = 'ja';
+let state    = 'title';  // title | play | gameover
+let score    = 0;
+let best     = +localStorage.getItem('sc_best')||0;
+let curLv    = 0;
+let nextLv   = 0;
+let dropX    = 0;
+let canDrop  = false;
+let dropLock = false;
+let dangerMs = 0;
+const DANGER_LIMIT = 2800;
+const DROP_DELAY   = 650;
+
+// Particles
+const pars = [];
+const pops = [];
+
+/* ══════════════════════════════════════
+   INPUT
+══════════════════════════════════════ */
+function getX(e){ return (e.touches?e.touches[0]:e).clientX; }
+function getY(e){ return (e.touches?e.touches[0]:e).clientY; }
+
+function clampX(x,lv){
+  const r = GD[lv].r;
+  return Math.max(BOX_X+r+2, Math.min(BOX_X+BOX_W-r-2, x));
+}
+
+canvas.addEventListener('touchmove', e=>{
+  e.preventDefault();
+  if(state==='play') dropX = clampX(getX(e), curLv);
+},{passive:false});
+
+canvas.addEventListener('mousemove', e=>{
+  if(state==='play') dropX = clampX(getX(e), curLv);
+});
+
+canvas.addEventListener('touchstart', e=>{
+  e.preventDefault();
+  if(state==='play'){
+    dropX = clampX(getX(e), curLv);
+    if(canDrop&&!dropLock) drop();
+  }
+},{passive:false});
+
+canvas.addEventListener('mousedown', e=>{
+  if(state==='play'){
+    dropX = clampX(getX(e), curLv);
+    if(canDrop&&!dropLock) drop();
+  }
+});
+
+function drop(){
+  if(!canDrop||dropLock||state!=='play') return;
+  dropLock = true;
+  canDrop  = false;
+  addGhost(dropX, DROP_Y, curLv);
+  curLv  = nextLv;
+  nextLv = SPAWN_LVS[Math.floor(Math.random()*SPAWN_LVS.length)];
+  drawNextPreview();
+  setTimeout(()=>{ dropLock=false; canDrop=true; }, DROP_DELAY);
+}
+
+/* ══════════════════════════════════════
+   MERGE REWARD
+══════════════════════════════════════ */
+function onMerge(x,y,lv){
+  const pts = GD[lv].pts;
+  score += pts;
+  updateHUD();
+  spawnPop(x, y-10, `+${pts.toLocaleString()}`, GD[lv].glow, lv>=6);
+  spawnMergePars(x,y,lv);
+  if(lv===MAX_LV){
+    score += 5000; updateHUD();
+    spawnPop(x, y-44, lang==='ja'?'👑 魔王誕生!!':'👑 DEMON LORD!!', '200,0,255', true);
+  }
+}
+
+/* ══════════════════════════════════════
+   DANGER
+══════════════════════════════════════ */
+function checkDanger(){
+  if(state!=='play') return;
+  let danger = false;
+  for(const b of bodies){
+    if(b.position.y - GD[b.ghostLv].r < DANGER_Y){
+      const spd = Math.hypot(b.velocity.x,b.velocity.y);
+      if(spd < 0.6){ danger=true; break; }
+    }
+  }
+  const dt = engine.timing.lastDelta||16;
+  if(danger){
+    dangerMs += dt;
+    if(dangerMs >= DANGER_LIMIT){ gameOver(); }
+  } else {
+    dangerMs = Math.max(0, dangerMs - dt*1.5);
+  }
+}
+
+/* ══════════════════════════════════════
+   DRAW — GHOST
+══════════════════════════════════════ */
+function drawGhost(c, x, y, lv, alpha=1, angle=0){
+  const g = GD[lv];
+  const r = g.r;
+  c.save();
+  c.translate(x,y);
+  if(angle) c.rotate(angle);
+  c.globalAlpha = alpha;
+
+  // Outer glow
+  c.shadowBlur  = r * 0.9;
+  c.shadowColor = `rgba(${g.glow},0.65)`;
+
+  // Body path
+  ghostBodyPath(c, 0, 0, r);
+  const grd = c.createRadialGradient(-r*0.2,-r*0.3,r*0.05, 0,0,r*1.05);
+  grd.addColorStop(0, g.c1);
+  grd.addColorStop(1, g.c2);
+  c.fillStyle = grd;
+  c.fill();
+  c.shadowBlur = 0;
+
+  // Face
+  const ey  = r*0.05;
+  const exo = r*0.27;
+  const er  = r*0.18;
+  const ecol = lv>=8?'#ff1100': lv>=5?'#0d0010':'#1a1a30';
+
+  c.fillStyle = ecol;
+  for(const sx of [-1,1]){
+    c.beginPath();
+    c.ellipse(sx*exo, ey, er, er*(lv>=6?1.25:1), 0, 0, Math.PI*2);
+    c.fill();
+  }
+  // Eye shine
+  c.fillStyle = 'rgba(255,255,255,0.92)';
+  for(const sx of [-1,1]){
+    c.beginPath();
+    c.ellipse(sx*exo+er*0.3, ey-er*0.3, er*0.37, er*0.37, 0, 0, Math.PI*2);
+    c.fill();
+  }
+  // Blush
+  if(lv<=7){
+    c.fillStyle = `rgba(255,140,140,${0.28-lv*0.02})`;
+    for(const sx of [-1,1]){
+      c.beginPath();
+      c.ellipse(sx*(exo+er*0.6), ey+er*1.1, er*1.0, er*0.55, 0, 0, Math.PI*2);
+      c.fill();
+    }
+  }
+  // Mouth
+  const my = ey + er*2.6;
+  c.strokeStyle = ecol;
+  c.lineWidth   = r*0.05;
+  c.lineCap     = 'round';
+  c.beginPath();
+  if(lv>=6){
+    c.moveTo(-r*0.22, my);
+    c.quadraticCurveTo(0, my+r*0.18, r*0.22, my);
+    c.stroke();
+    // fangs
+    c.fillStyle = '#fff';
+    for(const sx of [-1,0,1]){
+      c.fillRect(sx*r*0.12-r*0.05, my, r*0.085, r*0.12);
+    }
+  } else {
+    c.moveTo(-r*0.18, my);
+    c.quadraticCurveTo(0, my+r*0.12, r*0.18, my);
+    c.stroke();
+  }
+
+  // Accessories
+  drawAcc(c, 0, 0, r, g.acc, lv);
+
+  c.globalAlpha=1;
+  c.restore();
+}
+
+function ghostBodyPath(c, x, y, r){
+  c.beginPath();
+  c.arc(x, y-r*0.1, r, Math.PI, 0);
+  const by  = y + r*0.72;
+  const bw  = r;
+  const bh  = r*0.28;
+  c.lineTo(x+bw, by);
+  c.bezierCurveTo(x+bw*0.7, by+bh,   x+bw*0.4, by,       x,      by+bh);
+  c.bezierCurveTo(x-bw*0.4, by+bh*2, x-bw*0.7, by,       x-bw,   by+bh*0.5);
+  c.lineTo(x-bw, y-r*0.1);
+  c.closePath();
+}
+
+function drawAcc(c, x, y, r, acc, lv){
+  const ty = y - r*1.08;
+  if(acc.startsWith('halo')){
+    const hr = acc==='halo_s'?r*0.52: acc==='halo_l'?r*0.72: r*0.62;
+    c.strokeStyle = '#ffd700';
+    c.lineWidth   = r*0.10;
+    c.shadowBlur  = 14;
+    c.shadowColor = 'rgba(255,210,0,0.9)';
+    c.beginPath();
+    c.ellipse(x, ty, hr, hr*0.27, 0, 0, Math.PI*2);
+    c.stroke();
+    c.shadowBlur = 0;
+  }
+  if(acc.startsWith('horn')){
+    const hw = acc==='horn_s'?r*0.20: acc==='horn_l'?r*0.30: r*0.25;
+    const hh = acc==='horn_s'?r*0.35: acc==='horn_l'?r*0.52: r*0.42;
+    c.fillStyle  = '#cc1a1a';
+    c.shadowBlur = 10;
+    c.shadowColor= 'rgba(220,0,0,0.7)';
+    for(const sx of [-1,1]){
+      c.beginPath();
+      c.moveTo(x+sx*r*0.32,       ty+10);
+      c.lineTo(x+sx*(r*0.32+hw),  ty+10);
+      c.lineTo(x+sx*(r*0.32+hw/2),ty-hh+10);
+      c.closePath();
+      c.fill();
+    }
+    c.shadowBlur=0;
+  }
+  if(acc==='crown'){
+    const cw=r*0.75, ch=r*0.44;
+    c.fillStyle='#ffd700';
+    c.shadowBlur=18;c.shadowColor='rgba(255,180,0,0.8)';
+    c.beginPath();
+    c.moveTo(x-cw/2, ty+6);
+    c.lineTo(x-cw/2, ty-ch+6);
+    c.lineTo(x-cw/5, ty-ch*0.5+6);
+    c.lineTo(x,      ty-ch+6);
+    c.lineTo(x+cw/5, ty-ch*0.5+6);
+    c.lineTo(x+cw/2, ty-ch+6);
+    c.lineTo(x+cw/2, ty+6);
+    c.closePath();c.fill();
+    c.shadowBlur=0;
+    const gems=['#ff3333','#33ff88','#3388ff'];
+    gems.forEach((gc,i)=>{
+      c.fillStyle=gc;
+      c.beginPath();
+      c.arc(x+(i-1)*cw*0.32, ty-ch*0.38+6, r*0.07, 0, Math.PI*2);
+      c.fill();
+    });
+  }
+}
+
+/* ══════════════════════════════════════
+   DRAW — NEXT PREVIEW
+══════════════════════════════════════ */
+function drawNextPreview(){
+  nctx.clearRect(0,0,52,52);
+  const lv = nextLv;
+  const g  = GD[lv];
+  const r  = Math.min(g.r*0.88, 20);
+  drawGhost(nctx, 26, 28, lv, 1, 0);
+}
+
+/* ══════════════════════════════════════
+   DRAW — MAIN LOOP
+══════════════════════════════════════ */
+let raf_id;
+function loop(){
+  raf_id = requestAnimationFrame(loop);
+  const now = Date.now();
+  update(now);
+  render(now);
+}
+
+function update(now){
+  // update pars
+  for(let i=pars.length-1;i>=0;i--){
+    const p=pars[i]; p.life-=16;
+    p.x+=p.vx*0.016; p.y+=p.vy*0.016; p.vy+=240*0.016;
+    if(p.life<=0) pars.splice(i,1);
+  }
+  for(let i=pops.length-1;i>=0;i--){
+    const p=pops[i]; p.life-=16; p.y-=35*0.016;
+    if(p.life<=0) pops.splice(i,1);
+  }
+}
+
+function render(now){
+  ctx.clearRect(0,0,SW,SH);
+  drawBG(now);
+  if(state==='play'||state==='gameover'){
+    drawBox(now);
+    drawDangerLine(now);
+    drawBodies(now);
+    if(state==='play'&&canDrop) drawCurrent(now);
+    drawDropLine();
+  }
+  drawPars();
+  drawPops();
+}
+
+function drawBG(now){
+  // Deep space gradient
+  const grd = ctx.createLinearGradient(0,0,0,SH);
+  grd.addColorStop(0,'#060010');
+  grd.addColorStop(0.5,'#0f0025');
+  grd.addColorStop(1,'#07001a');
+  ctx.fillStyle=grd;
+  ctx.fillRect(0,0,SW,SH);
+
+  // Subtle ambient glow
+  const ag = ctx.createRadialGradient(SW*0.15,SH*0.3,0, SW*0.15,SH*0.3,SW*0.5);
+  ag.addColorStop(0,'rgba(80,40,160,0.08)');
+  ag.addColorStop(1,'transparent');
+  ctx.fillStyle=ag;
+  ctx.fillRect(0,0,SW,SH);
+  const ag2 = ctx.createRadialGradient(SW*0.85,SH*0.6,0, SW*0.85,SH*0.6,SW*0.45);
+  ag2.addColorStop(0,'rgba(160,0,80,0.06)');
+  ag2.addColorStop(1,'transparent');
+  ctx.fillStyle=ag2;
+  ctx.fillRect(0,0,SW,SH);
+}
+
+function drawBox(now){
+  const x=BOX_X, y=BOX_Y, w=BOX_W, h=BOX_H;
+  // Glass inner
+  ctx.fillStyle='rgba(255,255,255,0.016)';
+  ctx.fillRect(x,y,w,h);
+
+  // Wall glow L
+  const gl=ctx.createLinearGradient(x,0,x+18,0);
+  gl.addColorStop(0,'rgba(130,80,255,0.22)');gl.addColorStop(1,'transparent');
+  ctx.fillStyle=gl;ctx.fillRect(x-WALL,y,WALL+14,h+WALL+4);
+  // Wall glow R
+  const gr=ctx.createLinearGradient(x+w+WALL,0,x+w-4,0);
+  gr.addColorStop(0,'rgba(130,80,255,0.22)');gr.addColorStop(1,'transparent');
+  ctx.fillStyle=gr;ctx.fillRect(x+w-6,y,WALL+10,h+WALL+4);
+  // Floor glow
+  const gf=ctx.createLinearGradient(0,y+h,0,y+h+WALL+6);
+  gf.addColorStop(0,'rgba(130,80,255,0.28)');gf.addColorStop(1,'transparent');
+  ctx.fillStyle=gf;ctx.fillRect(x-WALL,y+h,w+WALL*2,WALL+8);
+
+  // Wall lines
+  ctx.strokeStyle='rgba(140,90,255,0.45)';
+  ctx.lineWidth=1.2;
+  ctx.beginPath();
+  ctx.moveTo(x,y);ctx.lineTo(x,y+h+WALL);
+  ctx.moveTo(x+w,y);ctx.lineTo(x+w,y+h+WALL);
+  ctx.moveTo(x-WALL,y+h);ctx.lineTo(x+w+WALL,y+h);
+  ctx.stroke();
+}
+
+function drawDangerLine(now){
+  const t  = dangerMs/DANGER_LIMIT;
+  const al = t>0 ? 0.25+0.45*t*(0.5+0.5*Math.sin(now/180)) : 0.18;
+  ctx.strokeStyle=`rgba(255,70,50,${al})`;
+  ctx.lineWidth=1;
+  ctx.setLineDash([5,5]);
+  ctx.beginPath();
+  ctx.moveTo(BOX_X+4,DANGER_Y);ctx.lineTo(BOX_X+BOX_W-4,DANGER_Y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  if(t>0.3){
+    ctx.fillStyle=`rgba(255,60,30,${al*0.12})`;
+    ctx.fillRect(BOX_X,BOX_Y,BOX_W,DANGER_Y-BOX_Y);
+  }
+}
+
+function drawBodies(){
+  for(const b of bodies){
+    drawGhost(ctx, b.position.x, b.position.y, b.ghostLv, 1, b.angle);
+  }
+}
+
+function drawCurrent(){
+  drawGhost(ctx, dropX, DROP_Y, curLv, 0.88);
+}
+
+function drawDropLine(){
+  if(!canDrop||state!=='play') return;
+  const r = GD[curLv].r;
+  ctx.strokeStyle='rgba(255,255,255,0.1)';
+  ctx.lineWidth=1;
+  ctx.setLineDash([3,6]);
+  ctx.beginPath();
+  ctx.moveTo(dropX, DROP_Y+r+2);
+  ctx.lineTo(dropX, BOX_Y+BOX_H);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+/* ══════════════════════════════════════
+   PARTICLES
+══════════════════════════════════════ */
+function spawnMergePars(x,y,lv){
+  const g=GD[lv];
+  const n=10+lv*2;
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2;
+    const s=60+Math.random()*200;
+    pars.push({
+      x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-60,
+      life:400+Math.random()*400, maxLife:800,
+      r:2+Math.random()*3.5, glow:g.glow
+    });
+  }
+}
+
+function drawPars(){
+  for(const p of pars){
+    const al = p.life/p.maxLife;
+    ctx.globalAlpha = al*al;
+    ctx.fillStyle   = `rgb(${p.glow})`;
+    ctx.shadowBlur  = p.r*4;
+    ctx.shadowColor = `rgba(${p.glow},0.7)`;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;ctx.shadowBlur=0;
+}
+
+/* ══════════════════════════════════════
+   SCORE POPUPS
+══════════════════════════════════════ */
+function spawnPop(x,y,text,glow,big=false){
+  pops.push({x,y,text,glow,big,life:700,maxLife:700});
+}
+function drawPops(){
+  for(const p of pops){
+    const al=Math.min(1,p.life/200);
+    ctx.globalAlpha=al;
+    ctx.font=`${p.big?700:600} ${p.big?'15px':'12px'} system-ui`;
+    ctx.textAlign='center';
+    ctx.fillStyle=`rgb(${p.glow})`;
+    ctx.shadowBlur=10;ctx.shadowColor=`rgba(${p.glow},0.8)`;
+    ctx.fillText(p.text,p.x,p.y);
+  }
+  ctx.globalAlpha=1;ctx.shadowBlur=0;ctx.textAlign='left';
+}
+
+/* ══════════════════════════════════════
+   HUD
+══════════════════════════════════════ */
+function updateHUD(){
+  document.getElementById('hv-sc').textContent=score.toLocaleString();
+  if(score>best){ best=score; localStorage.setItem('sc_best',best); }
+  document.getElementById('hv-bs').textContent=best.toLocaleString();
+}
+
+/* ══════════════════════════════════════
+   GAME OVER
+══════════════════════════════════════ */
+let goTriggered=false;
+function gameOver(){
+  if(goTriggered||state!=='play') return;
+  goTriggered=true;
+  state='gameover';
+  canDrop=false;
+  setTimeout(()=>{
+    const isNew = score>=best;
+    document.getElementById('go-sc').textContent=score.toLocaleString();
+    const bd = document.getElementById('go-bs');
+    bd.textContent=(isNew&&score>0)
+      ? '🏆 NEW RECORD!'
+      : `${lang==='ja'?'最高記録':'BEST'}: ${best.toLocaleString()}`;
+    bd.className='go-best'+(isNew&&score>0?' new':'');
+
+    const coms_ja=[
+      [0,    'ゴーストたちが心配そうに見ている…'],
+      [300,  '合体の快感、わかってきたね？'],
+      [1500, 'なかなか！悪魔の素質を感じる。'],
+      [5000, 'すごい！閻魔大王がスカウトを考えている。'],
+      [12000,'天才！？宇宙が震えている。'],
+      [25000,'伝説の魔王プレイヤー誕生。さんちゃんが泣いている（感動で）。'],
+    ];
+    const coms_en=[
+      [0,    'The ghosts are looking at you with concern...'],
+      [300,  'Getting the feel for merges now, huh?'],
+      [1500, 'Not bad! Demon potential detected.'],
+      [5000, 'Amazing! The King of Hell is considering recruitment.'],
+      [12000,'Genius?! The cosmos is trembling.'],
+      [25000,'Legendary Demon Lord player. Sanchan is crying (with joy).'],
+    ];
+    const table=lang==='ja'?coms_ja:coms_en;
+    let cm=table[0][1];
+    for(const[t,m] of table) if(score>=t) cm=m;
+    document.getElementById('go-cm').textContent=cm;
+    document.getElementById('sc-go').classList.remove('off');
+  }, 900);
+}
+
+/* ══════════════════════════════════════
+   SHARE
+══════════════════════════════════════ */
+function shareScore(){
+  const tx=lang==='ja'
+    ?`さんちゃんドロップ👻\nスコア：${score.toLocaleString()}pt\nベスト：${best.toLocaleString()}pt\n\nゴーストを合体させて魔王を目指すゲーム！\n#さんちゃんドロップ`
+    :`SANCHAN DROP👻\nScore:${score.toLocaleString()}pt\nBest:${best.toLocaleString()}pt\n\nMerge ghosts to reach Demon Lord!\n#SanchanDrop`;
+  if(navigator.share) navigator.share({title:'SANCHAN DROP',text:tx}).catch(()=>{});
+  else navigator.clipboard?.writeText(tx);
+}
+
+/* ══════════════════════════════════════
+   START
+══════════════════════════════════════ */
+function startGame(){
+  document.getElementById('sc-title').classList.add('off');
+  document.getElementById('sc-go').classList.add('off');
+  score=0; dangerMs=0; goTriggered=false; state='play';
+  pars.length=0; pops.length=0; bodies=[];
+  curLv  = SPAWN_LVS[Math.floor(Math.random()*SPAWN_LVS.length)];
+  nextLv = SPAWN_LVS[Math.floor(Math.random()*SPAWN_LVS.length)];
+  dropX  = SW/2;
+  canDrop=false; dropLock=false;
+  updateHUD(); drawNextPreview();
+  physicsSetup();
+  setTimeout(()=>{ canDrop=true; }, 300);
+}
+
+/* ══════════════════════════════════════
+   LANG
+══════════════════════════════════════ */
+function setLang(l){
+  lang=l;
+  document.getElementById('lj').classList.toggle('on',l==='ja');
+  document.getElementById('le').classList.toggle('on',l==='en');
+  const j=l==='ja';
+  document.getElementById('t-desc').innerHTML=j
+    ?'同じゴーストが触れると<em>合体</em>して進化！<br>天使さんちゃんが悪魔になり…<em>魔王</em>を目指せ。<br>積みすぎると<em>GAME OVER</em> 👑'
+    :'Same ghosts touching will <em>merge</em> and evolve!<br>Angels become demons… aim for the <em>Demon Lord</em>.<br>Stack too high = <em>GAME OVER</em> 👑';
+  document.getElementById('t-st').textContent  =j?'👻 はじめる':'👻 START';
+  document.getElementById('go-rt').textContent =j?'🔄 もう一回':'🔄 Play Again';
+  document.getElementById('hl-sc').textContent ='SCORE';
+  document.getElementById('hl-bs').textContent =j?'ベスト':'BEST';
+  document.getElementById('next-label').textContent=j?'つぎ':'NEXT';
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+window.addEventListener('resize',()=>{ layout(); if(state==='play') physicsSetup(); });
+layout();
+setLang('ja');
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
