@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b001f">
+<title>SANCHAN 👻</title>
+<style>
+:root {
+  --heaven: #c8e8ff;
+  --hell:   #ff2a00;
+  --gold:   #ffd966;
+  --purple: #9933ff;
+  --white:  #fffdf5;
+  --dark:   #0b001f;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%; width: 100%;
+  overflow: hidden;
+  background: var(--dark);
+  font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Segoe UI', sans-serif;
+  color: #fff;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* ─── CANVAS BG ─── */
+#world {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Sky split */
+#sky {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    #060010 0%,
+    #150535 40%,
+    #1a0840 100%
+  );
+  transition: background 0.8s ease;
+  z-index: 0;
+}
+#sky::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(180,220,255,0.12), transparent),
+    radial-gradient(ellipse 60% 50% at 80% 30%, rgba(180,0,60,0.10), transparent);
+  transition: opacity 0.6s;
+}
+
+/* Animated stars */
+.stars {
+  position: absolute; inset: 0; overflow: hidden; z-index: 1; pointer-events: none;
+}
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle var(--d) ease-in-out infinite;
+  opacity: var(--o);
+}
+@keyframes twinkle {
+  0%, 100% { opacity: var(--o); transform: scale(1); }
+  50%       { opacity: calc(var(--o) * 0.2); transform: scale(0.6); }
+}
+
+/* Heaven light rays */
+#heaven-rays {
+  position: absolute;
+  top: -20%; left: 10%;
+  width: 40%; height: 70%;
+  background: conic-gradient(
+    from 160deg at 50% 0%,
+    transparent 0deg,
+    rgba(255,240,160,0.08) 5deg,
+    transparent 10deg,
+    rgba(255,240,160,0.05) 15deg,
+    transparent 20deg,
+    rgba(255,240,160,0.07) 25deg,
+    transparent 35deg
+  );
+  pointer-events: none;
+  z-index: 2;
+  animation: rays-rotate 12s linear infinite;
+  transform-origin: 50% 0%;
+}
+@keyframes rays-rotate {
+  to { transform: rotate(4deg); }
+}
+
+/* Hell glow */
+#hell-glow {
+  position: absolute;
+  bottom: -10%; right: 0%;
+  width: 55%; height: 55%;
+  background: radial-gradient(ellipse at 80% 100%, rgba(255,40,0,0.18), transparent 60%);
+  pointer-events: none; z-index: 2;
+  animation: hell-pulse 3s ease-in-out infinite;
+}
+@keyframes hell-pulse {
+  0%, 100% { opacity: 0.7; }
+  50%       { opacity: 1; }
+}
+
+/* Floating background ghosts */
+.bg-ghost {
+  position: absolute;
+  font-size: var(--fs);
+  opacity: 0.06;
+  animation: bg-float var(--dur) ease-in-out infinite;
+  pointer-events: none; z-index: 2;
+}
+@keyframes bg-float {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50%       { transform: translateY(-30px) rotate(5deg); }
+}
+
+/* ─── LAYOUT ─── */
+#ui {
+  position: relative; z-index: 10;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: max(env(safe-area-inset-top), 16px) 0 max(env(safe-area-inset-bottom), 16px);
+}
+
+/* ─── TOP STRIP ─── */
+#top-strip {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+#score-wrap {
+  display: flex; flex-direction: column; align-items: flex-start;
+}
+#score-label {
+  font-size: 0.6rem; letter-spacing: 3px; color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+}
+#score-num {
+  font-size: clamp(1.6rem, 6vw, 2rem);
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #fff 0%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+}
+#round-wrap {
+  display: flex; flex-direction: column; align-items: flex-end;
+}
+#round-num {
+  font-size: clamp(1.2rem, 4.5vw, 1.5rem);
+  font-weight: 700; color: rgba(255,255,255,0.5);
+  line-height: 1;
+}
+#round-label {
+  font-size: 0.6rem; letter-spacing: 3px; color: rgba(255,255,255,0.3);
+  text-align: right;
+}
+
+/* Chaos bar */
+#chaos-bar-wrap {
+  width: calc(100% - 40px);
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+#chaos-track {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+#chaos-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #4488ff, #aa44ff, #ff4488);
+  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+#chaos-fill::after {
+  content: '';
+  position: absolute;
+  right: 0; top: -3px;
+  width: 8px; height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #fff;
+  transform: translateX(50%);
+}
+
+/* ─── SCENARIO CARD ─── */
+#card-wrap {
+  width: calc(100% - 32px);
+  max-width: 420px;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+}
+#scenario-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 16px 20px;
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  position: relative;
+  overflow: hidden;
+}
+#scenario-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.06) 0%,
+    transparent 50%,
+    rgba(255,255,255,0.02) 100%);
+  pointer-events: none;
+}
+#scenario-tag {
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+#scenario-text {
+  font-size: clamp(0.9rem, 3.8vw, 1.1rem);
+  font-weight: 700;
+  line-height: 1.55;
+  color: #fff;
+}
+#scenario-sub {
+  font-size: clamp(0.68rem, 2.5vw, 0.78rem);
+  color: rgba(255,255,255,0.4);
+  margin-top: 5px;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* ─── GHOST STAGE ─── */
+#ghost-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  cursor: pointer;
+}
+
+/* Tap zones — invisible but cover L/R halves */
+#tap-left, #tap-right {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 50%;
+  z-index: 5;
+}
+#tap-left  { left: 0; }
+#tap-right { right: 0; }
+
+/* Zone hint ripple */
+.zone-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: ripple-out 0.6s ease-out forwards;
+  z-index: 20;
+}
+@keyframes ripple-out {
+  from { width: 20px; height: 20px; opacity: 0.8; transform: translate(-50%,-50%) scale(0); }
+  to   { width: 200px; height: 200px; opacity: 0; transform: translate(-50%,-50%) scale(1); }
+}
+
+/* Ghost container */
+#ghost-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: ghost-levitate 3s ease-in-out infinite;
+  z-index: 3;
+}
+@keyframes ghost-levitate {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  33%       { transform: translateY(-18px) rotate(1.5deg); }
+  66%       { transform: translateY(-8px) rotate(-0.5deg); }
+}
+
+#ghost-aura {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  filter: blur(25px);
+  background: var(--gaura, rgba(200,220,255,0.2));
+  transition: background 1s ease;
+  animation: aura-breathe 3s ease-in-out infinite;
+}
+@keyframes aura-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50%       { transform: scale(1.15); opacity: 1; }
+}
+
+#ghost-svg {
+  width: clamp(120px, 32vw, 170px);
+  height: auto;
+  filter: drop-shadow(var(--glow, 0 0 20px rgba(200,220,255,0.5)));
+  transition: filter 0.8s ease;
+}
+#ghost-acc {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  transition: all 0.5s;
+  filter: drop-shadow(0 0 8px rgba(255,220,100,0.8));
+}
+
+/* Ghost morph bounce on choice */
+.ghost-bounce {
+  animation: ghost-bounce-anim 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
+}
+@keyframes ghost-bounce-anim {
+  0%   { transform: scale(1) translateY(0); }
+  30%  { transform: scale(1.2, 0.8) translateY(0); }
+  60%  { transform: scale(0.85, 1.15) translateY(-20px); }
+  80%  { transform: scale(1.05, 0.95) translateY(0); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+/* ─── CHOICE HINTS ─── */
+#choice-hints {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+  margin-bottom: 6px;
+  pointer-events: none;
+}
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: opacity 0.3s;
+}
+.hint-angel { color: rgba(150,210,255,0.7); }
+.hint-demon  { color: rgba(255,100,80,0.7); }
+.hint-icon { font-size: 1.1em; }
+
+/* ─── PROGRESS PIPS ─── */
+#pips {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+}
+.pip {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.pip.done    { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+.pip.current { background: #fff; transform: scale(1.4); box-shadow: 0 0 8px #fff; }
+
+/* ─── FLASH OVERLAY ─── */
+#flash {
+  position: fixed; inset: 0; z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+#flash.active { opacity: 1; transition: none; }
+#flash.fade   { opacity: 0; transition: opacity 0.5s ease; }
+
+/* ─── SCORE POP ─── */
+.pts-pop {
+  position: fixed;
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  font-weight: 900;
+  pointer-events: none;
+  z-index: 60;
+  animation: pts-rise 0.9s cubic-bezier(0.23,1,0.32,1) forwards;
+  text-shadow: 0 0 20px currentColor;
+  white-space: nowrap;
+}
+@keyframes pts-rise {
+  0%   { opacity: 1; transform: translateY(0) scale(0.8); }
+  40%  { opacity: 1; transform: translateY(-30px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-90px) scale(0.9); }
+}
+
+/* ─── PARTICLES ─── */
+.particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 55;
+  font-size: var(--s, 1.2rem);
+  animation: par-fly var(--t, 1s) ease-out forwards;
+  will-change: transform, opacity;
+}
+@keyframes par-fly {
+  from { opacity: 1; transform: translate(0,0) scale(1) rotate(0deg); }
+  to   { opacity: 0; transform: translate(var(--x), var(--y)) scale(0.3) rotate(var(--r)); }
+}
+
+/* ─── TITLE SCREEN ─── */
+#title-screen {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0;
+  background: linear-gradient(170deg, #08001a 0%, #15003a 50%, #0d0020 100%);
+  padding: 32px 24px;
+}
+.t-eyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 5px;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.t-ghost {
+  font-size: clamp(5rem, 20vw, 8rem);
+  animation: ghost-levitate 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 40px rgba(200,200,255,0.4));
+  margin-bottom: 8px;
+}
+.t-title {
+  font-size: clamp(2.2rem, 9vw, 3.2rem);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #ffffff 0%, #e0c8ff 40%, #ffd966 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.t-sub {
+  font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.t-desc {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 16px 20px;
+  font-size: clamp(0.8rem, 3vw, 0.9rem);
+  line-height: 1.7;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  max-width: 340px;
+  margin-bottom: 28px;
+  backdrop-filter: blur(10px);
+}
+.t-desc em { color: #ffcc66; font-style: normal; }
+.t-start {
+  width: 100%; max-width: 300px;
+  padding: 18px;
+  background: linear-gradient(135deg, #7722ff, #ff2266);
+  border: none; border-radius: 16px;
+  color: #fff;
+  font-size: clamp(1rem, 3.5vw, 1.15rem);
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 8px 40px rgba(130, 0, 255, 0.4), 0 2px 8px rgba(0,0,0,0.4);
+  animation: btn-glow 2s ease-in-out infinite;
+}
+@keyframes btn-glow {
+  0%, 100% { box-shadow: 0 8px 30px rgba(130,0,255,0.4), 0 2px 8px rgba(0,0,0,0.4); }
+  50%       { box-shadow: 0 8px 50px rgba(200,0,100,0.6), 0 2px 8px rgba(0,0,0,0.4); }
+}
+.t-start:active { transform: scale(0.96); }
+.t-lang {
+  display: flex; gap: 10px; margin-top: 16px;
+}
+.t-lang button {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.6);
+  padding: 7px 18px; border-radius: 20px;
+  font-size: 0.78rem; cursor: pointer; font-family: inherit;
+}
+.t-lang button.on {
+  background: rgba(120,50,255,0.3);
+  border-color: rgba(150,100,255,0.6);
+  color: #fff;
+}
+.t-lang button:active { transform: scale(0.93); }
+
+/* ─── RESULT SCREEN ─── */
+#result-screen {
+  position: fixed; inset: 0; z-index: 90;
+  display: none;
+  flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px;
+  gap: 12px;
+  background: linear-gradient(170deg, #060010 0%, #150030 100%);
+}
+.r-ghost { font-size: clamp(4rem, 16vw, 6.5rem); animation: ghost-levitate 3s ease-in-out infinite; }
+.r-verdict {
+  font-size: 0.65rem; letter-spacing: 4px;
+  color: rgba(255,255,255,0.35); text-transform: uppercase;
+}
+.r-type {
+  font-size: clamp(1.4rem, 5.5vw, 1.9rem);
+  font-weight: 900;
+  text-align: center;
+  background: linear-gradient(135deg, var(--c1, #fff), var(--c2, #ffd966));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+.r-score {
+  font-size: clamp(2.5rem, 9vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, #fff, var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+.r-pts { font-size: 0.7rem; letter-spacing: 3px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+.r-chaos {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.75rem; color: rgba(255,255,255,0.45);
+}
+.r-chaos-track {
+  width: 80px; height: 3px;
+  background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
+}
+.r-chaos-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4488ff, #ff4488);
+  border-radius: 2px;
+}
+.r-comment {
+  font-size: clamp(0.78rem, 3vw, 0.9rem);
+  line-height: 1.65;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  max-width: 300px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+.r-btns { display: flex; gap: 10px; margin-top: 4px; }
+.r-btn {
+  padding: 14px 28px; border-radius: 14px; border: none;
+  font-size: clamp(0.82rem, 3vw, 0.92rem);
+  font-weight: 800; cursor: pointer; font-family: inherit;
+  letter-spacing: 0.5px;
+}
+.r-btn-share { background: linear-gradient(135deg, #0088ff, #0044cc); color: #fff; }
+.r-btn-retry { background: linear-gradient(135deg, #7722ff, #ff2266); color: #fff; }
+.r-btn:active { transform: scale(0.94); }
+
+/* screen-off class */
+.off { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ─── BG WORLD ─── -->
+<div id="world">
+  <div id="sky"></div>
+  <div class="stars" id="stars-el"></div>
+  <div id="heaven-rays"></div>
+  <div id="hell-glow"></div>
+</div>
+
+<!-- ─── GAME UI ─── -->
+<div id="ui">
+  <div id="top-strip">
+    <div id="score-wrap">
+      <div id="score-label">SCORE</div>
+      <div id="score-num">0</div>
+    </div>
+    <div id="round-wrap">
+      <div id="round-num">1 / 10</div>
+      <div id="round-label">ROUND</div>
+    </div>
+  </div>
+
+  <div id="chaos-bar-wrap">
+    <div id="chaos-track">
+      <div id="chaos-fill"></div>
+    </div>
+  </div>
+
+  <div id="card-wrap">
+    <div id="scenario-card">
+      <div id="scenario-tag">CASE FILE</div>
+      <div id="scenario-text">Loading…</div>
+      <div id="scenario-sub"></div>
+    </div>
+  </div>
+
+  <div id="ghost-stage">
+    <div id="tap-left"  onclick="choose('angel', event)"></div>
+    <div id="tap-right" onclick="choose('demon', event)"></div>
+
+    <div id="ghost-container">
+      <div id="ghost-aura"></div>
+      <svg id="ghost-svg" viewBox="0 0 120 145" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="gBodyGrad" cx="40%" cy="35%" r="65%">
+            <stop id="gStop1" offset="0%"   stop-color="#ffffff"/>
+            <stop id="gStop2" offset="100%" stop-color="#e0ddf5"/>
+          </radialGradient>
+          <filter id="gSoft" x="-5%" y="-5%" width="110%" height="110%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+        </defs>
+        <!-- Body -->
+        <path id="gBody" filter="url(#gSoft)"
+          d="M18,70 Q18,18 60,14 Q102,18 102,70 L102,118
+             Q94,108 86,118 Q78,128 68,118 Q60,128 52,118 Q42,108 34,118 Q26,108 18,118 Z"
+          fill="url(#gBodyGrad)"/>
+        <!-- Eyes -->
+        <circle id="gEyeL" cx="44" cy="68" r="9" fill="#1a1a2e"/>
+        <circle id="gEyeR" cx="76" cy="68" r="9" fill="#1a1a2e"/>
+        <circle cx="47" cy="65" r="3.5" fill="#fff"/>
+        <circle cx="79" cy="65" r="3.5" fill="#fff"/>
+        <!-- Blush -->
+        <ellipse id="gBlushL" cx="30" cy="78" rx="8" ry="5" fill="rgba(255,150,150,0.35)"/>
+        <ellipse id="gBlushR" cx="90" cy="78" rx="8" ry="5" fill="rgba(255,150,150,0.35)"/>
+        <!-- Mouth -->
+        <path id="gMouth" d="M50,90 Q60,100 70,90" stroke="#1a1a2e" stroke-width="2.5"
+          fill="none" stroke-linecap="round"/>
+        <!-- Extra layer (horns/halo/wings rendered by JS) -->
+        <g id="gExtra"></g>
+      </svg>
+      <div id="ghost-acc">✨</div>
+    </div>
+  </div>
+
+  <div id="choice-hints">
+    <div class="hint hint-angel">
+      <span class="hint-icon">👈</span>
+      <span id="hint-l">ANGEL</span>
+    </div>
+    <div class="hint hint-demon">
+      <span id="hint-r">DEMON</span>
+      <span class="hint-icon">👉</span>
+    </div>
+  </div>
+
+  <div id="pips"></div>
+</div>
+
+<!-- ─── FLASH ─── -->
+<div id="flash"></div>
+
+<!-- ─── TITLE ─── -->
+<div id="title-screen">
+  <div class="t-eyebrow" id="t-eyebrow">DIVINE JUDGMENT</div>
+  <div class="t-ghost" id="t-ghost-emoji">👻</div>
+  <div class="t-title">SANCHAN</div>
+  <div class="t-sub" id="t-sub">HEAVEN OR HELL</div>
+  <div class="t-desc" id="t-desc">
+    神様があなたに<em>10個の意味不明な事件</em>を押しつけた。<br>
+    画面<em>左タップ</em>で天使判決、<em>右タップ</em>で悪魔判決。<br>
+    あなたのさんちゃんは…どっちに進化する？
+  </div>
+  <button class="t-start" id="t-start" onclick="startGame()">
+    <span id="t-start-text">⚖️ 裁判 START</span>
+  </button>
+  <div class="t-lang">
+    <button id="btn-ja" class="on" onclick="setLang('ja')">🇯🇵 JP</button>
+    <button id="btn-en"           onclick="setLang('en')">🇺🇸 EN</button>
+  </div>
+</div>
+
+<!-- ─── RESULT ─── -->
+<div id="result-screen">
+  <div class="r-ghost" id="r-ghost">👻</div>
+  <div class="r-verdict" id="r-verdict">FINAL VERDICT</div>
+  <div class="r-type"  id="r-type">天使さんちゃん</div>
+  <div>
+    <div class="r-score" id="r-score">0</div>
+    <div class="r-pts">POINTS</div>
+  </div>
+  <div class="r-chaos">
+    <span id="r-chaos-label">CHAOS</span>
+    <div class="r-chaos-track"><div class="r-chaos-fill" id="r-chaos-fill"></div></div>
+    <span id="r-chaos-pct">0%</span>
+  </div>
+  <div class="r-comment" id="r-comment">…</div>
+  <div class="r-btns">
+    <button class="r-btn r-btn-share" onclick="shareResult()">📤 Share</button>
+    <button class="r-btn r-btn-retry" onclick="retryGame()" id="r-retry">🔄 Retry</button>
+  </div>
+</div>
+
+<script>
+/* ────────────────────────────────────────────
+   STATE
+──────────────────────────────────────────── */
+let lang = 'ja';
+let score = 0;
+let chaos = 0;   // 0–100
+let round = 0;
+let TOTAL = 10;
+let locked = false;
+let ghostLv = 0; // 0–5
+
+/* ────────────────────────────────────────────
+   GHOST CONFIGS
+──────────────────────────────────────────── */
+const G = [
+  { body1:'#ffffff', body2:'#e8f0ff', eyes:'#1a1a2e', blush:'rgba(255,150,150,0.35)',
+    aura:'rgba(180,220,255,0.25)', glow:'0 0 28px rgba(180,220,255,0.6)',
+    acc:'😇', emoji:'👼',
+    extra:`<ellipse cx="60" cy="8" rx="22" ry="5.5" fill="none" stroke="#ffd700" stroke-width="3"/>
+           <path d="M22,54 Q8,36 16,22 Q28,10 34,28" fill="rgba(255,240,200,0.5)" stroke="#ffe090" stroke-width="1.5"/>
+           <path d="M98,54 Q112,36 104,22 Q92,10 86,28" fill="rgba(255,240,200,0.5)" stroke="#ffe090" stroke-width="1.5"/>`,
+    ja:'天使さんちゃん', en:'Angel Sanchan' },
+  { body1:'#f0f0f8', body2:'#d8d8f0', eyes:'#1a1a30', blush:'rgba(255,140,140,0.3)',
+    aura:'rgba(160,180,255,0.2)', glow:'0 0 22px rgba(160,180,255,0.5)',
+    acc:'🌟', emoji:'😊',
+    extra:`<ellipse cx="60" cy="8" rx="18" ry="4" fill="none" stroke="rgba(200,180,255,0.6)" stroke-width="2"/>`,
+    ja:'ふつうさんちゃん', en:'Normal Sanchan' },
+  { body1:'#d0d0e8', body2:'#b8b8d0', eyes:'#0a0a1a', blush:'rgba(200,120,120,0.25)',
+    aura:'rgba(140,100,220,0.2)', glow:'0 0 22px rgba(140,100,220,0.45)',
+    acc:'💜', emoji:'😏',
+    extra:`<path d="M42,58 L50,65 L58,58" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round"/>
+           <path d="M62,58 L70,65 L78,58" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    ja:'あやしいさんちゃん', en:'Shady Sanchan' },
+  { body1:'#a0a0c0', body2:'#808098', eyes:'#660000', blush:'rgba(180,60,60,0.3)',
+    aura:'rgba(200,50,50,0.22)', glow:'0 0 30px rgba(220,50,30,0.55)',
+    acc:'😈', emoji:'👿',
+    extra:`<path d="M36,22 L42,5  L50,24" fill="#cc2222" stroke="#990000" stroke-width="1"/>
+           <path d="M70,22 L78,5  L84,24" fill="#cc2222" stroke="#990000" stroke-width="1"/>`,
+    ja:'小悪魔さんちゃん', en:'Mini-Devil Sanchan' },
+  { body1:'#4a4a6a', body2:'#2a2a48', eyes:'#ff2200', blush:'rgba(200,20,20,0.25)',
+    aura:'rgba(255,40,0,0.3)', glow:'0 0 40px rgba(255,80,0,0.7)',
+    acc:'🔥', emoji:'👿',
+    extra:`<path d="M30,20 L38,2  L48,22" fill="#ff1111" stroke="#cc0000" stroke-width="1"/>
+           <path d="M72,20 L82,2  L90,22" fill="#ff1111" stroke="#cc0000" stroke-width="1"/>
+           <path d="M24,95 Q18,115 12,122" stroke="#ff4400" stroke-width="4" fill="none" stroke-linecap="round"/>
+           <path d="M96,95 Q102,115 108,122" stroke="#ff4400" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+    ja:'本物の悪魔さんちゃん', en:'True Demon Sanchan' },
+  { body1:'#111128', body2:'#080814', eyes:'#ff0000', blush:'rgba(180,0,200,0.2)',
+    aura:'rgba(160,0,255,0.4)', glow:'0 0 60px rgba(160,0,255,0.8)',
+    acc:'👑🔥', emoji:'💀',
+    extra:`<path d="M28,18 L36,-4 L48,20" fill="#8800ff" stroke="#6600cc" stroke-width="1"/>
+           <path d="M72,18 L84,-4 L92,20" fill="#8800ff" stroke="#6600cc" stroke-width="1"/>
+           <path d="M15,65 Q4,85 10,100" stroke="#9900ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+           <path d="M105,65 Q116,85 110,100" stroke="#9900ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+           <circle cx="44" cy="68" r="10" fill="#ff0000" opacity="0.85"/>
+           <circle cx="76" cy="68" r="10" fill="#ff0000" opacity="0.85"/>
+           <circle cx="44" cy="68" r="4" fill="#fff"/>
+           <circle cx="76" cy="68" r="4" fill="#fff"/>
+           <path d="M46,90 L51,98 L56,90 L60,98 L64,90 L69,98 L74,90" stroke="rgba(200,100,255,0.7)" stroke-width="1.5" fill="none"/>`,
+    ja:'魔王さんちゃん', en:'DEMON LORD SANCHAN' }
+];
+
+/* ────────────────────────────────────────────
+   SCENARIOS
+──────────────────────────────────────────── */
+const S = [
+  { ja:'神様がLINEをブロックした', en:'God blocked you on LINE',
+    sub_ja:'既読スルー歴：12億年',sub_en:'Left on read for 1.2 billion years',
+    angel:{ja:'Instagramでそっとフォロー申請する',en:'Quietly send a follow request on Insta',pts:400,c:5},
+    demon:{ja:'天国をGoogleマップで★1にする',en:'Leave a 1-star Google Maps review of Heaven',pts:900,c:30} },
+
+  { ja:'悪魔がビーガンになった',en:'The devil went vegan',
+    sub_ja:'地獄のメニューから肉が全消滅',sub_en:'All meat vanished from Hell\'s menu',
+    angel:{ja:'アサイーボウルを差し入れする',en:'Bring acai bowls to support them',pts:350,c:5},
+    demon:{ja:'肉を隠して「知らない」と言う',en:'Hide meat and pretend you know nothing',pts:800,c:28} },
+
+  { ja:'太陽が「照らすのやめたい」と言い出した',en:'The sun said "I quit shining"',
+    sub_ja:'宇宙が暗くなるまで残り15分',sub_en:'Universe goes dark in 15 minutes',
+    angel:{ja:'「がんばれ！」と激励する',en:'Cheer it on — "You can do it!"',pts:400,c:5},
+    demon:{ja:'自分が太陽の代わりになる（炎上する）',en:'Become the sun yourself (and combust)',pts:1200,c:45} },
+
+  { ja:'犬が宿題を食べた　でもあなたはゴースト',en:'A dog ate your homework. But you\'re a ghost.',
+    sub_ja:'犬が「え？」ってなってる',sub_en:'The dog is very confused',
+    angel:{ja:'犬に謝る（謎の謝罪）',en:'Apologize to the dog (for some reason)',pts:300,c:0},
+    demon:{ja:'犬の宿題を逆に食べる',en:'Eat the dog\'s homework in revenge',pts:1100,c:40} },
+
+  { ja:'地獄にWi-Fiが開通した',en:'Hell finally got WiFi',
+    sub_ja:'悪魔たちが「繋がらない！」と大騒ぎ',sub_en:'Demons screaming "It won\'t connect!"',
+    angel:{ja:'パスワードを全員に教える',en:'Share the password with everyone',pts:350,c:8},
+    demon:{ja:'パスワードを「パスワード」にする',en:'Set the password to "password"',pts:750,c:25} },
+
+  { ja:'天使がAmazonで偽の翼を買って落ちてきた',en:'Angel bought fake wings on Amazon and crashed',
+    sub_ja:'★1レビュー：「翼の代わりに猫が来た」',sub_en:'★1 review: "Got a cat instead of wings"',
+    angel:{ja:'助ける',en:'Help them up',pts:400,c:0},
+    demon:{ja:'同じ翼を自分も注文してみる',en:'Order the same wings yourself',pts:900,c:32} },
+
+  { ja:'神様がガチャをハズした',en:'God missed the SSR in a gacha',
+    sub_ja:'課金額：∞円　泣いている',sub_en:'Spent: ∞ yen. Currently sobbing.',
+    angel:{ja:'「次こそ！」と励ます',en:'"You\'ll get it next time!"',pts:350,c:5},
+    demon:{ja:'「神様なら自分で作れば」と言う',en:'"Just make your own SSR, you\'re God"',pts:1000,c:38} },
+
+  { ja:'閻魔大王がTikTokデビューした',en:'The King of Hell debuted on TikTok',
+    sub_ja:'フォロワー0人　再生数3回（自撮り含む）',sub_en:'0 followers. 3 views including self-views.',
+    angel:{ja:'フォローしてあげる',en:'Follow them',pts:300,c:5},
+    demon:{ja:'「魂コレクション開封動画」を提案する',en:'Suggest "Soul Unboxing" content',pts:1100,c:42} },
+
+  { ja:'宇宙人が地球に来て「違う」と帰ろうとしている',en:'Aliens arrived and are already leaving',
+    sub_ja:'「人間が思ったより面白くなかった」',sub_en:'"Humans were less entertaining than expected"',
+    angel:{ja:'地球の良いところを紹介する',en:'Give them a highlight tour of Earth',pts:400,c:5},
+    demon:{ja:'宇宙船に勝手に乗り込む',en:'Jump on their ship uninvited',pts:1500,c:55} },
+
+  { ja:'最終判決　あなたは天使か？悪魔か？',en:'FINAL VERDICT — Angel or Demon?',
+    sub_ja:'神様「全部知ってるぞ（全知全能なので）」',sub_en:'God: "I already know. (omniscient, duh)"',
+    angel:{ja:'「天使です！🙏」（嘘かも）',en:'"I\'m an angel! 🙏" (probably lying)',pts:600,c:10},
+    demon:{ja:'「あなたが作ったんですから責任取って」',en:'"You made me — take responsibility"',pts:3000,c:50} }
+];
+
+/* ────────────────────────────────────────────
+   GHOST TYPES for result
+──────────────────────────────────────────── */
+const RTYPES = [
+  { c1:'#ffe090',c2:'#fff8d0',
+    ja:'超聖人💫',en:'ULTRA SAINT 💫',
+    ja_c:'神様も「え、なんで？」と驚く善人でした。',
+    en_c:'Even God was surprised by your goodness.' },
+  { c1:'#88ccff',c2:'#c8eaff',
+    ja:'ぼちぼち良い人🕊️',en:'DECENT HUMAN 🕊️',
+    ja_c:'悪くないけど、ちょっとつまらないとも言う。',
+    en_c:'Not bad, but not exactly thrilling either.' },
+  { c1:'#cc99ff',c2:'#eebbff',
+    ja:'グレーゾーン住人😏',en:'GRAY ZONE DWELLER 😏',
+    ja_c:'あなたはグレーという名の完全な自由人。',
+    en_c:'You live in the gray zone — absolute freedom.' },
+  { c1:'#ff8888',c2:'#ffbbaa',
+    ja:'小悪魔認定😈',en:'CERTIFIED MINI-DEVIL 😈',
+    ja_c:'閻魔大王からスカウトが来ています。',
+    en_c:'The King of Hell is already recruiting you.' },
+  { c1:'#ff4444',c2:'#ff8866',
+    ja:'本物の悪魔👿',en:'AUTHENTIC DEMON 👿',
+    ja_c:'地獄があなたのために新フロアを作りました。',
+    en_c:'Hell built a new floor specifically for you.' },
+  { c1:'#cc66ff',c2:'#ff66cc',
+    ja:'魔王爆誕💀',en:'DEMON LORD 💀',
+    ja_c:'神様が震えています。宇宙のバランスが崩れました。',
+    en_c:'God is trembling. The cosmos is unbalanced.' }
+];
+
+/* ────────────────────────────────────────────
+   BUILD STARS
+──────────────────────────────────────────── */
+(function() {
+  const el = document.getElementById('stars-el');
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() < 0.15 ? 3 : Math.random() < 0.4 ? 2 : 1;
+    s.style.cssText =
+      `left:${Math.random()*100}%;top:${Math.random()*100}%;` +
+      `width:${sz}px;height:${sz}px;` +
+      `--d:${1.5+Math.random()*3}s;--o:${0.3+Math.random()*0.7};` +
+      `animation-delay:${Math.random()*3}s`;
+    el.appendChild(s);
+  }
+  // Floating bg ghosts
+  const world = document.getElementById('world');
+  ['👻','👼','😇','💀','👿'].forEach((e,i) => {
+    const g = document.createElement('div');
+    g.className = 'bg-ghost';
+    g.textContent = e;
+    const left = 5 + i * 20 + Math.random()*10;
+    const top  = 10 + Math.random()*70;
+    const fs   = 2 + Math.random()*3;
+    const dur  = 4 + Math.random()*5;
+    g.style.cssText = `left:${left}%;top:${top}%;--fs:${fs}rem;--dur:${dur}s;animation-delay:${i*1.1}s`;
+    world.appendChild(g);
+  });
+})();
+
+/* ────────────────────────────────────────────
+   LANG
+──────────────────────────────────────────── */
+function setLang(l) {
+  lang = l;
+  document.getElementById('btn-ja').classList.toggle('on', l==='ja');
+  document.getElementById('btn-en').classList.toggle('on', l==='en');
+  const j = l === 'ja';
+  document.getElementById('t-eyebrow').textContent    = j ? '神様からの依頼' : 'DIVINE JUDGMENT';
+  document.getElementById('t-sub').textContent        = j ? '天国か地獄か'  : 'HEAVEN OR HELL';
+  document.getElementById('t-desc').innerHTML = j
+    ? '神様があなたに<em>10個の意味不明な事件</em>を押しつけた。<br>画面<em>左タップ</em>で天使判決、<em>右タップ</em>で悪魔判決。<br>あなたのさんちゃんは…どっちに進化する？'
+    : 'God dumped <em>10 unhinged cases</em> on you.<br>Tap <em>LEFT</em> for angel verdict, <em>RIGHT</em> for demon.<br>Which way will your Sanchan evolve?';
+  document.getElementById('t-start-text').textContent = j ? '⚖️ 裁判 START' : '⚖️ START TRIAL';
+  document.getElementById('r-retry').textContent      = j ? '🔄 もう一回' : '🔄 Retry';
+  document.getElementById('r-verdict').textContent    = j ? '最終判決' : 'FINAL VERDICT';
+}
+
+/* ────────────────────────────────────────────
+   GAME FLOW
+──────────────────────────────────────────── */
+function startGame() {
+  score = 0; chaos = 0; round = 0; ghostLv = 0; locked = false;
+  buildPips();
+  applyGhost(0);
+  updateHUD();
+  document.getElementById('title-screen').classList.add('off');
+  document.getElementById('result-screen').style.display = 'none';
+  loadRound();
+}
+
+function buildPips() {
+  const el = document.getElementById('pips');
+  el.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const p = document.createElement('div');
+    p.className = 'pip' + (i===0?' current':'');
+    p.id = 'pip'+i;
+    el.appendChild(p);
+  }
+}
+
+function updatePips() {
+  for (let i = 0; i < TOTAL; i++) {
+    const p = document.getElementById('pip'+i);
+    if (!p) continue;
+    p.className = 'pip' + (i < round ? ' done' : i===round ? ' current' : '');
+  }
+}
+
+function updateHUD() {
+  document.getElementById('score-num').textContent = score.toLocaleString();
+  document.getElementById('round-num').textContent = `${round+1} / ${TOTAL}`;
+  document.getElementById('chaos-fill').style.width = chaos + '%';
+}
+
+function loadRound() {
+  if (round >= TOTAL) { showResult(); return; }
+  updatePips();
+  updateHUD();
+  locked = false;
+
+  const sc = S[round];
+  // Card animate in
+  const card = document.getElementById('scenario-card');
+  card.style.animation = 'none'; void card.offsetWidth;
+  card.style.animation = 'card-in 0.45s cubic-bezier(0.175,0.885,0.32,1.275)';
+
+  document.getElementById('scenario-text').textContent = lang==='ja' ? sc.ja : sc.en;
+  document.getElementById('scenario-sub').textContent  = lang==='ja' ? (sc.sub_ja||'') : (sc.sub_en||'');
+  document.getElementById('hint-l').textContent = lang==='ja' ? sc.angel.ja : sc.angel.en;
+  document.getElementById('hint-r').textContent = lang==='ja' ? sc.demon.ja  : sc.demon.en;
+
+  // Small card-in keyframe inject if not present
+  if (!document.getElementById('card-kf')) {
+    const st = document.createElement('style');
+    st.id = 'card-kf';
+    st.textContent = '@keyframes card-in{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:none}}';
+    document.head.appendChild(st);
+  }
+}
+
+/* ────────────────────────────────────────────
+   CHOOSE
+──────────────────────────────────────────── */
+function choose(side, ev) {
+  if (locked) return;
+  locked = true;
+
+  const sc   = S[round];
+  const pick = side === 'angel' ? sc.angel : sc.demon;
+  score += pick.pts;
+  chaos  = Math.min(100, chaos + pick.c);
+
+  // Flash
+  const isAngel = side === 'angel';
+  flashScreen(isAngel
+    ? 'radial-gradient(ellipse at 20% 50%, rgba(180,220,255,0.55), transparent 60%)'
+    : 'radial-gradient(ellipse at 80% 50%, rgba(255,60,20,0.55), transparent 60%)');
+
+  // Ripple at tap point
+  if (ev) spawnRipple(ev.clientX, ev.clientY, isAngel ? '#88ccff' : '#ff4422');
+
+  // Score pop
+  const px = isAngel ? window.innerWidth * 0.25 : window.innerWidth * 0.75;
+  spawnPts('+' + pick.pts.toLocaleString(), px, window.innerHeight * 0.55,
+           isAngel ? '#aaddff' : '#ff8866');
+
+  // Particles
+  spawnPar(ev ? ev.clientX : px,
+           ev ? ev.clientY : window.innerHeight*0.5,
+           isAngel ? ['✨','💙','🌟','💫','❄️'] : ['🔥','💥','😈','⚡','💜'], 10);
+
+  // Ghost bounce
+  const gc = document.getElementById('ghost-container');
+  gc.classList.remove('ghost-bounce'); void gc.offsetWidth;
+  gc.classList.add('ghost-bounce');
+  gc.addEventListener('animationend', () => gc.classList.remove('ghost-bounce'), {once:true});
+
+  // Evolve ghost
+  const newLv = Math.min(5, Math.floor(chaos / 17));
+  if (newLv > ghostLv) {
+    ghostLv = newLv;
+    setTimeout(() => { evolveFlash(); applyGhost(ghostLv); }, 350);
+  }
+
+  round++;
+  updateHUD();
+  setTimeout(() => loadRound(), 800);
+}
+
+/* ────────────────────────────────────────────
+   GHOST VISUAL
+──────────────────────────────────────────── */
+function applyGhost(lv) {
+  const g = G[Math.min(lv, G.length-1)];
+  document.getElementById('gStop1').setAttribute('stop-color', g.body1);
+  document.getElementById('gStop2').setAttribute('stop-color', g.body2);
+  document.getElementById('gEyeL').setAttribute('fill', g.eyes);
+  document.getElementById('gEyeR').setAttribute('fill', g.eyes);
+  document.getElementById('gBlushL').setAttribute('fill', g.blush);
+  document.getElementById('gBlushR').setAttribute('fill', g.blush);
+  document.getElementById('gExtra').innerHTML = g.extra;
+  document.getElementById('ghost-aura').style.setProperty('background', g.aura);
+  document.getElementById('ghost-svg').style.setProperty(
+    'filter', `drop-shadow(${g.glow})`);
+  document.getElementById('ghost-acc').textContent = g.acc;
+  document.getElementById('t-ghost-emoji').textContent = g.emoji;
+}
+
+function evolveFlash() {
+  const f = document.getElementById('flash');
+  f.style.background = 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.9), transparent 60%)';
+  f.classList.add('active');
+  setTimeout(() => { f.classList.remove('active'); f.classList.add('fade');
+    setTimeout(() => f.classList.remove('fade'), 600); }, 120);
+  spawnPar(window.innerWidth/2, window.innerHeight/2,
+    ['💫','✨','🌟','⭐','💥','🔮'], 16);
+}
+
+/* ────────────────────────────────────────────
+   FLASH
+──────────────────────────────────────────── */
+function flashScreen(bg) {
+  const f = document.getElementById('flash');
+  f.style.background = bg;
+  f.classList.add('active');
+  setTimeout(() => {
+    f.classList.remove('active');
+    f.classList.add('fade');
+    setTimeout(() => f.classList.remove('fade'), 500);
+  }, 100);
+}
+
+/* ────────────────────────────────────────────
+   RIPPLE
+──────────────────────────────────────────── */
+function spawnRipple(x, y, color) {
+  const r = document.createElement('div');
+  r.className = 'zone-ripple';
+  r.style.cssText = `left:${x}px;top:${y}px;background:${color}33;border:2px solid ${color}88`;
+  document.getElementById('ghost-stage').appendChild(r);
+  r.addEventListener('animationend', () => r.remove());
+}
+
+/* ────────────────────────────────────────────
+   PTS POP
+──────────────────────────────────────────── */
+function spawnPts(text, x, y, color) {
+  const el = document.createElement('div');
+  el.className = 'pts-pop';
+  el.textContent = text;
+  el.style.cssText = `left:${x}px;top:${y}px;color:${color};transform:translateX(-50%)`;
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+/* ────────────────────────────────────────────
+   PARTICLES
+──────────────────────────────────────────── */
+function spawnPar(cx, cy, emojis, n) {
+  for (let i = 0; i < n; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const angle = (Math.PI*2*i/n) + Math.random()*0.8;
+    const dist  = 60 + Math.random()*130;
+    const t     = 0.6 + Math.random()*0.7;
+    const s     = 0.8 + Math.random()*1.0;
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.cssText =
+      `left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);` +
+      `--x:${Math.cos(angle)*dist}px;--y:${Math.sin(angle)*dist-60}px;` +
+      `--t:${t}s;--s:${s}rem;--r:${(Math.random()-0.5)*720}deg;` +
+      `animation-delay:${Math.random()*0.1}s`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), (t+0.15)*1000);
+  }
+}
+
+/* ────────────────────────────────────────────
+   RESULT
+──────────────────────────────────────────── */
+function showResult() {
+  const lv = Math.min(ghostLv, G.length-1);
+  const rt = RTYPES[lv];
+  const gd = G[lv];
+
+  document.getElementById('r-ghost').textContent = gd.emoji;
+  document.getElementById('r-type').textContent  = lang==='ja' ? rt.ja : rt.en;
+  document.getElementById('r-type').style.setProperty('--c1', rt.c1);
+  document.getElementById('r-type').style.setProperty('--c2', rt.c2);
+  document.getElementById('r-score').textContent = score.toLocaleString();
+  document.getElementById('r-comment').textContent = lang==='ja' ? rt.ja_c : rt.en_c;
+  document.getElementById('r-chaos-fill').style.width = chaos+'%';
+  document.getElementById('r-chaos-pct').textContent = chaos+'%';
+  document.getElementById('r-chaos-label').textContent = lang==='ja' ? 'カオス度' : 'CHAOS';
+  document.getElementById('result-screen').style.display = 'flex';
+
+  setTimeout(() => {
+    spawnPar(window.innerWidth/2, window.innerHeight*0.35,
+      ['🎉','🎊','✨','💫','👻','🌟','🔥'], 22);
+  }, 400);
+}
+
+/* ────────────────────────────────────────────
+   SHARE / RETRY
+──────────────────────────────────────────── */
+function shareResult() {
+  const gd = G[Math.min(ghostLv, G.length-1)];
+  const text = lang === 'ja'
+    ? `SANCHAN神判決ショー⚖️\n\n${gd.emoji} 判決タイプ：${G[Math.min(ghostLv,5)].ja}\nスコア：${score.toLocaleString()}pt\nカオス度：${chaos}%\n\n意味不明な10件の事件を裁いた結果です笑\n#SANCHAN #神判決 #意味不明ゲーム`
+    : `SANCHAN DIVINE CHAOS ⚖️\n\n${gd.emoji} Type: ${G[Math.min(ghostLv,5)].en}\nScore: ${score.toLocaleString()}pt\nChaos: ${chaos}%\n\nI judged 10 absolutely unhinged cases.\n#SANCHAN #DivineJudgment`;
+  if (navigator.share) {
+    navigator.share({ title: 'SANCHAN', text }).catch(()=>{});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      const b = document.querySelector('.r-btn-share');
+      b.textContent = lang==='ja' ? '✅ コピー完了' : '✅ Copied!';
+      setTimeout(() => b.textContent = '📤 Share', 2200);
+    });
+  }
+}
+
+function retryGame() {
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('title-screen').classList.remove('off');
+  ghostLv = 0;
+  applyGhost(0);
+}
+
+/* ────────────────────────────────────────────
+   INIT
+──────────────────────────────────────────── */
+setLang('ja');
+</script>
+</body>
+</html>
