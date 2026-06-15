@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050010">
+<title>SANCHAN PUMP 👻🚀</title>
+<style>
+:root{
+  --p:#9945FF;--g:#14F195;--r:#FF4444;
+  --bg:#050010;--card:rgba(153,69,255,0.07);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);
+  font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Segoe UI',sans-serif;
+  color:#fff;touch-action:manipulation;user-select:none;
+  -webkit-tap-highlight-color:transparent}
+
+/* BG */
+#bg{position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 45% at 15% 0%,rgba(153,69,255,0.18),transparent),
+    radial-gradient(ellipse 55% 35% at 85% 100%,rgba(20,241,149,0.1),transparent),
+    linear-gradient(175deg,#050010 0%,#0d0025 55%,#050018 100%);
+}
+.grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(153,69,255,0.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(153,69,255,0.035) 1px,transparent 1px);
+  background-size:36px 36px}
+
+/* ── SCREENS ── */
+.page{position:fixed;inset:0;z-index:10;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;align-items:center;
+  padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom))}
+.page.off{display:none}
+
+/* ── SHARED COMPONENTS ── */
+.logo{font-size:clamp(1.9rem,7vw,2.8rem);font-weight:900;text-align:center;line-height:1.1;
+  background:linear-gradient(135deg,#fff 0%,var(--p) 45%,var(--g) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:.6rem;letter-spacing:4px;color:rgba(255,255,255,.28);text-transform:uppercase;margin-bottom:20px}
+.card{background:var(--card);border:1px solid rgba(153,69,255,.2);border-radius:18px;
+  padding:18px 20px;backdrop-filter:blur(14px);width:100%;max-width:420px}
+.card-title{font-size:.62rem;letter-spacing:3px;color:rgba(255,255,255,.3);
+  text-transform:uppercase;margin-bottom:10px}
+.inp{width:100%;padding:13px 14px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(153,69,255,.3);
+  border-radius:12px;color:#fff;font-size:.95rem;font-family:inherit;
+  margin-bottom:10px;outline:none}
+.inp:focus{border-color:var(--p)}
+.inp::placeholder{color:rgba(255,255,255,.25)}
+.btn{width:100%;padding:15px;border:none;border-radius:14px;
+  font-size:clamp(.9rem,3.3vw,1rem);font-weight:800;cursor:pointer;
+  font-family:inherit;letter-spacing:.3px;margin-bottom:8px}
+.btn:active{transform:scale(.95)}
+.btn-primary{background:linear-gradient(135deg,var(--p),#ff2266);color:#fff;
+  box-shadow:0 8px 30px rgba(153,69,255,.4)}
+.btn-sol{background:linear-gradient(135deg,#9945FF,#14F195);color:#fff;
+  box-shadow:0 6px 24px rgba(153,69,255,.35)}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
+  color:rgba(255,255,255,.6)}
+.ghost-big{font-size:clamp(3.5rem,13vw,5.5rem);text-align:center;
+  animation:gfl 2.5s ease-in-out infinite;
+  filter:drop-shadow(0 0 28px rgba(153,69,255,.55));line-height:1}
+@keyframes gfl{0%,100%{transform:translateY(0)rotate(-2deg)}50%{transform:translateY(-14px)rotate(2deg)}}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:.68rem;font-weight:700}
+.tag-live{background:rgba(20,241,149,.15);border:1px solid rgba(20,241,149,.35);color:var(--g)}
+.tag-pump{background:rgba(153,69,255,.15);border:1px solid rgba(153,69,255,.35);color:var(--p)}
+.row{display:flex;gap:8px;align-items:center}
+.row-sb{display:flex;justify-content:space-between;align-items:center}
+hr{border:none;border-top:1px solid rgba(255,255,255,.06);margin:12px 0}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--p);
+  font-size:.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-text{font-size:.82rem;color:rgba(255,255,255,.65);line-height:1.5}
+.link{color:var(--g);text-decoration:none;font-weight:700}
+.link:hover{text-decoration:underline}
+.mono{font-family:monospace;font-size:.75rem;word-break:break-all;color:rgba(255,255,255,.5)}
+.spin{display:inline-block;width:18px;height:18px;
+  border:2px solid rgba(255,255,255,.2);border-top-color:#fff;
+  border-radius:50%;animation:sp 0.7s linear infinite;vertical-align:middle}
+@keyframes sp{to{transform:rotate(360deg)}}
+.notice{font-size:.72rem;color:rgba(255,255,255,.35);text-align:center;line-height:1.6;padding:0 4px}
+em2{color:var(--g);font-style:normal}
+
+/* ── PAGE 0: TITLE ── */
+#p0{justify-content:center;gap:6px;text-align:center}
+.tier-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:360px;margin:12px 0}
+.tier-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:12px;padding:10px 12px;text-align:left}
+.tier-emoji{font-size:1.3rem}
+.tier-name{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.8);margin-top:2px}
+.tier-req{font-size:.6rem;color:rgba(255,255,255,.35)}
+
+/* ── PAGE 1: LAUNCH ── */
+#p1{gap:12px;padding-top:max(24px,env(safe-area-inset-top))}
+.preview-token{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.token-icon-wrap{width:56px;height:56px;border-radius:16px;overflow:hidden;
+  background:linear-gradient(135deg,#9945FF,#14F195);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+.token-info-name{font-size:1.1rem;font-weight:800}
+.token-info-sym{font-size:.75rem;color:rgba(255,255,255,.45)}
+.status-line{font-size:.72rem;padding:8px 12px;border-radius:10px;line-height:1.5}
+.status-ok{background:rgba(20,241,149,.1);color:var(--g);border:1px solid rgba(20,241,149,.25)}
+.status-err{background:rgba(255,80,80,.1);color:#ff8888;border:1px solid rgba(255,80,80,.25)}
+.status-info{background:rgba(153,69,255,.1);color:#cc99ff;border:1px solid rgba(153,69,255,.25)}
+.mint-addr{font-family:monospace;font-size:.7rem;word-break:break-all;
+  background:rgba(20,241,149,.07);border:1px solid rgba(20,241,149,.2);
+  border-radius:8px;padding:8px 10px;color:var(--g);margin:6px 0}
+
+/* ── PAGE 2: GAME ── */
+#p2{padding:0;overflow:hidden}
+#game-wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center}
+
+/* HUD */
+#hud{width:100%;max-width:480px;
+  padding:max(10px,env(safe-area-inset-top)) 14px 6px;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  background:linear-gradient(to bottom,rgba(5,0,16,.95),transparent);
+  flex-shrink:0;z-index:5}
+.hb{display:flex;flex-direction:column}
+.hl{font-size:.52rem;letter-spacing:3px;color:rgba(255,255,255,.25);text-transform:uppercase}
+.hv{font-size:clamp(1.3rem,4.8vw,1.7rem);font-weight:900;line-height:1;
+  background:linear-gradient(135deg,#fff,#ffd966);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px}
+.hv-sol{font-size:clamp(1rem,3.8vw,1.35rem);font-weight:900;color:var(--g);line-height:1}
+#wallet-pill{display:none;background:rgba(153,69,255,.15);
+  border:1px solid rgba(153,69,255,.3);border-radius:20px;
+  padding:5px 10px;font-size:.65rem;color:#cc99ff;
+  align-items:center;gap:5px}
+#wallet-pill.show{display:flex}
+.wpill-dot{width:6px;height:6px;border-radius:50%;background:var(--g)}
+
+/* Progress bar: bonding curve */
+#curve-bar{width:100%;max-width:480px;padding:0 14px 4px;flex-shrink:0}
+.cb-row{display:flex;justify-content:space-between;font-size:.58rem;
+  color:rgba(255,255,255,.3);margin-bottom:3px}
+.cb-track{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.cb-fill{height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--p),var(--g));
+  transition:width .4s ease;position:relative}
+.cb-fill::after{content:'';position:absolute;right:0;top:-2px;
+  width:10px;height:10px;background:#fff;border-radius:50%;
+  box-shadow:0 0 8px var(--g);transform:translateX(50%)}
+
+/* Canvas */
+#gc{flex:1;display:block;width:100%;touch-action:none;min-height:0}
+
+/* Bottom controls */
+#bottom-ctrl{width:100%;max-width:480px;
+  padding:8px 14px max(10px,env(safe-area-inset-bottom));
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:linear-gradient(to top,rgba(5,0,16,.95),transparent)}
+.pump-btn{
+  flex:1;padding:16px 0;border:none;border-radius:16px;
+  font-size:clamp(.95rem,3.5vw,1.1rem);font-weight:900;cursor:pointer;font-family:inherit;
+  letter-spacing:.5px;touch-action:none}
+.pump-btn:active{transform:scale(.94)}
+#btn-pump{background:linear-gradient(135deg,rgba(20,241,149,.2),rgba(0,180,100,.15));
+  border:1.5px solid rgba(20,241,149,.5);color:var(--g);
+  box-shadow:0 4px 20px rgba(20,241,149,.2);font-size:1.3rem}
+#btn-dump{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.3);font-size:.8rem;padding:12px 18px;flex:none}
+
+/* GAMEOVER panel */
+#go-panel{display:none;position:absolute;inset:0;z-index:20;
+  background:rgba(5,0,16,.92);backdrop-filter:blur(16px);
+  flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px}
+#go-panel.show{display:flex}
+.go-title{font-size:clamp(2rem,7vw,3rem);font-weight:900;
+  background:linear-gradient(135deg,#fff,var(--p));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.go-score{font-size:clamp(2.5rem,9vw,3.8rem);font-weight:900;letter-spacing:-2px;
+  background:linear-gradient(135deg,#fff,#ffd966);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+
+/* particles */
+.par{position:fixed;pointer-events:none;z-index:60;font-size:var(--s,1rem);
+  animation:pfly var(--t,.9s) ease-out forwards}
+@keyframes pfly{from{opacity:1;transform:translate(0,0)scale(1)rotate(0deg)}
+  to{opacity:0;transform:translate(var(--x),var(--y))scale(.3)rotate(var(--r))}}
+#flash{position:fixed;inset:0;z-index:55;pointer-events:none;opacity:0;transition:opacity .15s}
+#flash.a{opacity:1;transition:none}#flash.f{opacity:0;transition:opacity .55s}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div class="grid"></div>
+<div id="flash"></div>
+
+<!-- ═══════════════════════════════════
+     PAGE 0: TITLE
+═══════════════════════════════════ -->
+<div class="page" id="p0">
+  <div class="ghost-big" id="pg0">👻</div>
+  <div class="logo">SANCHAN PUMP</div>
+  <div class="sub">魔界コインで遊ぶゲーム · POWERED BY SOLANA</div>
+
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <span class="tag tag-live">● LIVE on pump.fun</span>
+    <span class="tag tag-pump">$SANC Token</span>
+  </div>
+
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-title">トークンでパワーアップ</div>
+    <div class="tier-grid">
+      <div class="tier-card">
+        <div class="tier-emoji">👻</div>
+        <div class="tier-name">ノーマル</div>
+        <div class="tier-req">0 $SANC</div>
+      </div>
+      <div class="tier-card" style="border-color:rgba(20,241,149,.25)">
+        <div class="tier-emoji">👼</div>
+        <div class="tier-name">HODLer</div>
+        <div class="tier-req" style="color:var(--g)">10K $SANC</div>
+      </div>
+      <div class="tier-card" style="border-color:rgba(255,210,0,.25)">
+        <div class="tier-emoji">✨</div>
+        <div class="tier-name">Diamond Hands</div>
+        <div class="tier-req" style="color:#ffd700">100K $SANC</div>
+      </div>
+      <div class="tier-card" style="border-color:rgba(153,69,255,.4)">
+        <div class="tier-emoji">👑</div>
+        <div class="tier-name">魔王 (Whale)</div>
+        <div class="tier-req" style="color:var(--p)">1M $SANC</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-sol" onclick="showPage('p1')">🚀 トークンをローンチ → pump.fun</button>
+  <button class="btn btn-ghost" onclick="showPage('p2');initGame()">👻 トークンなしでプレイ</button>
+
+  <div style="display:flex;gap:10px;margin-top:6px">
+    <button style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+      color:rgba(255,255,255,.4);padding:7px 16px;border-radius:20px;
+      font-size:.75rem;cursor:pointer;font-family:inherit" id="lj" class="on" onclick="setLang('ja')">🇯🇵 JP</button>
+    <button style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+      color:rgba(255,255,255,.4);padding:7px 16px;border-radius:20px;
+      font-size:.75rem;cursor:pointer;font-family:inherit" id="le" onclick="setLang('en')">🇺🇸 EN</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PAGE 1: LAUNCH TOKEN
+═══════════════════════════════════ -->
+<div class="page off" id="p1">
+  <div style="width:100%;max-width:420px;padding-top:4px">
+    <button onclick="showPage('p0')" style="background:none;border:none;color:rgba(255,255,255,.4);
+      font-size:.8rem;cursor:pointer;font-family:inherit;margin-bottom:12px;padding:0">← 戻る</button>
+
+    <div class="logo" style="font-size:1.6rem;margin-bottom:4px">🚀 トークンローンチ</div>
+    <div class="sub" style="margin-bottom:14px">pump.fun で $SANC を作る</div>
+
+    <!-- Token preview -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="preview-token">
+        <div class="token-icon-wrap"><canvas id="token-icon-canvas" width="56" height="56"></canvas></div>
+        <div>
+          <div class="token-info-name" id="prev-name">さんちゃん魔界コイン</div>
+          <div class="token-info-sym" id="prev-sym">$SANC</div>
+          <div style="margin-top:4px"><span class="tag tag-pump" style="font-size:.58rem">pump.fun</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title">ローンチ手順</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="row" style="gap:10px;align-items:flex-start">
+          <div class="step-num">1</div>
+          <div class="step-text">下のフォームを確認して<br><strong style="color:#fff">「メタデータを準備」</strong>をタップ</div>
+        </div>
+        <div class="row" style="gap:10px;align-items:flex-start">
+          <div class="step-num">2</div>
+          <div class="step-text">Phantomウォレットで署名<br>（トランザクション手数料 約0.02 SOL）</div>
+        </div>
+        <div class="row" style="gap:10px;align-items:flex-start">
+          <div class="step-num">3</div>
+          <div class="step-text">ミントアドレスを取得 →<br>pump.funでゲームプレイ開始！</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Token config form -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title">トークン設定</div>
+      <input class="inp" id="tok-name" value="さんちゃん魔界コイン" placeholder="Token Name">
+      <input class="inp" id="tok-sym"  value="SANC" placeholder="Symbol (e.g. SANC)">
+      <textarea class="inp" id="tok-desc" rows="3" style="resize:none;line-height:1.5"
+        placeholder="Description">さんちゃんの魔界ゲームで使える公式トークン。天使か悪魔か、その答えはあなたのウォレットにある。WAGMI 👻🚀</textarea>
+      <input class="inp" id="tok-twitter"  placeholder="Twitter (optional): https://x.com/...">
+      <input class="inp" id="tok-telegram" placeholder="Telegram (optional): https://t.me/...">
+      <input class="inp" id="tok-website"  placeholder="Website (optional)">
+    </div>
+
+    <!-- Launch button -->
+    <div id="launch-status" style="display:none;margin-bottom:8px"></div>
+    <button class="btn btn-sol" id="btn-launch" onclick="launchToken()">
+      🚀 pump.funでローンチ
+    </button>
+    <div class="notice" style="margin-bottom:12px">
+      Phantomウォレットが必要です。<br>
+      トランザクション手数料：約 0.02〜0.03 SOL
+    </div>
+
+    <!-- Result: mint address -->
+    <div id="launch-result" style="display:none">
+      <div class="card" style="margin-bottom:10px">
+        <div class="card-title">✅ ローンチ完了！</div>
+        <div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:6px">Mint Address</div>
+        <div class="mint-addr" id="result-mint"></div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <a id="pumpfun-link" href="#" target="_blank" class="btn btn-sol"
+             style="text-align:center;text-decoration:none;padding:12px;font-size:.85rem;font-weight:800">
+            🌐 pump.funで見る
+          </a>
+          <button class="btn btn-ghost" style="font-size:.82rem;padding:12px"
+            onclick="copyMint()">📋 コピー</button>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="startWithToken()">
+        👻 このトークンでゲームプレイ！
+      </button>
+    </div>
+
+    <!-- Or: enter existing token -->
+    <hr>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.3);text-align:center;margin-bottom:8px">
+      または既存の $SANC ミントアドレスを入力
+    </div>
+    <input class="inp" id="existing-mint" placeholder="Mint address (base58)">
+    <button class="btn btn-ghost" onclick="useExistingToken()">このトークンを使う</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PAGE 2: GAME
+═══════════════════════════════════ -->
+<div class="page off" id="p2" style="padding:0;overflow:hidden">
+  <div id="game-wrap" style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;position:relative">
+
+    <div id="hud">
+      <div class="hb">
+        <div class="hl">SCORE</div>
+        <div class="hv" id="hv-sc">0</div>
+      </div>
+      <div id="wallet-pill">
+        <div class="wpill-dot"></div>
+        <span id="wpill-addr"></span>
+        <span id="wpill-sanc" style="color:var(--g);font-weight:800;margin-left:4px"></span>
+      </div>
+      <div class="hb" style="align-items:flex-end">
+        <div class="hl">BEST</div>
+        <div class="hv" id="hv-best">0</div>
+      </div>
+    </div>
+
+    <div id="curve-bar">
+      <div class="cb-row">
+        <span id="cb-label">BONDING CURVE</span>
+        <span id="cb-pct">0%</span>
+      </div>
+      <div class="cb-track"><div class="cb-fill" id="cb-fill" style="width:0%"></div></div>
+    </div>
+
+    <canvas id="gc" style="flex:1;display:block;width:100%;touch-action:none"></canvas>
+
+    <div id="bottom-ctrl">
+      <button id="btn-dump" onclick="goBack()">← back</button>
+      <button id="btn-pump" onpointerdown="pumpOn()" onpointerup="pumpOff()" onpointercancel="pumpOff()">
+        🚀 PUMP
+      </button>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="go-panel">
+      <div class="ghost-big" id="go-ghost">😵</div>
+      <div class="go-title" id="go-ttl">GAME OVER</div>
+      <div class="go-score" id="go-sc">0</div>
+      <div style="font-size:.6rem;letter-spacing:3px;color:rgba(255,255,255,.3)">POINTS</div>
+      <div id="go-comment" style="font-size:.82rem;color:rgba(255,255,255,.5);
+        text-align:center;max-width:280px;line-height:1.6;margin-top:6px"></div>
+      <button class="btn btn-primary" style="max-width:260px;margin-top:12px" onclick="restartGame()">
+        🔄 もう一回
+      </button>
+      <button class="btn btn-ghost" style="max-width:260px;margin-top:0;font-size:.82rem" onclick="shareScore()">
+        📤 Share Score
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Solana web3.js -->
+<script src="https://unpkg.com/@solana/web3.js@1.87.6/lib/index.iife.min.js"></script>
+<script>
+'use strict';
+/* ══════════════════════════════════════
+   CONSTANTS
+══════════════════════════════════════ */
+const PUMP_PROGRAM    = '6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P';
+const MPL_METADATA    = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
+const TOKEN_PROGRAM   = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+const ATA_PROGRAM     = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe1bJo';
+const SYSTEM_PROGRAM  = '11111111111111111111111111111111';
+const SYSVAR_RENT     = 'SysvarRent111111111111111111111111111111111';
+const RPC             = 'https://api.mainnet-beta.solana.com';
+
+const web3 = solanaWeb3;
+const conn = new web3.Connection(RPC, 'confirmed');
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+let lang = 'ja';
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('off'));
+  document.getElementById(id).classList.remove('off');
+}
+function setLang(l) {
+  lang = l;
+  document.getElementById('lj').style.color = l==='ja'?'#fff':'rgba(255,255,255,.4)';
+  document.getElementById('le').style.color = l==='en'?'#fff':'rgba(255,255,255,.4)';
+}
+function goBack() { showPage('p0'); stopGame(); }
+
+/* ══════════════════════════════════════
+   TOKEN ICON CANVAS (ghost image)
+══════════════════════════════════════ */
+function drawTokenIcon() {
+  const c = document.getElementById('token-icon-canvas');
+  const x = c.getContext('2d');
+  x.clearRect(0,0,56,56);
+  // Purple/green gradient bg
+  const g = x.createLinearGradient(0,0,56,56);
+  g.addColorStop(0,'#9945FF'); g.addColorStop(1,'#14F195');
+  x.fillStyle = g; x.beginPath(); x.roundRect?x.roundRect(0,0,56,56,12):x.rect(0,0,56,56); x.fill();
+  // Ghost emoji
+  x.font='32px serif'; x.textAlign='center'; x.textBaseline='middle';
+  x.fillText('👻',28,30);
+}
+
+/* ══════════════════════════════════════
+   PHANTOM CONNECT
+══════════════════════════════════════ */
+let walletPubkey = null;
+let sancBalance  = 0;
+let mintAddress  = null;
+
+async function connectPhantom() {
+  const ph = window.solana;
+  if (!ph?.isPhantom) {
+    alert(lang==='ja'
+      ? 'Phantom Walletをインストールしてください。\nhttps://phantom.app'
+      : 'Please install Phantom Wallet.\nhttps://phantom.app');
+    return null;
+  }
+  try {
+    const resp = await ph.connect();
+    walletPubkey = resp.publicKey;
+    return walletPubkey;
+  } catch(e) { return null; }
+}
+
+async function fetchSancBalance() {
+  if (!walletPubkey || !mintAddress) return 0;
+  try {
+    const resp = await fetch(RPC, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        jsonrpc:'2.0', id:1,
+        method:'getTokenAccountsByOwner',
+        params:[
+          walletPubkey.toBase58(),
+          {mint: mintAddress},
+          {encoding:'jsonParsed'}
+        ]
+      })
+    });
+    const d = await resp.json();
+    const accs = d.result?.value || [];
+    if (!accs.length) return 0;
+    return accs[0].account.data.parsed.info.tokenAmount.uiAmount || 0;
+  } catch { return 0; }
+}
+
+/* ══════════════════════════════════════
+   PUMP.FUN TOKEN LAUNCH
+══════════════════════════════════════ */
+function setStatus(html, type='info') {
+  const el = document.getElementById('launch-status');
+  el.style.display = 'block';
+  el.className = `status-line status-${type}`;
+  el.innerHTML = html;
+}
+
+async function launchToken() {
+  const name = document.getElementById('tok-name').value.trim();
+  const sym  = document.getElementById('tok-sym').value.trim().toUpperCase();
+  const desc = document.getElementById('tok-desc').value.trim();
+  const twtr = document.getElementById('tok-twitter').value.trim();
+  const tele = document.getElementById('tok-telegram').value.trim();
+  const web  = document.getElementById('tok-website').value.trim();
+
+  if (!name || !sym) { setStatus('名前とシンボルは必須です','err'); return; }
+
+  // Step 1: Connect wallet
+  setStatus('<span class="spin"></span> Phantomに接続中…');
+  const pk = await connectPhantom();
+  if (!pk) { setStatus('ウォレット接続がキャンセルされました','err'); return; }
+  setStatus(`✅ 接続: ${pk.toBase58().slice(0,6)}…${pk.toBase58().slice(-4)}`, 'ok');
+
+  // Step 2: Upload metadata to pump.fun IPFS
+  await new Promise(r=>setTimeout(r,800));
+  setStatus('<span class="spin"></span> pump.fun IPFSにメタデータをアップロード中…');
+
+  // Generate ghost image blob
+  const iconCanvas = document.getElementById('token-icon-canvas');
+  const imageBlob  = await new Promise(res => iconCanvas.toBlob(res, 'image/png'));
+
+  let metadataUri;
+  try {
+    const form = new FormData();
+    form.append('name',        name);
+    form.append('symbol',      sym);
+    form.append('description', desc);
+    form.append('twitter',     twtr);
+    form.append('telegram',    tele);
+    form.append('website',     web);
+    form.append('showName',    'true');
+    form.append('file',        imageBlob, 'sanchan.png');
+
+    const ipfsRes = await fetch('https://pump.fun/api/ipfs', {method:'POST', body:form});
+    if (!ipfsRes.ok) throw new Error('IPFS upload failed: ' + ipfsRes.status);
+    const ipfsData = await ipfsRes.json();
+    metadataUri = ipfsData.metadataUri;
+    if (!metadataUri) throw new Error('No metadataUri returned');
+    setStatus(`✅ メタデータURI取得: <span class="mono">${metadataUri.slice(0,40)}…</span>`, 'ok');
+  } catch(e) {
+    setStatus(`❌ IPFSアップロード失敗: ${e.message}<br>pump.funのCORSポリシーによりブラウザからの直接アップロードが<br>ブロックされる場合があります。手動でpump.funから作成してください。`, 'err');
+    showManualInstructions(name, sym, desc);
+    return;
+  }
+
+  // Step 3: Build create transaction
+  await new Promise(r=>setTimeout(r,500));
+  setStatus('<span class="spin"></span> トランザクションを構築中…');
+
+  try {
+    const {tx, mint} = await buildCreateTx(pk, name, sym, metadataUri);
+    setStatus('<span class="spin"></span> Phantomで署名してください…');
+
+    // Sign with Phantom (mint keypair already partially signed)
+    const signedTx = await window.solana.signTransaction(tx);
+
+    setStatus('<span class="spin"></span> Solanaネットワークに送信中…');
+    const sig = await conn.sendRawTransaction(signedTx.serialize());
+    await conn.confirmTransaction(sig, 'confirmed');
+
+    mintAddress = mint.publicKey.toBase58();
+    onLaunchSuccess(mintAddress, sig);
+  } catch(e) {
+    setStatus(`❌ トランザクション失敗: ${e.message}`, 'err');
+    console.error(e);
+  }
+}
+
+async function buildCreateTx(userPubkey, name, symbol, uri) {
+  const mint = web3.Keypair.generate();
+  const PK   = k => new web3.PublicKey(k);
+
+  const pumpProg = PK(PUMP_PROGRAM);
+  const mplMeta  = PK(MPL_METADATA);
+  const tokenPrg = PK(TOKEN_PROGRAM);
+  const ataPrg   = PK(ATA_PROGRAM);
+  const sysPrg   = PK(SYSTEM_PROGRAM);
+  const rentSys  = PK(SYSVAR_RENT);
+
+  // PDAs
+  const [mintAuth]  = web3.PublicKey.findProgramAddressSync([Buffer.from('mint-authority')], pumpProg);
+  const [globalAcc] = web3.PublicKey.findProgramAddressSync([Buffer.from('global')], pumpProg);
+  const [evtAuth]   = web3.PublicKey.findProgramAddressSync([Buffer.from('__event_authority')], pumpProg);
+  const [bondCurve] = web3.PublicKey.findProgramAddressSync(
+    [Buffer.from('bonding-curve'), mint.publicKey.toBuffer()], pumpProg);
+  const [assocBC]   = web3.PublicKey.findProgramAddressSync(
+    [bondCurve.toBuffer(), tokenPrg.toBuffer(), mint.publicKey.toBuffer()], ataPrg);
+  const [metaAcc]   = web3.PublicKey.findProgramAddressSync(
+    [Buffer.from('metadata'), mplMeta.toBuffer(), mint.publicKey.toBuffer()], mplMeta);
+
+  // Instruction data: discriminator + borsh-encoded strings
+  function str(s) {
+    const b = Buffer.from(s, 'utf8');
+    const l = Buffer.allocUnsafe(4); l.writeUInt32LE(b.length); return Buffer.concat([l, b]);
+  }
+  const discriminator = Buffer.from([24,30,200,40,5,28,7,119]);
+  const data = Buffer.concat([discriminator, str(name), str(symbol), str(uri)]);
+
+  const ix = new web3.TransactionInstruction({
+    programId: pumpProg,
+    keys: [
+      {pubkey: mint.publicKey,  isSigner:true,  isWritable:true},
+      {pubkey: mintAuth,        isSigner:false, isWritable:false},
+      {pubkey: bondCurve,       isSigner:false, isWritable:true},
+      {pubkey: assocBC,         isSigner:false, isWritable:true},
+      {pubkey: globalAcc,       isSigner:false, isWritable:false},
+      {pubkey: mplMeta,         isSigner:false, isWritable:false},
+      {pubkey: metaAcc,         isSigner:false, isWritable:true},
+      {pubkey: userPubkey,      isSigner:true,  isWritable:true},
+      {pubkey: sysPrg,          isSigner:false, isWritable:false},
+      {pubkey: tokenPrg,        isSigner:false, isWritable:false},
+      {pubkey: ataPrg,          isSigner:false, isWritable:false},
+      {pubkey: rentSys,         isSigner:false, isWritable:false},
+      {pubkey: evtAuth,         isSigner:false, isWritable:false},
+      {pubkey: pumpProg,        isSigner:false, isWritable:false},
+    ],
+    data
+  });
+
+  const {blockhash} = await conn.getLatestBlockhash();
+  const tx = new web3.Transaction({recentBlockhash: blockhash, feePayer: userPubkey});
+  // Priority fee
+  tx.add(web3.ComputeBudgetProgram.setComputeUnitPrice({microLamports: 100000}));
+  tx.add(ix);
+  tx.partialSign(mint); // mint keypair signs first
+
+  return {tx, mint};
+}
+
+function onLaunchSuccess(mintAddr, sig) {
+  setStatus(`✅ ローンチ成功！`, 'ok');
+  document.getElementById('result-mint').textContent = mintAddr;
+  const pumpUrl = `https://pump.fun/coin/${mintAddr}`;
+  document.getElementById('pumpfun-link').href = pumpUrl;
+  document.getElementById('launch-result').style.display = 'block';
+  document.getElementById('btn-launch').style.display = 'none';
+  spawnPars(window.innerWidth/2, window.innerHeight/2, ['🚀','✨','💫','🎉','👻'], 20);
+}
+
+function copyMint() {
+  navigator.clipboard?.writeText(document.getElementById('result-mint').textContent);
+  const b = document.querySelector('[onclick="copyMint()"]');
+  b.textContent = '✅ コピー完了'; setTimeout(()=>b.textContent='📋 コピー',2000);
+}
+
+function showManualInstructions(name, sym, desc) {
+  const url = `https://pump.fun/create`;
+  document.getElementById('launch-status').innerHTML +=
+    `<br><br>📋 <strong>手動でローンチする場合：</strong><br>
+    <a href="${url}" target="_blank" class="link">pump.fun/create</a> を開き、<br>
+    名前: <strong>${name}</strong>、シンボル: <strong>${sym}</strong> で作成してください。<br>
+    作成後、ミントアドレスを下の入力欄に入れてゲームで使えます。`;
+}
+
+function useExistingToken() {
+  const addr = document.getElementById('existing-mint').value.trim();
+  if (!addr) return;
+  try { new web3.PublicKey(addr); } catch { alert('無効なアドレスです'); return; }
+  mintAddress = addr;
+  startWithToken();
+}
+
+async function startWithToken() {
+  if (mintAddress) {
+    const pk = await connectPhantom();
+    if (pk) {
+      sancBalance = await fetchSancBalance();
+      updateWalletPill();
+    }
+  }
+  showPage('p2');
+  initGame();
+}
+
+function updateWalletPill() {
+  if (!walletPubkey) return;
+  const pill = document.getElementById('wallet-pill');
+  pill.classList.add('show');
+  document.getElementById('wpill-addr').textContent =
+    walletPubkey.toBase58().slice(0,4)+'…'+walletPubkey.toBase58().slice(-3);
+  document.getElementById('wpill-sanc').textContent =
+    sancBalance >= 1e6 ? (sancBalance/1e6).toFixed(1)+'M $SANC' :
+    sancBalance >= 1e3 ? (sancBalance/1e3).toFixed(1)+'K $SANC' :
+    sancBalance > 0 ? sancBalance.toFixed(0)+' $SANC' : '';
+}
+
+/* ══════════════════════════════════════
+   TOKEN TIER
+══════════════════════════════════════ */
+function getTier() {
+  if (sancBalance >= 1e6) return 3; // 魔王
+  if (sancBalance >= 1e5) return 2; // Diamond
+  if (sancBalance >= 1e4) return 1; // HODLer
+  return 0;                          // Normal
+}
+const TIER_DATA = [
+  {emoji:'👻',name:'ノーマル',   mult:1,   shield:0, color:'rgba(153,69,255,0.6)'},
+  {emoji:'👼',name:'HODLer',    mult:1.5, shield:1, color:'rgba(20,241,149,0.7)'},
+  {emoji:'✨',name:'Diamond',   mult:2,   shield:2, color:'rgba(255,210,0,0.8)'},
+  {emoji:'👑',name:'魔王 Whale',mult:5,   shield:3, color:'rgba(153,69,255,1)'},
+];
+
+/* ══════════════════════════════════════
+   GAME ENGINE
+══════════════════════════════════════ */
+const gc     = document.getElementById('gc');
+const gctx   = gc.getContext('2d');
+const DPR    = window.devicePixelRatio || 1;
+
+let GW, GH;
+let raf, running = false;
+let score=0, best=+localStorage.getItem('sp_best')||0;
+let curve=0;  // 0-100 bonding curve progress
+let ghY=0, ghVY=0;
+let pumping=false;
+let candles=[]; // obstacles & collectibles
+let pars=[];
+let frame=0;
+let shieldLeft=0;
+
+function resizeGame() {
+  const rect = gc.getBoundingClientRect();
+  GW = rect.width; GH = rect.height;
+  gc.width  = GW*DPR; gc.height = GH*DPR;
+  gctx.scale(DPR,DPR);
+}
+
+function initGame() {
+  resizeGame();
+  score=0; curve=0; frame=0; pumping=false;
+  candles=[]; pars=[];
+  ghY = GH*0.55; ghVY=0;
+  shieldLeft = getTier() * 1; // shields based on tier
+  running=true;
+  updateHUD();
+  document.getElementById('go-panel').classList.remove('show');
+  if(raf) cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(gameLoop);
+}
+
+function stopGame() { running=false; if(raf){ cancelAnimationFrame(raf); raf=null; } }
+function restartGame() { document.getElementById('go-panel').classList.remove('show'); initGame(); }
+
+function pumpOn()  { pumping=true; }
+function pumpOff() { pumping=false; }
+
+gc.addEventListener('pointerdown', pumpOn);
+gc.addEventListener('pointerup',   pumpOff);
+gc.addEventListener('pointercancel',pumpOff);
+
+/* ── GAME LOOP ── */
+let lastT=0;
+function gameLoop(t) {
+  if(!running) return;
+  raf = requestAnimationFrame(gameLoop);
+  const dt = Math.min((t-lastT)/1000, 0.05); lastT=t;
+  frame++;
+
+  update(dt, t);
+  drawGame(t);
+}
+
+const GRAVITY = 600;
+const LIFT    = -900;
+const GHOST_R = 22;
+const TIER_MULT = [1, 1.5, 2, 5];
+
+function update(dt, t) {
+  const tier = getTier();
+  const speedMult = 1 + tier*0.15 + frame*0.00015;
+
+  // Ghost physics
+  if(pumping) ghVY += LIFT*dt;
+  else        ghVY += GRAVITY*dt;
+  ghVY = Math.max(-350, Math.min(400, ghVY));
+  ghY  += ghVY*dt;
+
+  const ghX = GW*0.25;
+  const minY = GHOST_R + 4, maxY = GH - GHOST_R - 4;
+  if(ghY < minY) { ghY=minY; ghVY=Math.abs(ghVY)*0.4; }
+  if(ghY > maxY) { triggerGameOver(); return; }
+
+  // Score
+  score += Math.round(dt * 30 * speedMult * TIER_MULT[tier]);
+  curve  = Math.min(100, curve + dt * 0.8 * speedMult);
+
+  // Spawn candles
+  if(frame % Math.max(30, 80-Math.floor(frame/200)) === 0) spawnCandle(speedMult);
+
+  // Update candles
+  for(let i=candles.length-1;i>=0;i--) {
+    const c=candles[i];
+    c.x -= (180+frame*0.05)*dt*speedMult;
+    if(c.x+c.w < -20) { candles.splice(i,1); continue; }
+
+    // Collision
+    if(!c.hit && checkCollision(c, ghX, ghY)) {
+      c.hit=true;
+      if(c.type==='pump') {
+        onCollectPump(c);
+      } else {
+        onHitDump(c);
+      }
+    }
+  }
+
+  // Particles
+  for(let i=pars.length-1;i>=0;i--){
+    const p=pars[i]; p.life-=dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=300*dt;
+    if(p.life<=0) pars.splice(i,1);
+  }
+
+  updateHUD();
+  if(curve>=100) triggerGraduation();
+}
+
+function spawnCandle(speed) {
+  const tier = getTier();
+  const isPump = Math.random() < (0.4+tier*0.05);
+  const h = 40+Math.random()*120;
+  const w = 22+Math.random()*18;
+  const fromTop = Math.random()<0.5;
+  const y = fromTop ? 0 : GH-h;
+  candles.push({
+    x: GW+20, y, w, h, type: isPump?'pump':'dump', hit:false,
+    hue: isPump ? 145 : 0,
+  });
+}
+
+function checkCollision(c, gx, gy) {
+  const cx = c.x+c.w/2, cy = c.y+c.h/2;
+  return Math.abs(gx-cx)<(GHOST_R+c.w/2)*0.8 && Math.abs(gy-cy)<(GHOST_R+c.h/2)*0.75;
+}
+
+function onCollectPump(c) {
+  const pts = 200 * TIER_MULT[getTier()];
+  score += pts;
+  curve = Math.min(100, curve+3);
+  spawnGamePars(c.x+c.w/2, c.y+c.h/2, ['💚','✨','🚀','💫'], 8, '#14F195');
+}
+
+function onHitDump(c) {
+  if(shieldLeft>0) {
+    shieldLeft--;
+    spawnGamePars(c.x+c.w/2, c.y+c.h/2, ['🛡️','✨'], 6, '#aaaaff');
+    flashGc('rgba(100,100,255,0.3)');
+  } else {
+    triggerGameOver();
+  }
+}
+
+function triggerGameOver() {
+  running=false;
+  if(score>best){ best=score; localStorage.setItem('sp_best',best); }
+  const tier=getTier();
+  document.getElementById('go-ghost').textContent = tier>=2?'💀':'😵';
+  document.getElementById('go-sc').textContent = score.toLocaleString();
+  const comments_ja=[
+    '空が高すぎた…またリベンジしよう','なかなか！$SANCをもっと買えばもっと強くなれる','すごい！魔界コインが喜んでいる','伝説の魔王プレイヤー。$SANCを持て。'
+  ];
+  document.getElementById('go-comment').textContent = comments_ja[Math.min(tier, comments_ja.length-1)];
+  document.getElementById('go-panel').classList.add('show');
+  updateHUD();
+}
+
+function triggerGraduation() {
+  // pump.fun graduation! 🎉
+  running=false;
+  score += 50000;
+  updateHUD();
+  spawnBigPars();
+  setTimeout(()=>{
+    document.getElementById('go-ghost').textContent='🌙';
+    document.getElementById('go-ttl').textContent='🎓 GRADUATED!';
+    document.getElementById('go-sc').textContent=score.toLocaleString();
+    document.getElementById('go-comment').textContent=
+      lang==='ja'?'おめでとう！$SANCがpump.funを卒業した！\n魔王さんちゃん、月まで行け！🚀'
+                 :'Congratulations! $SANC graduated pump.fun!\nDemon Lord Sanchan, to the moon! 🚀';
+    document.getElementById('go-panel').classList.add('show');
+    if(score>best){ best=score; localStorage.setItem('sp_best',best); }
+  }, 1500);
+}
+
+/* ── DRAW ── */
+function drawGame(t) {
+  gctx.clearRect(0,0,GW,GH);
+  const tier=getTier();
+  const td=TIER_DATA[tier];
+
+  // BG gradient
+  const bg=gctx.createLinearGradient(0,0,0,GH);
+  bg.addColorStop(0,'#050010'); bg.addColorStop(1,'#0d0025');
+  gctx.fillStyle=bg; gctx.fillRect(0,0,GW,GH);
+
+  // Grid lines (scrolling)
+  gctx.strokeStyle='rgba(153,69,255,0.04)'; gctx.lineWidth=1;
+  const off=(t/8)%36;
+  for(let x=off;x<GW;x+=36){ gctx.beginPath();gctx.moveTo(x,0);gctx.lineTo(x,GH);gctx.stroke(); }
+  for(let y=off;y<GH;y+=36){ gctx.beginPath();gctx.moveTo(0,y);gctx.lineTo(GW,y);gctx.stroke(); }
+
+  // Candles
+  for(const c of candles) {
+    const green=c.type==='pump';
+    const col=green?'rgba(20,241,149,':'rgba(255,68,68,';
+    gctx.shadowBlur=12; gctx.shadowColor=(green?'rgba(20,241,149,':'rgba(255,68,68,')+'0.5)';
+    const grad=gctx.createLinearGradient(c.x,c.y,c.x+c.w,c.y+c.h);
+    grad.addColorStop(0,col+(green?'0.3)':'0.2)'));
+    grad.addColorStop(1,col+(green?'0.15)':'0.1)'));
+    gctx.fillStyle=grad;
+    gctx.strokeStyle=col+(green?'0.7)':'0.6)');
+    gctx.lineWidth=1.5;
+    roundRect(gctx,c.x,c.y,c.w,c.h,5);
+    gctx.fill(); gctx.stroke();
+    gctx.shadowBlur=0;
+    // Label
+    gctx.font=`bold ${c.w*0.5}px sans-serif`;
+    gctx.fillStyle='rgba(255,255,255,0.7)';
+    gctx.textAlign='center';
+    gctx.fillText(green?'📈':'🐳',c.x+c.w/2,c.y+c.h/2+5);
+    gctx.textAlign='left';
+  }
+
+  // Ghost
+  const ghX=GW*0.25;
+  gctx.shadowBlur=20; gctx.shadowColor=td.color;
+  drawGhostShape(gctx,ghX,ghY,GHOST_R,tier);
+  gctx.shadowBlur=0;
+
+  // Shield indicator
+  if(shieldLeft>0) {
+    gctx.strokeStyle='rgba(100,150,255,0.5)';gctx.lineWidth=2;
+    gctx.beginPath();gctx.arc(ghX,ghY,GHOST_R+6,0,Math.PI*2);gctx.stroke();
+    gctx.font='11px sans-serif';gctx.textAlign='center';gctx.fillStyle='#aaaaff';
+    gctx.fillText('🛡️'.repeat(shieldLeft),ghX,ghY-GHOST_R-10);
+    gctx.textAlign='left';
+  }
+
+  // Particles
+  for(const p of pars){
+    gctx.globalAlpha=Math.max(0,p.life);
+    gctx.font=`${p.size}px sans-serif`;
+    gctx.fillText(p.emoji,p.x,p.y);
+  }
+  gctx.globalAlpha=1;
+
+  // Tier badge
+  if(tier>0){
+    gctx.font='bold 11px sans-serif';
+    gctx.fillStyle=td.color;
+    gctx.textAlign='right';
+    gctx.fillText(td.emoji+' '+td.name,GW-10,GH-12);
+    gctx.textAlign='left';
+  }
+}
+
+function drawGhostShape(c, x, y, r, tier) {
+  const colors=[
+    ['#f0f0ff','#c8c8f0'],
+    ['#e8fff0','#a0e0c0'],
+    ['#fff8d0','#d0c040'],
+    ['#c890ff','#8020cc'],
+  ];
+  const [c1,c2]=colors[tier]||colors[0];
+  const gr=c.createRadialGradient(x-r*.2,y-r*.3,r*.05,x,y,r*1.05);
+  gr.addColorStop(0,c1); gr.addColorStop(1,c2);
+
+  c.beginPath();
+  c.arc(x,y-r*.1,r,Math.PI,0);
+  const by=y+r*.72,bw=r,bh=r*.28;
+  c.lineTo(x+bw,by);
+  c.bezierCurveTo(x+bw*.7,by+bh, x+bw*.4,by, x,by+bh);
+  c.bezierCurveTo(x-bw*.4,by+bh*2, x-bw*.7,by, x-bw,by+bh*.5);
+  c.lineTo(x-bw,y-r*.1);
+  c.closePath();
+  c.fillStyle=gr; c.fill();
+
+  // Eyes
+  const ecol=tier>=3?'#ff0000':'#1a1a30';
+  const er=r*.18, exo=r*.27, ey=r*.05;
+  c.fillStyle=ecol;
+  c.beginPath();c.ellipse(x-exo,y+ey,er,er,0,0,Math.PI*2);c.fill();
+  c.beginPath();c.ellipse(x+exo,y+ey,er,er,0,0,Math.PI*2);c.fill();
+  c.fillStyle='rgba(255,255,255,.9)';
+  c.beginPath();c.ellipse(x-exo+er*.3,y+ey-er*.3,er*.38,er*.38,0,0,Math.PI*2);c.fill();
+  c.beginPath();c.ellipse(x+exo+er*.3,y+ey-er*.3,er*.38,er*.38,0,0,Math.PI*2);c.fill();
+
+  // Mouth
+  c.strokeStyle=ecol; c.lineWidth=r*.05; c.lineCap='round';
+  c.beginPath();c.moveTo(x-r*.16,y+er*2.6);
+  c.quadraticCurveTo(x,y+er*3.3+ey,x+r*.16,y+er*2.6);c.stroke();
+
+  // Tier accessories
+  if(tier===1){// halo
+    c.strokeStyle='#ffd700';c.lineWidth=r*.09;c.shadowBlur=10;c.shadowColor='rgba(255,210,0,.8)';
+    c.beginPath();c.ellipse(x,y-r*1.1,r*.6,r*.24,0,0,Math.PI*2);c.stroke();c.shadowBlur=0;
+  } else if(tier===2){// sparkles
+    ['✨','⭐'].forEach((e,i)=>{
+      c.font=`${r*.7}px serif`;c.textAlign='center';
+      c.fillStyle='rgba(255,255,255,1)';
+      c.fillText(e,x+(i===0?-r*1.3:r*1.3),y-r*.3);
+    });c.textAlign='left';
+  } else if(tier>=3){// crown + wings
+    c.font=`${r*.9}px serif`;c.textAlign='center';
+    c.fillText('👑',x,y-r*1.2);
+    c.fillText('🦇',x-r*1.4,y+r*.1);
+    c.fillText('🦇',x+r*1.4,y+r*.1);
+    c.textAlign='left';
+  }
+}
+
+function roundRect(c,x,y,w,h,radius){
+  c.beginPath();
+  c.moveTo(x+radius,y);
+  c.lineTo(x+w-radius,y);c.quadraticCurveTo(x+w,y,x+w,y+radius);
+  c.lineTo(x+w,y+h-radius);c.quadraticCurveTo(x+w,y+h,x+w-radius,y+h);
+  c.lineTo(x+radius,y+h);c.quadraticCurveTo(x,y+h,x,y+h-radius);
+  c.lineTo(x,y+radius);c.quadraticCurveTo(x,y,x+radius,y);
+  c.closePath();
+}
+
+function spawnGamePars(x,y,emojis,n,color) {
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2, s=80+Math.random()*120;
+    pars.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-60,
+      life:0.6+Math.random()*0.4, emoji:emojis[~~(Math.random()*emojis.length)],
+      size:14+~~(Math.random()*10)});
+  }
+}
+
+function flashGc(color) {
+  gctx.fillStyle=color; gctx.fillRect(0,0,GW,GH);
+}
+
+function spawnBigPars() {
+  spawnPars(window.innerWidth/2,window.innerHeight/2,['🚀','🎉','🌙','✨','💫','🎊','👑','💜'],30);
+}
+
+/* ── HUD ── */
+function updateHUD() {
+  document.getElementById('hv-sc').textContent = score.toLocaleString();
+  document.getElementById('hv-best').textContent = Math.max(score,best).toLocaleString();
+  const pct = Math.min(100,Math.round(curve));
+  document.getElementById('cb-fill').style.width = pct+'%';
+  document.getElementById('cb-pct').textContent  = pct+'%';
+}
+
+/* ── SHARE ── */
+function shareScore() {
+  const tier=getTier();
+  const td=TIER_DATA[tier];
+  const text=lang==='ja'
+    ?`SANCHAN PUMP 🚀\n\n${td.emoji} ${td.name}\nスコア：${score.toLocaleString()}pt\n\n$SANCトークンで遊ぶSolanaゲーム！\nホルダーはパワーアップ👻\n#SanchanPump #SANC #Solana`
+    :`SANCHAN PUMP 🚀\n\n${td.emoji} ${td.name}\nScore: ${score.toLocaleString()}pt\n\nSolana game powered by $SANC token!\nHolders get power-ups👻\n#SanchanPump #SANC #Solana`;
+  if(navigator.share) navigator.share({title:'SANCHAN PUMP',text}).catch(()=>{});
+  else navigator.clipboard?.writeText(text);
+}
+
+/* ── PARTICLES (DOM layer) ── */
+function spawnPars(cx,cy,emojis,n){
+  for(let i=0;i<n;i++){
+    const p=document.createElement('div');
+    p.className='par';
+    const a=(Math.PI*2*i/n)+Math.random()*.8,d=80+Math.random()*160,t=.6+Math.random()*.7;
+    p.textContent=emojis[~~(Math.random()*emojis.length)];
+    p.style.cssText=`left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);
+      --x:${Math.cos(a)*d}px;--y:${Math.sin(a)*d-60}px;--t:${t}s;
+      --r:${(Math.random()-.5)*600}deg;--s:${.9+Math.random()*.8}rem;
+      animation-delay:${Math.random()*.1}s`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),(t+.2)*1000);
+  }
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+window.addEventListener('resize',()=>{ if(running){ resizeGame(); } });
+drawTokenIcon();
+</script>
+</body>
+</html>
