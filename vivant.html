@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VIVANT考察">
+<meta name="theme-color" content="#0a0d12">
+<meta name="description" content="ドラマ『VIVANT』のファン考察まとめ＆投稿サイト。気になる考察にいいねしたり、自分の考察を投稿しよう。">
+<title>VIVANT考察ラボ 🕵️‍♂️</title>
+<style>
+:root{
+  --bg:#0a0d12;--bg2:#12161d;
+  --gold:#e0b256;--gold2:#f4d488;
+  --teal:#2bb3a3;
+  --card:rgba(224,178,86,0.06);
+  --line:rgba(224,178,86,0.22);
+  --txt:#f2ede3;--sub:rgba(242,237,227,0.55);--faint:rgba(242,237,227,0.32);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Segoe UI',sans-serif;color:var(--txt)}
+body{
+  background:
+    radial-gradient(ellipse 70% 40% at 15% -10%,rgba(224,178,86,0.10),transparent),
+    radial-gradient(ellipse 60% 40% at 90% 0%,rgba(43,179,163,0.08),transparent),
+    linear-gradient(180deg,#0a0d12 0%,#0d1117 100%);
+  padding:max(20px,env(safe-area-inset-top)) 14px max(40px,env(safe-area-inset-bottom));
+}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+/* header */
+.hero{text-align:center;padding:14px 0 4px}
+.hero-emoji{font-size:clamp(2.6rem,10vw,3.4rem);filter:drop-shadow(0 0 20px rgba(224,178,86,.35))}
+.hero-title{font-size:clamp(1.6rem,7vw,2.3rem);font-weight:900;letter-spacing:1px;margin-top:6px;
+  background:linear-gradient(135deg,#fff 0%,var(--gold2) 55%,var(--teal) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:.66rem;letter-spacing:3px;color:var(--faint);text-transform:uppercase;margin-top:4px}
+.hero-desc{font-size:.8rem;line-height:1.7;color:var(--sub);max-width:480px;margin:14px auto 0;text-align:center}
+
+/* stat strip */
+.stats{display:flex;justify-content:center;gap:22px;margin-top:14px}
+.stat{text-align:center}
+.stat-num{font-size:1.3rem;font-weight:900;color:var(--gold2)}
+.stat-label{font-size:.6rem;letter-spacing:1.5px;color:var(--faint);text-transform:uppercase;margin-top:2px}
+
+/* controls */
+.controls{display:flex;flex-direction:column;gap:10px;position:sticky;top:8px;z-index:5;
+  background:rgba(10,13,18,0.85);backdrop-filter:blur(10px);padding:10px 0 4px;margin-top:6px}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.search-box input{flex:1;background:none;border:none;outline:none;color:var(--txt);font-size:.85rem;font-family:inherit}
+.search-box input::placeholder{color:var(--faint)}
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:7px 13px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.03);
+  color:var(--sub);font-size:.72rem;font-weight:700;white-space:nowrap;cursor:pointer;transition:all .15s;font-family:inherit}
+.chip.on{background:linear-gradient(135deg,var(--gold),var(--teal));border-color:transparent;color:#0a0d12}
+.sort-row{display:flex;justify-content:flex-end;gap:6px}
+.sort-btn{padding:5px 11px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--faint);font-size:.68rem;font-weight:700;cursor:pointer;font-family:inherit}
+.sort-btn.on{color:var(--gold2);border-color:var(--gold)}
+
+/* theory cards */
+#list{display:flex;flex-direction:column;gap:12px;margin-top:4px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;position:relative;overflow:hidden;animation:fadein .35s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.card-tag{display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:.5px;color:var(--teal);background:rgba(43,179,163,.12);border:1px solid rgba(43,179,163,.3);padding:3px 9px;border-radius:8px}
+.card-tag.mine{color:var(--gold2);background:rgba(224,178,86,.12);border-color:rgba(224,178,86,.35)}
+.card-title{font-size:1rem;font-weight:800;line-height:1.4;margin-top:8px}
+.card-body{font-size:.82rem;line-height:1.8;color:var(--sub);margin-top:6px;white-space:pre-wrap}
+.card-meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.card-author{font-size:.68rem;color:var(--faint)}
+.like-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:20px;padding:6px 13px;cursor:pointer;font-family:inherit;transition:transform .12s}
+.like-btn:active{transform:scale(.92)}
+.like-btn .heart{font-size:.95rem;transition:transform .25s}
+.like-btn.liked{border-color:var(--gold);background:rgba(224,178,86,.15)}
+.like-btn.liked .heart{transform:scale(1.15)}
+.like-count{font-size:.8rem;font-weight:800;color:var(--gold2)}
+.empty{text-align:center;color:var(--faint);font-size:.8rem;padding:30px 0}
+
+/* post form */
+.post-toggle{width:100%;padding:15px;border:none;border-radius:16px;font-size:.9rem;font-weight:800;cursor:pointer;font-family:inherit;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0d12;box-shadow:0 8px 26px rgba(224,178,86,.25);margin-top:6px}
+.post-toggle:active{transform:scale(.97)}
+.post-form{display:none;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:2px}
+.post-form.open{display:flex}
+.post-form label{font-size:.68rem;color:var(--faint);letter-spacing:1px;text-transform:uppercase;margin-bottom:-4px}
+.post-form input,.post-form select,.post-form textarea{
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--txt);font-size:.85rem;font-family:inherit;outline:none}
+.post-form textarea{min-height:100px;resize:vertical;line-height:1.6}
+.post-form .row{display:flex;gap:8px}
+.post-form .row>*{flex:1}
+.submit-btn{padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--teal),#1d8d80);color:#fff;font-weight:800;font-size:.86rem;cursor:pointer;font-family:inherit}
+.submit-btn:active{transform:scale(.97)}
+.hint{font-size:.65rem;color:var(--faint);line-height:1.6}
+
+footer{margin-top:18px;text-align:center}
+.back-link{display:inline-block;font-size:.75rem;color:var(--faint);text-decoration:none;padding:8px 16px;border:1px solid var(--line);border-radius:20px}
+.disclaimer{font-size:.62rem;line-height:1.8;color:var(--faint);margin-top:14px;text-align:center;padding:0 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <span class="hero-emoji">🕵️‍♂️🐫</span>
+    <div class="hero-title">VIVANT考察ラボ</div>
+    <div class="hero-sub">UNOFFICIAL FAN THEORY HUB</div>
+    <p class="hero-desc">
+      日曜劇場『VIVANT』のファン考察をまとめた非公式サイト。
+      別班、バルサ、テント、タイトルの意味…気になる考察に「いいね」して、
+      自分の考察も投稿してみんなと共有しよう。
+    </p>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="statCount">0</div><div class="stat-label">考察数</div></div>
+      <div class="stat"><div class="stat-num" id="statLikes">0</div><div class="stat-label">総いいね</div></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-box">
+      <span>🔍</span>
+      <input id="searchInput" type="text" placeholder="キーワードで考察を検索…">
+    </div>
+    <div class="chips" id="chipRow"></div>
+    <div class="sort-row">
+      <button class="sort-btn on" data-sort="likes">🔥 人気順</button>
+      <button class="sort-btn" data-sort="new">🆕 新着順</button>
+    </div>
+  </div>
+
+  <div id="list"></div>
+
+  <button class="post-toggle" id="postToggle">✍️ 自分の考察を投稿する</button>
+  <form class="post-form" id="postForm">
+    <label>カテゴリ</label>
+    <select id="fCategory"></select>
+    <label>タイトル</label>
+    <input id="fTitle" type="text" maxlength="60" placeholder="例: 別班とテントの関係について" required>
+    <label>考察内容</label>
+    <textarea id="fBody" maxlength="800" placeholder="あなたの考察を書いてみよう（800文字まで）" required></textarea>
+    <div class="row">
+      <div>
+        <label>ニックネーム（任意）</label>
+        <input id="fAuthor" type="text" maxlength="20" placeholder="名無しの考察班">
+      </div>
+    </div>
+    <button type="submit" class="submit-btn">投稿する</button>
+    <p class="hint">※投稿はこの端末のブラウザに保存されます（このブラウザでのみ表示されます）。誹謗中傷・ネタバレの過度な断定表現はご遠慮ください。</p>
+  </form>
+
+  <footer>
+    <a href="index.html" class="back-link">← ポータルに戻る</a>
+    <p class="disclaimer">
+      本サイトはドラマ『VIVANT』（TBS系日曜劇場）に関するファン有志の非公式考察サイトです。<br>
+      制作局・原作関係者とは一切関係ありません。掲載内容はファンの考察・感想であり、公式見解ではありません。
+    </p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var CATS = ['すべて','タイトルの意味','別班の正体','バルサ/テント','キャラクター','伏線','ロケ地・撮影','考察全般'];
+
+  // original editorial summaries of commonly-discussed fan theory topics (not copied from any single source)
+  var SEED = [
+    {id:'s1', cat:'タイトルの意味', title:'「VIVANT」というタイトルに込められた意味とは', body:'VIVANTはフランス語で「生きている／生き生きとした」を意味する単語。過酷な状況を生き延び、真実に近づいていく登場人物たちの姿と重なる、という考察がファンの間で語られている。放送前のティザービジュアルではロゴの文字組みの中に別の単語が隠されているようなデザインが話題になり、「一体何が隠されているのか」という考察合戦がSNS上で盛り上がった。', base:412, days:60},
+    {id:'s2', cat:'別班の正体', title:'「別班」は実在するのか？というリアルとフィクションの境界', body:'作中に登場する「別班」は、自衛隊の中に存在するとされながらも公式には認められていない情報機関という設定。この“存在しないことになっている組織”という設定自体が物語最大の謎として機能しており、視聴者の間では「現実の自衛隊にも似た枠組みがあるのでは」という都市伝説的な考察も交わされた。', base:598, days:58},
+    {id:'s3', cat:'バルサ/テント', title:'「バルサ」と「テント」、二つの組織の関係を整理する', body:'「バルサ」は貧困や紛争地域を支援する資金を非合法な手段で集める謎の組織として描かれる。「テント」はその中核を担う人物・存在を指す呼び名として使われ、正体を巡る駆け引きが物語前半の大きな軸になる。両者がどこまで一枚岩なのか、内部対立があるのかという点は、放送当時から考察が分かれたポイント。', base:531, days:57},
+    {id:'s4', cat:'キャラクター', title:'主人公・乃木の「二重生活」が示す普通の人間の限界', body:'商社員としての顔と、もう一つの顔を持つ主人公・乃木憂助。二つの生活の間で揺れ動く姿は「エリートスパイ」ではなく「普通の人間が特殊な立場に置かれたらどうなるか」を描いているという読み方がファンの間で支持されている。決して超人的ではない等身大の葛藤が共感を呼んだ、という考察も多い。', base:377, days:55},
+    {id:'s5', cat:'伏線', title:'序盤の何気ない小道具・セリフが後半で回収される作りについて', body:'序盤で流されるように登場する小道具やセリフが、中盤〜終盤で意味を持って回収される構成が話題になった。1話を見返すと「これは伏線だったのか」と気づく視聴者が続出し、放送中から「見返し推奨ドラマ」としてSNSでたびたび言及された。', base:289, days:50},
+    {id:'s6', cat:'ロケ地・撮影', title:'モンゴルロケが物語に与えた説得力', body:'広大な草原や砂漠地帯でのロケ撮影が、単なる背景ではなく「文明から切り離された緊張感」を作品全体に与えているという考察。日本のドラマとしては異例のスケールの海外ロケが、フィクションでありながらリアリティを支えている、という声が多い。', base:340, days:48},
+    {id:'s7', cat:'考察全般', title:'「誰が味方で誰が敵か分からない」構成の狙い', body:'登場人物の立場が二転三転し、視聴者に「誰を信じればいいのか」を常に問い続ける構成。この不安定さこそが、単純な勧善懲悪ではないVIVANTらしさだ、という考察が多く見られる。', base:265, days:45},
+    {id:'s8', cat:'キャラクター', title:'脇を固めるキャラクターたちの“二面性”', body:'主要人物だけでなく脇役にも裏の顔・隠された動機が用意されているのが特徴的、という指摘。一見コミカルな人物ほど後半で重要な役割を持つ傾向があり、初見時の印象と再視聴時の印象がガラリと変わる、という感想も多い。', base:198, days:40},
+    {id:'s9', cat:'タイトルの意味', title:'サブタイトルや話数構成に隠されたリズム', body:'各話のテンポや引きの作り方が、映画的なカット割りに近いという指摘。1話完結ではなく連続ドラマ全体で一つの謎を追わせる構成が、「次回予告なしでも次が気になる」設計になっている、という考察がある。', base:176, days:38},
+    {id:'s10', cat:'考察全般', title:'なぜここまで社会現象になったのか', body:'スパイ・サスペンスというジャンルは日本の連続ドラマでは珍しく、映画級のスケール感とテレビドラマならではの人間ドラマが両立した点が支持を集めた理由ではないか、という考察。続編・映画化への期待の声も多く上がった。', base:452, days:35}
+  ];
+
+  var LS_LIKES = 'vivant_likes_v1';
+  var LS_LIKED = 'vivant_liked_v1';
+  var LS_POSTS = 'vivant_posts_v1';
+
+  function loadJSON(key, fallback){
+    try{ var v = JSON.parse(localStorage.getItem(key)); return v || fallback; }catch(e){ return fallback; }
+  }
+  function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+  var likes = loadJSON(LS_LIKES, {});
+  var liked = loadJSON(LS_LIKED, {});
+  var posts = loadJSON(LS_POSTS, []);
+
+  SEED.forEach(function(s){ if(!(s.id in likes)) likes[s.id] = s.base; });
+  saveJSON(LS_LIKES, likes);
+
+  function allTheories(){
+    var userItems = posts.map(function(p){
+      return {id:p.id, cat:p.cat, title:p.title, body:p.body, author:p.author, ts:p.ts, mine:true};
+    });
+    var seedItems = SEED.map(function(s){
+      return {id:s.id, cat:s.cat, title:s.title, body:s.body, author:'編集部まとめ', ts: Date.now() - s.days*86400000, mine:false};
+    });
+    return userItems.concat(seedItems);
+  }
+
+  var state = { cat:'すべて', sort:'likes', q:'' };
+
+  var chipRow = document.getElementById('chipRow');
+  CATS.forEach(function(c){
+    var b = document.createElement('button');
+    b.className = 'chip' + (c==='すべて' ? ' on' : '');
+    b.textContent = c;
+    b.dataset.cat = c;
+    b.onclick = function(){
+      chipRow.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      state.cat = c;
+      render();
+    };
+    chipRow.appendChild(b);
+  });
+
+  var fCategory = document.getElementById('fCategory');
+  CATS.filter(function(c){return c!=='すべて'}).forEach(function(c){
+    var o = document.createElement('option'); o.value=c; o.textContent=c; fCategory.appendChild(o);
+  });
+
+  document.querySelectorAll('.sort-btn').forEach(function(b){
+    b.onclick = function(){
+      document.querySelectorAll('.sort-btn').forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      state.sort = b.dataset.sort;
+      render();
+    };
+  });
+
+  document.getElementById('searchInput').addEventListener('input', function(e){
+    state.q = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  document.getElementById('postToggle').onclick = function(){
+    document.getElementById('postForm').classList.toggle('open');
+  };
+
+  document.getElementById('postForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var title = document.getElementById('fTitle').value.trim();
+    var body = document.getElementById('fBody').value.trim();
+    if(!title || !body) return;
+    var item = {
+      id: 'u' + Date.now(),
+      cat: fCategory.value,
+      title: title,
+      body: body,
+      author: document.getElementById('fAuthor').value.trim() || '名無しの考察班',
+      ts: Date.now()
+    };
+    posts.unshift(item);
+    saveJSON(LS_POSTS, posts);
+    likes[item.id] = 0;
+    saveJSON(LS_LIKES, likes);
+    e.target.reset();
+    document.getElementById('postForm').classList.remove('open');
+    state.sort = 'new';
+    document.querySelectorAll('.sort-btn').forEach(function(x){x.classList.toggle('on', x.dataset.sort==='new')});
+    render();
+  });
+
+  function toggleLike(id, btn){
+    var isLiked = !!liked[id];
+    if(isLiked){
+      likes[id] = Math.max(0,(likes[id]||0) - 1);
+      delete liked[id];
+    } else {
+      likes[id] = (likes[id]||0) + 1;
+      liked[id] = true;
+    }
+    saveJSON(LS_LIKES, likes);
+    saveJSON(LS_LIKED, liked);
+    render();
+  }
+
+  function esc(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function render(){
+    var items = allTheories();
+
+    if(state.cat !== 'すべて') items = items.filter(function(i){return i.cat===state.cat});
+    if(state.q) items = items.filter(function(i){
+      return (i.title+i.body).toLowerCase().indexOf(state.q) !== -1;
+    });
+
+    items.forEach(function(i){ i._likes = likes[i.id]||0; });
+
+    if(state.sort==='likes') items.sort(function(a,b){return b._likes - a._likes});
+    else items.sort(function(a,b){return b.ts - a.ts});
+
+    var list = document.getElementById('list');
+    list.innerHTML = '';
+
+    if(items.length===0){
+      var e = document.createElement('div');
+      e.className = 'empty';
+      e.textContent = '該当する考察が見つかりませんでした。';
+      list.appendChild(e);
+    }
+
+    items.forEach(function(i){
+      var card = document.createElement('div');
+      card.className = 'card';
+      var isLiked = !!liked[i.id];
+      card.innerHTML =
+        '<div class="card-top">' +
+          '<span class="card-tag' + (i.mine?' mine':'') + '">' + esc(i.cat) + (i.mine?' ・投稿':'') + '</span>' +
+        '</div>' +
+        '<div class="card-title">' + esc(i.title) + '</div>' +
+        '<div class="card-body">' + esc(i.body) + '</div>' +
+        '<div class="card-meta">' +
+          '<span class="card-author">by ' + esc(i.author) + '</span>' +
+          '<button class="like-btn' + (isLiked?' liked':'') + '" data-id="' + i.id + '">' +
+            '<span class="heart">' + (isLiked?'❤️':'🤍') + '</span>' +
+            '<span class="like-count">' + i._likes + '</span>' +
+          '</button>' +
+        '</div>';
+      card.querySelector('.like-btn').onclick = function(){ toggleLike(i.id, this); };
+      list.appendChild(card);
+    });
+
+    document.getElementById('statCount').textContent = items.length === allTheories().length ? items.length : allTheories().length;
+    var totalLikes = allTheories().reduce(function(sum,i){return sum + (likes[i.id]||0)}, 0);
+    document.getElementById('statLikes').textContent = totalLikes;
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
