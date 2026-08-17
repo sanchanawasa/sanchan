@@ -6,125 +6,106 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VIVANT考察">
-<meta name="theme-color" content="#0a0d12">
-<meta name="description" content="ドラマ『VIVANT』のファン考察まとめ＆投稿サイト。第14話までの『わかったこと』と『未回収伏線』を完全分離、ヤバさ順に大量整理。気になる考察にいいねしたり、自分の考察も投稿しよう。">
-<title>VIVANT考察ラボ 🕵️‍♂️</title>
+<meta name="theme-color" content="#f7f5f0">
+<meta name="description" content="ドラマ『VIVANT』のファン考察データベース。ほぼ確定済・未解決・未回収伏線・異説をフラグで整理し、いいね順で並び替え。自分の考察も投稿できる非公式サイト。">
+<title>VIVANTコウサツラボ 🕵️‍♂️</title>
 <style>
 :root{
-  --bg:#0a0d12;--bg2:#12161d;
-  --gold:#e0b256;--gold2:#f4d488;
-  --teal:#2bb3a3;
-  --red:#e0645a;--red2:#f4948c;
-  --card:rgba(224,178,86,0.06);
-  --line:rgba(224,178,86,0.22);
-  --txt:#f2ede3;--sub:rgba(242,237,227,0.55);--faint:rgba(242,237,227,0.32);
+  --bg:#f7f5f0;--card:#ffffff;--border:#e6e1d6;
+  --text:#201d19;--sub:#5c574c;--faint:#9c9789;
+  --navy:#2c3a63;
+  --green:#2f9e58;--green-bg:#e6f5ea;
+  --red:#d6473f;--red-bg:#fbe9e8;
+  --purple:#7c5cbf;--purple-bg:#efe9f9;
+  --slate:#6c6f8e;--slate-bg:#eceaf4;
+  --amber:#d98a2b;--amber-bg:#fbeedd;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100%;background:var(--bg);font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Segoe UI',sans-serif;color:var(--txt)}
-body{
-  background:
-    radial-gradient(ellipse 70% 40% at 15% -10%,rgba(224,178,86,0.10),transparent),
-    radial-gradient(ellipse 60% 40% at 90% 0%,rgba(43,179,163,0.08),transparent),
-    linear-gradient(180deg,#0a0d12 0%,#0d1117 100%);
-  padding:max(20px,env(safe-area-inset-top)) 14px max(40px,env(safe-area-inset-bottom));
-}
-.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+html,body{min-height:100%;background:var(--bg);font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Segoe UI',sans-serif;color:var(--text)}
+body{padding:max(18px,env(safe-area-inset-top)) 14px max(40px,env(safe-area-inset-bottom))}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 
 /* header */
-.hero{text-align:center;padding:14px 0 4px}
-.hero-emoji{font-size:clamp(2.6rem,10vw,3.4rem);filter:drop-shadow(0 0 20px rgba(224,178,86,.35))}
-.hero-title{font-size:clamp(1.6rem,7vw,2.3rem);font-weight:900;letter-spacing:1px;margin-top:6px;
-  background:linear-gradient(135deg,#fff 0%,var(--gold2) 55%,var(--teal) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:.66rem;letter-spacing:3px;color:var(--faint);text-transform:uppercase;margin-top:4px}
-.hero-desc{font-size:.8rem;line-height:1.7;color:var(--sub);max-width:520px;margin:14px auto 0;text-align:center}
-.ep-badge{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:6px 14px;border-radius:20px;
-  background:rgba(224,178,86,.12);border:1px solid var(--line);font-size:.72rem;font-weight:800;color:var(--gold2)}
+.hero{text-align:center;padding:10px 0 2px}
+.hero-emoji{font-size:clamp(2.2rem,9vw,2.8rem)}
+.hero-title{font-size:clamp(1.5rem,6.5vw,2.1rem);font-weight:900;letter-spacing:.5px;margin-top:6px;color:var(--navy)}
+.hero-sub{font-size:.64rem;letter-spacing:3px;color:var(--faint);text-transform:uppercase;margin-top:4px}
+.hero-desc{font-size:.78rem;line-height:1.7;color:var(--sub);max-width:540px;margin:12px auto 0;text-align:center}
 
-/* stat strip */
-.stats{display:flex;justify-content:center;gap:22px;margin-top:14px}
-.stat{text-align:center}
-.stat-num{font-size:1.3rem;font-weight:900;color:var(--gold2);font-variant-numeric:tabular-nums}
-.stat-label{font-size:.6rem;letter-spacing:1.5px;color:var(--faint);text-transform:uppercase;margin-top:2px}
+.stats{display:flex;justify-content:center;gap:0;margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.stat{flex:1;text-align:center;padding:10px 4px;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-num{font-size:1.15rem;font-weight:900;color:var(--navy);font-variant-numeric:tabular-nums}
+.stat-label{font-size:.58rem;letter-spacing:.5px;color:var(--faint);margin-top:2px}
 
-/* tabs (fact / mystery) */
-.tabbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.tab{padding:14px 10px;border-radius:16px;border:1.5px solid var(--line);background:rgba(255,255,255,.02);
-  cursor:pointer;font-family:inherit;text-align:center;transition:all .15s}
-.tab-icon{font-size:1.3rem;display:block;margin-bottom:2px}
-.tab-label{font-size:.82rem;font-weight:900;color:var(--sub)}
-.tab-count{font-size:.62rem;color:var(--faint);margin-top:2px;font-variant-numeric:tabular-nums}
-.tab.on{border-color:var(--teal);background:rgba(43,179,163,.12);box-shadow:0 4px 20px rgba(43,179,163,.15)}
-.tab.on .tab-label{color:var(--teal)}
-.tab.mystery.on{border-color:var(--red);background:rgba(224,100,90,.12);box-shadow:0 4px 20px rgba(224,100,90,.15)}
-.tab.mystery.on .tab-label{color:var(--red2)}
+/* flag tabs */
+.tabbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;margin-top:2px}
+.tabbar::-webkit-scrollbar{display:none}
+.tabbtn{flex-shrink:0;padding:9px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);
+  color:var(--sub);font-size:.76rem;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap}
+.tabbtn.on{background:var(--navy);border-color:var(--navy);color:#fff}
 
 /* controls */
-.controls{display:flex;flex-direction:column;gap:10px;position:sticky;top:8px;z-index:5;
-  background:rgba(10,13,18,0.92);backdrop-filter:blur(10px);padding:10px 0 4px;margin-top:2px}
-.search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
-.search-box input{flex:1;background:none;border:none;outline:none;color:var(--txt);font-size:.85rem;font-family:inherit}
+.controls{display:flex;flex-direction:column;gap:8px;position:sticky;top:6px;z-index:5;background:rgba(247,245,240,.94);backdrop-filter:blur(8px);padding:8px 0 2px}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 13px}
+.search-box input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:.85rem;font-family:inherit}
 .search-box input::placeholder{color:var(--faint)}
-.chip-label{font-size:.6rem;letter-spacing:2px;color:var(--faint);text-transform:uppercase;margin:2px 0 -2px 2px}
-.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:7px 13px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.03);
-  color:var(--sub);font-size:.72rem;font-weight:700;white-space:nowrap;cursor:pointer;transition:all .15s;font-family:inherit}
-.chip.on{background:linear-gradient(135deg,var(--gold),var(--teal));border-color:transparent;color:#0a0d12}
-.sort-row{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap}
-.sort-btn{padding:5px 11px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--faint);font-size:.68rem;font-weight:700;cursor:pointer;font-family:inherit}
-.sort-btn.on{color:var(--gold2);border-color:var(--gold)}
+.util-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.sort-row{display:flex;gap:6px}
+.sort-btn{padding:5px 11px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--faint);font-size:.68rem;font-weight:700;cursor:pointer;font-family:inherit}
+.sort-btn.on{color:var(--navy);border-color:var(--navy);background:#fff}
+.expand-all{padding:5px 11px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--sub);font-size:.68rem;font-weight:700;cursor:pointer;font-family:inherit}
 
-/* theory cards */
-#list{display:flex;flex-direction:column;gap:12px;margin-top:4px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;position:relative;overflow:hidden;animation:fadein .35s ease both}
-@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.card.mystery{border-color:rgba(224,100,90,.28)}
-.card-rank{position:absolute;top:0;right:0;font-size:.62rem;font-weight:900;color:#0a0d12;background:var(--gold2);
-  padding:4px 10px 4px 12px;border-radius:0 0 0 12px;letter-spacing:.5px}
-.card-rank.mystery{background:var(--red2)}
-.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;padding-right:50px}
-.card-tags{display:flex;gap:6px;flex-wrap:wrap}
-.card-tag{display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:.5px;color:var(--teal);background:rgba(43,179,163,.12);border:1px solid rgba(43,179,163,.3);padding:3px 9px;border-radius:8px}
-.card-tag.mystery{color:var(--red2);background:rgba(224,100,90,.12);border-color:rgba(224,100,90,.32)}
-.card-tag.ep{color:var(--gold2);background:rgba(224,178,86,.12);border-color:rgba(224,178,86,.35)}
-.card-tag.mine{color:var(--gold2);background:rgba(224,178,86,.12);border-color:rgba(224,178,86,.35)}
-.card-title{font-size:1rem;font-weight:800;line-height:1.4;margin-top:8px;text-wrap:balance}
-.card-shock{font-size:.72rem;letter-spacing:1px;margin-top:4px;color:var(--faint)}
-.card-body{font-size:.82rem;line-height:1.85;color:var(--sub);margin-top:8px;white-space:pre-wrap}
-.card-meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
-.card-author{font-size:.68rem;color:var(--faint)}
-.like-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:20px;padding:6px 13px;cursor:pointer;font-family:inherit;transition:transform .12s}
+/* cards */
+#list{display:flex;flex-direction:column;gap:10px;margin-top:2px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;position:relative;
+  box-shadow:0 1px 2px rgba(30,25,15,.04)}
+.card-no{font-size:.62rem;color:var(--faint);font-weight:700;letter-spacing:.5px}
+.card-flags{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.flag{font-size:.62rem;font-weight:800;padding:2.5px 8px;border-radius:7px;white-space:nowrap}
+.flag.confirmed{color:var(--green);background:var(--green-bg)}
+.flag.unresolved{color:var(--red);background:var(--red-bg)}
+.flag.foreshadow{color:var(--purple);background:var(--purple-bg)}
+.flag.alt{color:var(--slate);background:var(--slate-bg)}
+.flag.new{color:var(--amber);background:var(--amber-bg)}
+.flag.ep{color:var(--navy);background:#eef0f6;border:1px solid #dde1ec}
+.card-title{font-size:.98rem;font-weight:800;line-height:1.45;margin-top:8px;color:var(--text)}
+.card-summary{font-size:.82rem;line-height:1.7;color:var(--sub);margin-top:5px}
+.detail-toggle{margin-top:8px;background:none;border:none;color:var(--navy);font-size:.75rem;font-weight:800;cursor:pointer;font-family:inherit;padding:2px 0}
+.card-detail{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.card-detail.open{max-height:400px}
+.card-detail-inner{font-size:.8rem;line-height:1.8;color:var(--sub);padding-top:8px;border-top:1px dashed var(--border);margin-top:8px}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tagchip{font-size:.68rem;color:var(--navy);font-weight:700}
+.card-meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.card-author{font-size:.66rem;color:var(--faint)}
+.like-btn{display:flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--border);border-radius:18px;padding:5px 12px;cursor:pointer;font-family:inherit;transition:transform .12s}
 .like-btn:active{transform:scale(.92)}
-.like-btn .heart{font-size:.95rem;transition:transform .25s}
-.like-btn.liked{border-color:var(--gold);background:rgba(224,178,86,.15)}
-.like-btn.liked .heart{transform:scale(1.15)}
-.like-count{font-size:.8rem;font-weight:800;color:var(--gold2);font-variant-numeric:tabular-nums}
+.like-btn.liked{border-color:var(--red);background:var(--red-bg)}
+.like-count{font-size:.78rem;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
 .empty{text-align:center;color:var(--faint);font-size:.8rem;padding:30px 0}
 
 /* post form */
-.post-toggle{width:100%;padding:15px;border:none;border-radius:16px;font-size:.9rem;font-weight:800;cursor:pointer;font-family:inherit;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0d12;box-shadow:0 8px 26px rgba(224,178,86,.25);margin-top:6px}
-.post-toggle:active{transform:scale(.97)}
-.post-form{display:none;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:2px}
+.post-toggle{width:100%;padding:14px;border:none;border-radius:14px;font-size:.88rem;font-weight:800;cursor:pointer;font-family:inherit;
+  background:var(--navy);color:#fff;margin-top:4px}
+.post-toggle:active{transform:scale(.98)}
+.post-form{display:none;flex-direction:column;gap:9px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:15px;margin-top:2px}
 .post-form.open{display:flex}
-.post-form label{font-size:.68rem;color:var(--faint);letter-spacing:1px;text-transform:uppercase;margin-bottom:-4px}
+.post-form label{font-size:.66rem;color:var(--faint);letter-spacing:.5px;text-transform:uppercase;margin-bottom:-3px}
 .post-form input,.post-form select,.post-form textarea{
-  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--txt);font-size:.85rem;font-family:inherit;outline:none}
-.post-form textarea{min-height:100px;resize:vertical;line-height:1.6}
+  background:#fbfaf7;border:1px solid var(--border);border-radius:9px;padding:10px 11px;color:var(--text);font-size:.85rem;font-family:inherit;outline:none}
+.post-form textarea{min-height:90px;resize:vertical;line-height:1.6}
 .post-form .row{display:flex;gap:8px}
 .post-form .row>*{flex:1}
-.type-toggle{display:flex;gap:8px}
-.type-opt{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:rgba(255,255,255,.02);color:var(--sub);font-size:.78rem;font-weight:800;cursor:pointer;font-family:inherit;text-align:center}
-.type-opt.on{border-color:var(--teal);color:var(--teal);background:rgba(43,179,163,.12)}
-.type-opt.on.mystery{border-color:var(--red);color:var(--red2);background:rgba(224,100,90,.12)}
-.submit-btn{padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--teal),#1d8d80);color:#fff;font-weight:800;font-size:.86rem;cursor:pointer;font-family:inherit}
-.submit-btn:active{transform:scale(.97)}
-.hint{font-size:.65rem;color:var(--faint);line-height:1.6}
+.flag-toggle{display:flex;gap:6px;flex-wrap:wrap}
+.flag-opt{padding:7px 10px;border-radius:9px;border:1.5px solid var(--border);background:#fff;color:var(--sub);font-size:.72rem;font-weight:800;cursor:pointer;font-family:inherit}
+.flag-opt.on{border-color:var(--navy);color:var(--navy);background:#eef0f6}
+.submit-btn{padding:12px;border:none;border-radius:10px;background:var(--navy);color:#fff;font-weight:800;font-size:.85rem;cursor:pointer;font-family:inherit}
+.hint{font-size:.64rem;color:var(--faint);line-height:1.6}
 
-footer{margin-top:18px;text-align:center}
-.back-link{display:inline-block;font-size:.75rem;color:var(--faint);text-decoration:none;padding:8px 16px;border:1px solid var(--line);border-radius:20px}
-.disclaimer{font-size:.62rem;line-height:1.8;color:var(--faint);margin-top:14px;text-align:center;padding:0 10px}
+footer{margin-top:16px;text-align:center}
+.back-link{display:inline-block;font-size:.74rem;color:var(--faint);text-decoration:none;padding:7px 15px;border:1px solid var(--border);border-radius:18px}
+.disclaimer{font-size:.6rem;line-height:1.8;color:var(--faint);margin-top:12px;text-align:center;padding:0 10px}
 </style>
 </head>
 <body>
@@ -132,46 +113,29 @@ footer{margin-top:18px;text-align:center}
 
   <div class="hero">
     <span class="hero-emoji">🕵️‍♂️🐫</span>
-    <div class="hero-title">VIVANT考察ラボ</div>
-    <div class="hero-sub">UNOFFICIAL FAN THEORY HUB</div>
+    <div class="hero-title">VIVANTコウサツラボ</div>
+    <div class="hero-sub">UNOFFICIAL FAN THEORY DATABASE</div>
     <p class="hero-desc">
-      日曜劇場『VIVANT』のファン考察をまとめた非公式サイト。
-      「🔥わかったこと（確定事項）」と「❓未回収伏線（考察）」を完全に分けて、
-      ヤバさ順に大量整理。気になる考察にいいねして、自分の考察も投稿しよう。
+      日曜劇場『VIVANT』のファン考察を、✅ほぼ確定済・🔴未解決・🧩未回収伏線・💭異説・🆕最新
+      のフラグで整理した非公式データベース。気になる考察にいいねして、自分の考察も投稿しよう。
     </p>
-    <span class="ep-badge">📺 第14話まで反映済み</span>
-    <div class="stats">
-      <div class="stat"><div class="stat-num" id="statCount">0</div><div class="stat-label">総考察数</div></div>
-      <div class="stat"><div class="stat-num" id="statLikes">0</div><div class="stat-label">総いいね</div></div>
-    </div>
+    <div class="stats" id="statBar"></div>
   </div>
 
-  <div class="tabbar">
-    <button class="tab fact on" id="tabFact">
-      <span class="tab-icon">🔥</span>
-      <span class="tab-label">わかったこと</span>
-      <div class="tab-count" id="tabFactCount">確定事項</div>
-    </button>
-    <button class="tab mystery" id="tabMystery">
-      <span class="tab-icon">❓</span>
-      <span class="tab-label">未回収伏線</span>
-      <div class="tab-count" id="tabMysteryCount">考察・謎</div>
-    </button>
-  </div>
+  <div class="tabbar" id="tabbar"></div>
 
   <div class="controls">
     <div class="search-box">
       <span>🔍</span>
-      <input id="searchInput" type="text" placeholder="キーワードで考察を検索…">
+      <input id="searchInput" type="text" placeholder="キーワード・考察No.・ハッシュタグで検索…">
     </div>
-    <div class="chip-label">話数</div>
-    <div class="chips" id="epRow"></div>
-    <div class="chip-label">カテゴリ</div>
-    <div class="chips" id="chipRow"></div>
-    <div class="sort-row">
-      <button class="sort-btn on" data-sort="shock">😱 ヤバい順</button>
-      <button class="sort-btn" data-sort="likes">❤️ いいね順</button>
-      <button class="sort-btn" data-sort="new">🆕 新着順</button>
+    <div class="util-row">
+      <div class="sort-row">
+        <button class="sort-btn on" data-sort="no">#発見順</button>
+        <button class="sort-btn" data-sort="like">🔥イイね順</button>
+        <button class="sort-btn" data-sort="new">🆕新着順</button>
+      </div>
+      <button class="expand-all" id="expandAll">▾ 全部の詳細を開く</button>
     </div>
   </div>
 
@@ -179,41 +143,32 @@ footer{margin-top:18px;text-align:center}
 
   <button class="post-toggle" id="postToggle">✍️ 自分の考察を投稿する</button>
   <form class="post-form" id="postForm">
-    <label>分類</label>
-    <div class="type-toggle">
-      <button type="button" class="type-opt on" id="fTypeFact" data-type="fact">🔥 わかったこと</button>
-      <button type="button" class="type-opt" id="fTypeMystery" data-type="mystery">❓ 未回収伏線</button>
-    </div>
+    <label>フラグ（複数選択可）</label>
+    <div class="flag-toggle" id="flagPicker"></div>
     <div class="row">
       <div>
-        <label>話数（任意）</label>
+        <label>放送話数（任意）</label>
         <input id="fEp" type="text" maxlength="20" placeholder="例: 第15話">
-      </div>
-      <div>
-        <label>カテゴリ</label>
-        <select id="fCategory"></select>
       </div>
     </div>
     <label>タイトル</label>
     <input id="fTitle" type="text" maxlength="60" placeholder="例: 野崎は本当に裏切ったのか" required>
-    <label>考察内容</label>
+    <label>要約（1〜2行）</label>
+    <input id="fSummary" type="text" maxlength="80" placeholder="カード一覧に常に表示される要約">
+    <label>詳細（展開時に表示）</label>
     <textarea id="fBody" maxlength="800" placeholder="あなたの考察を書いてみよう（800文字まで）" required></textarea>
-    <label>ヤバさ（衝撃度）</label>
-    <div class="type-toggle" id="shockPicker"></div>
-    <div class="row">
-      <div>
-        <label>ニックネーム（任意）</label>
-        <input id="fAuthor" type="text" maxlength="20" placeholder="名無しの考察班">
-      </div>
-    </div>
+    <label>ハッシュタグ（スペース区切り・任意）</label>
+    <input id="fTags" type="text" maxlength="80" placeholder="例: 野崎 二重スパイ">
+    <label>ニックネーム（任意）</label>
+    <input id="fAuthor" type="text" maxlength="20" placeholder="名無しの考察班">
     <button type="submit" class="submit-btn">投稿する</button>
-    <p class="hint">※投稿はこの端末のブラウザに保存されます（このブラウザでのみ表示されます）。誹謗中傷・過度な断定・ネタバレの押し付けはご遠慮ください。</p>
+    <p class="hint">※投稿はこの端末のブラウザに保存されます（このブラウザでのみ表示されます）。誹謗中傷・過度な断定はご遠慮ください。</p>
   </form>
 
   <footer>
     <a href="index.html" class="back-link">← ポータルに戻る</a>
     <p class="disclaimer">
-      本サイトはドラマ『VIVANT』（TBS系日曜劇場）に関するファン有志の非公式考察サイトです。<br>
+      本サイトはドラマ『VIVANT』（TBS系日曜劇場）に関するファン有志の非公式考察データベースです。<br>
       制作局・原作関係者とは一切関係ありません。掲載内容はネット上の反応・二次情報をもとにした編集部要約およびファンの考察・感想であり、公式見解ではありません。事実関係は今後の放送で変わる可能性があります。
     </p>
   </footer>
@@ -221,129 +176,75 @@ footer{margin-top:18px;text-align:center}
 
 <script>
 (function(){
-  var CATS = ['すべて','野崎','新庄','シンシー/ハン','別班','テント/孤児院','AI/情報戦','キャラクター','世界観/タイトル','演出','その他'];
-  var EPS = ['すべて','第14話','シリーズ全体'];
+  var FLAGS = {
+    all:       {label:'すべて', icon:''},
+    confirmed: {label:'ほぼ確定済', icon:'✅'},
+    unresolved:{label:'未解決', icon:'🔴'},
+    foreshadow:{label:'未回収伏線', icon:'🧩'},
+    alt:       {label:'異説', icon:'💭'},
+    new:       {label:'最新', icon:'🆕'}
+  };
+  var FLAG_ORDER = ['all','new','unresolved','confirmed','foreshadow','alt'];
 
-  // Editorial summaries written by the site, based on aggregated online fan
-  // discussion of episode 14 and general series themes (not copied verbatim
-  // from any single source).
+  // Original editorial write-ups summarizing widely-discussed fan theory
+  // topics for VIVANT (S1 + S2 through ep14). Written by this site, not
+  // copied from any external source.
   var SEED = [
-    // ===== 第14話: わかったこと(fact) =====
-    {id:'f14-1', type:'fact', ep:'第14話', cat:'野崎', shock:5,
-      title:'別班5人を売ったのは公安・野崎守だった',
-      body:`乃木と共闘してきたはずの公安・野崎守が、別班メンバー5人の情報を中国系組織シンシーへ流していたことが判明。見返りとして50億円を受け取っており、表面上は国家への重大な裏切りに見える。ただしこれが本当の裏切りなのかどうかは、まだ確定していない。ここが今後最大の焦点になる。`,
-      base:2140, days:1},
-    {id:'f14-2', type:'fact', ep:'第14話', cat:'シンシー/ハン', shock:5,
-      title:'次なる宿敵は中国版“別班”シンシー、率いるのはハン',
-      body:`野崎が接触した相手は、元中国公安部第6局長とされるハン・リンシン。彼女が率いる組織シンシーは表向き多国籍の民間情報機関を装うが、実態は日本の別班と対になる“中国版・別班”とされる。中国系工作員を排除してきた別班に強い遺恨を持つとされ、物語は別班vsテントから国家レベルの諜報戦へスケールアップした。`,
-      base:1980, days:1},
-    {id:'f14-3', type:'fact', ep:'第14話', cat:'別班', shock:4,
-      title:'丸菱商事・長野専務が別班の一員だったと判明',
-      body:`シーズン1からの“空白の2年間”が謎だった長野専務が、自ら別班側の人間であることを乃木の前で明かした。単なる薬物更生の期間ではなく、別班としての活動歴を隠すためのカモフラージュだったことになり、シーズン1最大級の未回収伏線がここでひとつ回収された。`,
-      base:1340, days:1},
-    {id:'f14-4', type:'fact', ep:'第14話', cat:'別班', shock:4,
-      title:'拉致された別班5人は生存、ゴルバド共和国ルモー地区に拘束',
-      body:`行方不明だった黒須ら別班メンバー5人は死亡しておらず、架空の国家ゴルバド共和国のルモー地区にある施設で、満身創痍のまま拘束・拷問を受けていることが判明。次の大きな目的は明確に「5人の救出」になった。`,
-      base:1120, days:1},
-    {id:'f14-5', type:'fact', ep:'第14話', cat:'その他', shock:4,
-      title:'ハッカー東条が野崎の逃亡を幇助、乃木に発見される衝撃のラスト',
-      body:`サイバー犯罪対策課の東条は野崎の失踪を裏で支援しており、乃木に消されることを恐れて警視庁からの逃亡と国外への密航まで準備していた。しかし逃亡先の暗闇の中、背後に音もなく現れた乃木の不敵な笑み――で今回は幕切れ。次回、東条の運命が大きく動くのはほぼ確実。`,
-      base:980, days:1},
-    {id:'f14-6', type:'fact', ep:'第14話', cat:'AI/情報戦', shock:3,
-      title:'AIハヤトが判断を誤る、情報操作でAIすら欺けることが明らかに',
-      body:`劇中の分析AI「ハヤト」は一時、新庄が拉致に関与した確率を95％と算出したが、結果は外れた。入力される情報そのものを操作されればAIも誤答するという描写は、シンシー＝「信息（情報）」という名前とも重なり、シーズン2のテーマが「誰が情報を支配しているか」であることを示唆している。`,
-      base:760, days:1},
+    {flags:['confirmed'], ep:'S1', title:'別班は公式には存在しないとされる自衛隊の秘密組織', summary:'作中最大の前提設定。“存在しないことになっている組織”というルールが物語全体の緊張感を支える。', detail:'別班は自衛隊の中に置かれているとされながら、公式には認められていない情報組織として描かれる。この矛盾した立ち位置そのものが、シリーズを通した最大の謎の土台になっている。', tags:['別班','世界観'], base:1860},
+    {flags:['confirmed'], ep:'S1', title:'バルサは紛争支援金を非合法な手段で集める組織', summary:'貧困や紛争地域を支援する資金を、合法とは言えない手段で集めているとされる。', detail:'バルサはロビンフッド的な性格を持つ組織として描かれ、その資金の集め方・使い道を巡って乃木たちが翻弄されていく構図が、シーズン1前半の軸になっていた。', tags:['バルサ','世界観'], base:1590},
+    {flags:['confirmed'], ep:'S1', title:'テントはバルサの中核を担う存在を指す呼称', summary:'「テント」という言葉自体が、組織の中心人物・機能を指すコードネームとして使われている。', detail:'テントの正体を巡る駆け引きがシーズン1のミステリーの核だった。単独の人物なのか、複数人の総称なのかという解釈も当時から分かれていた。', tags:['テント','世界観'], base:1420},
+    {flags:['confirmed'], ep:'S1', title:'乃木の父はノゴーン・べキであることが判明', summary:'商社員としての顔の裏で、乃木は自身のルーツに関わる大きな真実に直面する。', detail:'モンゴルでの出自を巡る謎が、乃木憂助という人物の“二重生活”そのものの意味を大きく塗り替える転換点になった。', tags:['べキ','乃木'], base:2010},
+    {flags:['unresolved'], ep:'S1', title:'べキの生死は依然として不明のまま持ち越された', summary:'シーズン1終了時点で、べキが本当に生きているのかどうかは明言されていない。', detail:'べキというキャラクターの存在は物語の情緒的な核でありながら、その最終的な生死ははっきり描かれず、シーズン2以降への大きな引きになっている。', tags:['べキ','生存説'], base:1740},
+    {flags:['unresolved'], ep:'S1', title:'乃木のもう一つの人格「F」の全貌は明らかになっていない', summary:'極限状態で表に出るとされる乃木のもう一つの側面。その正体と限界は謎のまま。', detail:'Fは冷徹な尋問・判断を行う人格として描かれるが、これが乃木自身の意志とどこまで独立しているのか、最終的にどう決着するのかはまだ描かれていない。', tags:['F','乃木'], base:1610},
+    {flags:['confirmed'], ep:'S1', title:'新庄は別班の情報収集に関わる立場として描かれてきた', summary:'表向きの立場と裏の役割を併せ持つ人物として、シーズン1から存在感を放ってきた。', detail:'新庄というキャラクターは、公安・別班双方の情報が交錯する場所に立たされ続けており、その微妙な立ち位置が視聴者の間で常に議論の的になっている。', tags:['新庄','別班'], base:1180},
+    {flags:['alt'], ep:'S1', title:'ノコルとべキの関係を巡る複数の解釈', summary:'血縁なのか、べキに育てられた立場なのか、視聴者の間でも解釈が分かれている。', detail:'ノコルはべキと深い関わりを持つ人物として描かれており、彼の忠誠や葛藤の理由づけを巡って複数の読み方が共存している。', tags:['ノコル','べキ'], base:940},
+    {flags:['unresolved'], ep:'S1', title:'薫と乃木の関係が今後どう描かれるか', summary:'乃木の“もう一つの生活”を象徴する存在として、今後の展開が注目されている。', detail:'長野専務が繰り返し口にする“愛する人”というテーマとも重なり、薫という存在が今後の乃木の選択にどう関わってくるかが焦点になっている。', tags:['薫','乃木'], base:860},
+    {flags:['alt'], ep:'S1', title:'丸菱商事という存在そのものが別班の隠れ蓑なのでは説', summary:'一企業にしては不自然なほど、別班関係者が集中しているのではという見方。', detail:'長野専務をはじめ、丸菱商事の内部に別班関係者が複数紛れ込んでいる可能性が指摘されており、会社そのものが別班のカバーとして機能しているのではという読みがある。', tags:['丸菱商事','別班'], base:1050},
 
-    // ===== 第14話: 未回収伏線(mystery) =====
-    {id:'m14-1', type:'mystery', ep:'第14話', cat:'新庄', shock:5,
-      title:'新庄、本当に死んだのか？偽装死説の物的証拠が多すぎる',
-      body:`首から剥がした謎のピンク色の物体（歯型取りに使う素材とも推測される）、直前の「太ったな」という指摘（防弾装備を示唆）、急所を外せという指示に反して心臓を撃たれた不自然さ、日本での再検死なしの即火葬——状況証拠が揃いすぎている。関連番組で本人が「本当に死んだ」と明言したことすら、逆に視聴者を欺く仕掛けなのではと疑われている。`,
-      base:3120, days:1},
-    {id:'m14-2', type:'mystery', ep:'第14話', cat:'野崎', shock:5,
-      title:'野崎＝二重スパイ説、今のところ最有力',
-      body:`別班を売り、50億円を受け取り、敵地シンシーへ向かった野崎。一方で乃木に「チンギスを頼れ」と言い残し、相棒ドラムを乃木側に残し、公安上層部も野崎の動きを把握していたように見える描写がある。あまりに綺麗に「裏切り者」として描かれていること自体が、敵の信用を得るための潜入作戦だと疑われる最大の理由になっている。`,
-      base:2870, days:1},
-    {id:'m14-3', type:'mystery', ep:'第14話', cat:'世界観/タイトル', shock:5,
-      title:'最終的な敵は本当にシンシーなのか、Fとの対峙説',
-      body:`シンシーは「次なる宿敵」ではあっても“最後の敵”とは限らない。シーズン1が父・ベキとの対峙、シーズン2が国家/シンシーとの対峙だとすれば、最後に乃木が向き合うのはもう一つの人格「F」＝自分自身ではないか、という読みがある。Fと決別し、別班でもベキの息子でもなく「乃木憂助」として生きる着地なら、タイトルVIVANT＝“生きている者”がきれいに回収される。`,
-      base:1690, days:1},
-    {id:'m14-4', type:'mystery', ep:'第14話', cat:'シンシー/ハン', shock:4,
-      title:'ハンは“テントの孤児”なのでは？',
-      body:`野崎が「テントの資金は孤児院運営にも使われていた」と口にした瞬間、ハンの表情が明らかに変わり、不自然にその場を離れた。もしハン自身がベキに救われた孤児の一人だとすれば、乃木・ノコル・チンギスに続く“ベキの子どもたち”がシーズン2で敵味方に分かれて再会する構図が見えてくる。`,
-      base:1510, days:1},
-    {id:'m14-5', type:'mystery', ep:'第14話', cat:'テント/孤児院', shock:4,
-      title:'「テントの孤児院」に何が隠されているのか',
-      body:`シンシーが本当に狙っているのは別班の機密情報だけなのか、それともベキが遺した孤児院・人脈・資産といった“遺産”そのものなのか。ハンの過剰な反応を見る限り、孤児院こそが今作の核心を握っている可能性がある。`,
-      base:1230, days:1},
-    {id:'m14-6', type:'mystery', ep:'第14話', cat:'新庄', shock:3,
-      title:'新庄のカトリック発言と十字架モチーフの謎',
-      body:`「自分はカトリックだから自殺できない」という新庄のセリフ、鈴木が十字を切る仕草、そして別班員が十字架のような形で磔にされる演出——十字架モチーフが繰り返し登場している。宗教的な設定なのか、シンシー内部を示す暗号なのか、まだ意味は明らかになっていない。`,
-      base:940, days:1},
-    {id:'m14-7', type:'mystery', ep:'第14話', cat:'その他', shock:3,
-      title:'相棒ドラムは本当にただ乃木側へ移っただけなのか',
-      body:`野崎が消えた後、乃木の傍らに立つドラム。一見“引き継ぎ”に見えるが、話の後半で妙に本筋から外される場面もあり、シーズン1から一言も発さずすべてを見てきたこの男が実は“監視役”ではないかという疑いも根強い。`,
-      base:860, days:1},
-    {id:'m14-8', type:'mystery', ep:'第14話', cat:'その他', shock:2,
-      title:'野崎が見せた暗証番号「580486」の意味',
-      body:`画面にわざわざ大きく映された6桁の数字「580486」。日付なのか、座標なのか、人物コードなのか。VIVANTがここまで数字を見せて完全に無意味とは考えにくく、ファンの間で解読合戦が続いている。`,
-      base:640, days:1},
-    {id:'m14-9', type:'mystery', ep:'第14話', cat:'キャラクター', shock:2,
-      title:'長野専務が乃木に“愛”を語りすぎる理由',
-      body:`長野は今回も乃木に「愛する人を大事にしろ」「愛する者の存在の力」と繰り返し説く。単なる人生訓というより、薫やジャミーンへの想いを乃木自身に再確認させる意図があるのでは、という読み方がされている。国家より家族、憎しみより愛というベキのテーマとも重なる。`,
-      base:520, days:1},
-    {id:'m14-10', type:'mystery', ep:'第14話', cat:'演出', shock:2,
-      title:'特急やくもで通信が切れた理由',
-      body:`乃木と櫻井の通信が「電波が悪い」という理由で唐突に途切れる場面。別班ほどの組織の通信がその程度で切れるのは不自然で、乃木が意図的に切った、何者かに妨害された、尾行を察知した——などの解釈がされている。`,
-      base:410, days:1},
-    {id:'m14-11', type:'mystery', ep:'第14話', cat:'キャラクター', shock:2,
-      title:'宇佐美部長が「5日後にバルカへ来る」理由',
-      body:`なぜ宇佐美部長がバルカへ向かうのか。葬儀なのか、別任務なのか、ノコルや孤児院絡みなのか、それとも第三勢力との接点なのか。理由はまだ明かされていない。`,
-      base:360, days:1},
+    {flags:['confirmed','new'], ep:'第14話', title:'長野専務は別班の一員だったと第14話で自ら明かした', summary:'シーズン1からの“空白の2年間”の謎が、ここで大きく回収された。', detail:'薬物更生の期間とされていた長野の空白期間は、実際には別班としての活動歴を隠すためのカモフラージュだったことが本人の口から語られた。', tags:['長野','別班','ep14'], base:1340},
+    {flags:['confirmed','new'], ep:'第14話', title:'拉致された別班5人はゴルバド共和国ルモー地区で生存が確認された', summary:'行方不明だった黒須ら別班メンバーは死亡しておらず、拘束された状態で発見された。', detail:'架空の国家ゴルバド共和国のルモー地区にある施設で、満身創痍のまま拘束・拷問を受けていることが判明し、次の大きな目的が「5人の救出」であることが明確になった。', tags:['別班','ep14'], base:1120},
+    {flags:['confirmed','new'], ep:'第14話', title:'公安・野崎が別班5人の情報をシンシーへ流出、50億円を受領', summary:'乃木と共闘してきたはずの野崎が、別班の機密を敵側に渡していたことが判明。', detail:'表面上は国家への重大な裏切りに見えるが、これが本当の裏切りなのかは確定していない。今後の展開における最大の焦点になっている。', tags:['野崎','シンシー','ep14'], base:2140},
+    {flags:['confirmed','new'], ep:'第14話', title:'次なる宿敵は中国版“別班”とされるシンシー、率いるのはハン', summary:'元中国公安部第6局長とされるハン・リンシンが率いる情報組織シンシーが姿を現した。', detail:'表向きは多国籍の民間情報機関だが、実態は日本の別班と対になる“中国版・別班”とされ、中国系工作員を排除してきた別班に強い遺恨を持つ。物語は国家レベルの諜報戦へスケールアップした。', tags:['シンシー','ハン','ep14'], base:1980},
+    {flags:['confirmed','new'], ep:'第14話', title:'ハッカー東条は野崎の逃亡を裏で支援していた', summary:'サイバー犯罪対策課の東条も、完全にこちら側の人間ではなかった。', detail:'東条は野崎の失踪を支援し、乃木に消されることを恐れて逃亡と国外への密航まで準備していた。しかし逃亡先で背後に音もなく現れた乃木に発見される衝撃のラストを迎えた。', tags:['東条','ep14'], base:980},
+    {flags:['confirmed','new'], ep:'第14話', title:'分析AI「ハヤト」が新庄の関与を誤って高確率判定していた', summary:'劇中の万能AIも、入力される情報を操作されれば誤答することが示された。', detail:'AIハヤトは一時、新庄が拉致に関与した確率を95％と算出したが結果は外れた。「誰が情報を支配しているか」というシーズン2のテーマを象徴する描写として注目されている。', tags:['AI','ep14'], base:760},
+    {flags:['confirmed','new'], ep:'第14話', title:'シーズン2は国際的な情報戦へと物語のスケールが拡大した', summary:'別班vsテントの構図から、国家レベルの諜報組織同士の対立へと舞台が広がった。', detail:'第14話を境に、これまでの“犯人探し”のミステリーから、複数国家・複数組織が絡む情報戦へと物語のギアが一段上がったという受け止めが広がっている。', tags:['シーズン2','ep14'], base:1230},
 
-    // ===== シリーズ全体: わかったこと(fact / 世界観の前提) =====
-    {id:'s-fact-1', type:'fact', ep:'シリーズ全体', cat:'別班', shock:3,
-      title:'「別班」は公式には存在しないとされる情報組織',
-      body:`作中の「別班」は、自衛隊の中に存在するとされながらも公式には認められていない情報機関という設定。この“存在しないことになっている組織”という前提自体が、物語全体の緊張感を支える基本ルールになっている。`,
-      base:1860, days:900},
-    {id:'s-fact-2', type:'fact', ep:'シリーズ全体', cat:'テント/孤児院', shock:3,
-      title:'「バルサ」と「テント」、二つの組織の関係',
-      body:`「バルサ」は貧困や紛争地域を支援する資金を非合法な手段で集める組織として描かれる。「テント」はその中核を担う人物・存在を指す呼び名として使われ、正体を巡る駆け引きがシーズン1前半の大きな軸になっていた。`,
-      base:1590, days:880},
-    {id:'s-fact-3', type:'fact', ep:'シリーズ全体', cat:'その他', shock:1,
-      title:'モンゴルロケが物語に与えた説得力',
-      body:`広大な草原や砂漠地帯での海外ロケが、単なる背景ではなく「文明から切り離された緊張感」を作品全体に与えている。日本の連続ドラマとしては異例のスケールのロケが、フィクションのリアリティを支えている。`,
-      base:980, days:850},
+    {flags:['foreshadow','new','alt'], ep:'第14話', title:'新庄の死は偽装ではないかという説', summary:'不自然な描写が多すぎることから、生存説が根強く語られている。', detail:'首から剥がした謎のピンク色の物体、直前の「太ったな」という指摘、急所を外すよう指示されていたのに心臓を撃たれた不自然さ、日本での再検死なしの即火葬——状況証拠が偽装死を強く示唆している。', tags:['新庄','偽装死','ep14'], base:3120},
+    {flags:['foreshadow','new','alt'], ep:'第14話', title:'野崎は敵に潜入するための二重スパイではないかという説', summary:'裏切り者としてはあまりに“綺麗すぎる”描かれ方が、逆に疑いを呼んでいる。', detail:'別班を売り50億円を受け取る一方、乃木に「チンギスを頼れ」と言い残し、相棒ドラムを乃木側に残している。公安上層部も動きを把握していたように見え、潜入作戦だった可能性が有力視されている。', tags:['野崎','二重スパイ','ep14'], base:2870},
+    {flags:['alt','new','foreshadow'], ep:'第14話', title:'野崎の裏切りは公安上層部も把握した上での組織的な作戦だったのではという説', summary:'野崎個人の暴走ではなく、公安が黙認・関与していたのではという読み。', detail:'公安内部が野崎の不審な動きを把握していたように見える描写があることから、野崎単独ではなく組織ぐるみの潜入作戦だったのではという見方が広がっている。', tags:['野崎','公安','ep14'], base:1080},
+    {flags:['foreshadow','new'], ep:'第14話', title:'ハンはべキに救われた“テントの孤児”ではないかという説', summary:'野崎の一言に見せたハンの反応が、彼女の過去を疑わせている。', detail:'野崎が「テントの資金は孤児院運営にも使われていた」と口にした瞬間、ハンの表情が明らかに変わり不自然にその場を離れた。乃木・ノコル・チンギスに続く“べキの子どもたち”の一人ではという見方がある。', tags:['ハン','孤児院','ep14'], base:1510},
+    {flags:['foreshadow','new'], ep:'第14話', title:'「テントの孤児院」に何が隠されているのか', summary:'シンシーが本当に狙っているのは機密情報だけなのか、という疑問。', detail:'べキが遺した孤児院・人脈・資産といった“遺産”そのものが今作の核心を握っている可能性があり、ハンの過剰な反応がそれを裏付けているという読みがある。', tags:['孤児院','テント','ep14'], base:1230},
+    {flags:['foreshadow','new'], ep:'第14話', title:'新庄のカトリック発言と十字架モチーフの謎', summary:'「自殺はできない」という発言と、十字架の演出が繰り返し重なっている。', detail:'新庄のカトリック発言、鈴木が十字を切る仕草、別班員が十字架のような形で拘束される演出——宗教的な設定なのか、組織を示す暗号なのかはまだ明らかになっていない。', tags:['新庄','演出','ep14'], base:940},
+    {flags:['foreshadow','new'], ep:'第14話', title:'相棒ドラムの正体、監視役なのではという疑い', summary:'一言も発さずすべてを見てきた男が、乃木の“監視役”である可能性。', detail:'野崎が消えた後、乃木の傍らに立つドラム。一見“引き継ぎ”に見えるが、後半で本筋から外される描写もあり、正体への疑いが根強い。', tags:['ドラム','ep14'], base:860},
+    {flags:['foreshadow','new'], ep:'第14話', title:'野崎が見せた暗証番号「580486」の意味', summary:'画面にわざわざ大きく映された6桁の数字の意味が読み解かれていない。', detail:'日付なのか、座標なのか、人物コードなのか。VIVANTがここまで数字を見せて無意味とは考えにくく、ファンの間で解読合戦が続いている。', tags:['野崎','暗号','ep14'], base:640},
+    {flags:['foreshadow','new'], ep:'第14話', title:'長野専務が乃木に“愛”を語りすぎる理由', summary:'繰り返される“愛”というワードに、単なる人生訓以上の意図があるのでは。', detail:'薫やジャミーンへの想いを乃木自身に再確認させる意図があるのではという読み方がされている。国家より家族、憎しみより愛というべキのテーマとも重なる。', tags:['長野','ep14'], base:520},
+    {flags:['foreshadow','new'], ep:'第14話', title:'特急やくもで通信が切れた理由', summary:'「電波が悪い」という説明だけでは片付けにくい不自然な演出。', detail:'別班ほどの組織の通信がその程度で切れるのは不自然で、乃木が意図的に切った、何者かに妨害された、尾行を察知した——などの解釈がされている。', tags:['演出','ep14'], base:410},
+    {flags:['foreshadow','new'], ep:'第14話', title:'宇佐美部長が「5日後にバルカへ来る」理由', summary:'目的地・目的ともにまだ明かされていない移動の伏線。', detail:'葬儀なのか、別任務なのか、ノコルや孤児院絡みなのか、それとも第三勢力との接点なのか。理由はまだ明かされていない。', tags:['宇佐美','ep14'], base:360},
+    {flags:['alt','foreshadow','new'], ep:'第14話', title:'最終的な敵は本当にシンシーなのか、Fとの対峙になるのではという説', summary:'シンシーは“次の敵”ではあっても“最後の敵”とは限らないという読み。', detail:'シーズン1が父・べキとの対峙、シーズン2が国家/シンシーとの対峙だとすれば、最後に乃木が向き合うのはもう一つの人格「F」＝自分自身ではないかという見方がある。', tags:['F','シンシー','ep14'], base:1690},
+    {flags:['alt','new'], ep:'第14話', title:'シンシー＝「信息（情報）」説とAI時代の情報戦というテーマ読み', summary:'組織名の由来と、AIハヤトの誤判定が同じテーマでつながっているという指摘。', detail:'シンシーの名が中国語の「信息（情報）」を連想させることと、AIハヤトが情報操作に弱いという描写が重なり、シーズン2全体のテーマが「情報の支配」ではという読みが広がっている。', tags:['シンシー','AI','ep14'], base:700},
+    {flags:['foreshadow','new','alt'], ep:'第14話', title:'東条の私物へのこだわりが今後の交渉材料になるのではという見方', summary:'逃亡中も手放さなかった私物が、次回の尋問の鍵になるのではという予想。', detail:'東条が大切にしていた私物への強いこだわりが劇中で描かれており、これが乃木側との今後のやり取りに関わってくるのではという見方がある。', tags:['東条','ep14'], base:480},
+    {flags:['alt','unresolved','new'], ep:'第14話', title:'チンギスが今後どのような立場でシーズン2に関わってくるのか', summary:'バルカ警察のチンギスが再登場することへの期待と、その立ち位置への予想。', detail:'べキと関わりの深いチンギスが、乃木・野崎いずれの側に近い動きを見せるのか、次のエピソードでの本格参戦が注目されている。', tags:['チンギス','ep14'], base:590},
 
-    // ===== シリーズ全体: 未回収伏線・考察(mystery) =====
-    {id:'s-mys-1', type:'mystery', ep:'シリーズ全体', cat:'世界観/タイトル', shock:3,
-      title:'「VIVANT」というタイトルに込められた意味とは',
-      body:`VIVANTはフランス語で「生きている／生き生きとした」を意味する単語。過酷な状況を生き延び、真実に近づいていく登場人物たちの姿と重なる、という読み方がファンの間で語られている。放送前のティザービジュアルではロゴの文字組みの中に別の単語が隠されているようなデザインが話題になり、「一体何が隠されているのか」という考察合戦がSNS上で盛り上がった。`,
-      base:1780, days:900},
-    {id:'s-mys-2', type:'mystery', ep:'シリーズ全体', cat:'キャラクター', shock:2,
-      title:'主人公・乃木の「二重生活」が示す普通の人間の限界',
-      body:`商社員としての顔と、もう一つの顔を持つ主人公・乃木憂助。二つの生活の間で揺れ動く姿は「エリートスパイ」ではなく「普通の人間が特殊な立場に置かれたらどうなるか」を描いているという読み方が支持されている。`,
-      base:1140, days:870},
-    {id:'s-mys-3', type:'mystery', ep:'シリーズ全体', cat:'演出', shock:2,
-      title:'序盤の小道具・セリフが後半で回収される作りについて',
-      body:`序盤で流されるように登場する小道具やセリフが、中盤〜終盤で意味を持って回収される構成が話題になった。1話を見返すと「これは伏線だったのか」と気づく視聴者が続出し、「見返し推奨ドラマ」としてたびたび言及される。`,
-      base:1020, days:860},
-    {id:'s-mys-4', type:'mystery', ep:'シリーズ全体', cat:'演出', shock:2,
-      title:'「誰が味方で誰が敵か分からない」構成の狙い',
-      body:`登場人物の立場が二転三転し、視聴者に「誰を信じればいいのか」を常に問い続ける構成。この不安定さこそが、単純な勧善懲悪ではないVIVANTらしさだ、という考察が多く見られる。`,
-      base:860, days:840},
-    {id:'s-mys-5', type:'mystery', ep:'シリーズ全体', cat:'キャラクター', shock:1,
-      title:'脇を固めるキャラクターたちの“二面性”',
-      body:`主要人物だけでなく脇役にも裏の顔・隠された動機が用意されているのが特徴的、という指摘。一見コミカルな人物ほど後半で重要な役割を持つ傾向があり、初見時と再視聴時で印象が大きく変わる、という感想も多い。`,
-      base:640, days:820},
-    {id:'s-mys-6', type:'mystery', ep:'シリーズ全体', cat:'世界観/タイトル', shock:2,
-      title:'なぜここまで社会現象になったのか',
-      body:`スパイ・サスペンスというジャンルは日本の連続ドラマでは珍しく、映画級のスケール感とテレビドラマならではの人間ドラマが両立した点が支持を集めた理由ではないか、という考察。続編・映画化への期待の声も多く上がった。`,
-      base:1310, days:800}
+    {flags:['unresolved'], ep:'S1', title:'別班の予算がどこから出ているのかは劇中で説明されていない', summary:'“存在しない組織”を動かす資金源そのものが謎のまま。', detail:'公式には存在しない別班がどのように活動資金を確保しているのかは、シーズン1を通して明確に語られておらず、今後の伏線として残っている。', tags:['別班','世界観'], base:520},
+    {flags:['unresolved'], ep:'S1', title:'政府高官の中に他にも別班の協力者が紛れている可能性', summary:'長野専務の一件を受けて、他にも“隠れ別班”がいるのではという見方。', detail:'長野が別班側の人間だったことが判明したことで、丸菱商事や政府周辺に他にも協力者が紛れているのではという疑いが広がっている。', tags:['別班','考察'], base:610},
+    {flags:['unresolved'], ep:'S1', title:'別班と公安、二つの組織の指揮系統や力関係は明確に語られていない', summary:'どちらが上位なのか、連携はどこまで公式なのか、まだ不透明。', detail:'野崎の一件でも見えたように、公安と別班の間には協力関係とも対立関係とも取れる曖昧な距離感があり、その正確な力関係は描かれていない。', tags:['別班','公安'], base:480},
+    {flags:['alt'], ep:'シリーズ全体', title:'別班の別班（さらに上位の監視組織）が存在するのではという説', summary:'別班自体を監視・管理するさらに上位の存在があるのではという読み。', detail:'“存在しないことになっている組織”を誰が管理しているのかという疑問から、別班のさらに上位に位置する監視機構の存在を予想するファンもいる。', tags:['別班','考察'], base:390},
+    {flags:['alt'], ep:'シリーズ全体', title:'「VIVANT」というタイトルに込められた意味を巡る複数の解釈', summary:'フランス語の原義から演出上の仕掛けまで、様々な読み方がされてきた。', detail:'VIVANTはフランス語で「生きている」を意味する単語。過酷な状況を生き延びる登場人物たちの姿と重ねる読みのほか、放送前のロゴデザインに別の単語が隠されているのではという考察合戦もSNSで盛り上がった。', tags:['タイトル','考察'], base:1780},
+    {flags:['confirmed'], ep:'シリーズ全体', title:'序盤の小道具・セリフが後半で意味を持って回収される構成', summary:'“見返し推奨ドラマ”と言われるほど、伏線の張り方が緻密という評価。', detail:'序盤で流されるように登場する小道具やセリフが、中盤〜終盤で意味を持って回収される構成が話題になった。1話を見返すと新たな発見がある、という感想が多い。', tags:['演出'], base:1020},
+    {flags:['alt'], ep:'シリーズ全体', title:'主人公・乃木の「二重生活」が示すテーマ性を巡る読み方', summary:'超人的なスパイではなく“等身大の人間”を描いているという評価が多い。', detail:'商社員としての顔ともう一つの顔の間で揺れる乃木の姿は、「普通の人間が特殊な立場に置かれたらどうなるか」を描いているという読み方が支持されている。', tags:['乃木','テーマ'], base:1140},
+    {flags:['alt'], ep:'シリーズ全体', title:'「誰が味方で誰が敵か分からない」構成の狙いを巡る考察', summary:'視聴者に常に「誰を信じるか」を問い続ける、VIVANTらしい不安定さ。', detail:'登場人物の立場が二転三転する構成そのものが、単純な勧善懲悪ではないVIVANTらしさを作り出しているという考察が多く見られる。', tags:['演出','テーマ'], base:860},
+    {flags:['alt'], ep:'シリーズ全体', title:'脇役キャラクターたちの“二面性”という作劇上の特徴', summary:'一見コミカルな人物ほど、後半で重要な役割を持つ傾向がある。', detail:'主要人物だけでなく脇役にも裏の顔・隠された動機が用意されているのが特徴的で、初見時と再視聴時で印象が大きく変わる、という感想も多い。', tags:['キャラクター'], base:640},
+    {flags:['confirmed'], ep:'シリーズ全体', title:'モンゴルロケが物語に与えている説得力', summary:'日本の連続ドラマとしては異例のスケールの海外ロケ。', detail:'広大な草原や砂漠地帯での海外ロケが、単なる背景ではなく「文明から切り離された緊張感」を作品全体に与えている。', tags:['ロケ地','制作'], base:980},
+    {flags:['alt'], ep:'シリーズ全体', title:'なぜここまで社会現象になったのかを巡る考察', summary:'映画級のスケール感とテレビドラマならではの人間ドラマの両立が理由では。', detail:'スパイ・サスペンスというジャンルは日本の連続ドラマでは珍しく、映画級のスケール感とテレビドラマならではの人間ドラマが両立した点が支持を集めた理由ではないか、という考察がある。', tags:['世界観','考察'], base:1310},
+    {flags:['unresolved'], ep:'シリーズ全体', title:'タイトルVIVANTの正式な意味は劇中で明言されていない', summary:'公式解説が出ていない以上、意味づけはファンの解釈に委ねられている。', detail:'タイトルの由来についてはさまざまな考察が語られているが、劇中や公式から明確な種明かしがされたわけではなく、最終的な意味づけは今後の展開次第という見方が強い。', tags:['タイトル'], base:700},
+    {flags:['unresolved'], ep:'シリーズ全体', title:'乃木が最終的に望む結末とは何か', summary:'別班としての使命と、一人の人間としての幸福、その落としどころ。', detail:'国家への忠誠、べキとの因縁、薫との関係——乃木が最終的にどの立場で生きることを選ぶのかは、シリーズ全体を貫く最大の問いとして残っている。', tags:['乃木','テーマ'], base:790},
+    {flags:['alt','unresolved'], ep:'シリーズ全体', title:'べキが本当に生きているのかを巡る生存説・死亡確定説', summary:'生存説・死亡確定説、それぞれに支持されている根拠がある。', detail:'明確な死亡描写がなかったことから生存説を支持する声がある一方、物語上の役割を終えたキャラクターとして死亡を確定的に捉える見方もあり、意見が分かれている。', tags:['べキ','生存説'], base:1230},
+    {flags:['unresolved','alt'], ep:'シリーズ全体', title:'続編・映画化への期待の声が多く上がっている', summary:'シーズン2放送中の今もなお、その先の展開を望む声が絶えない。', detail:'国内外からの評価の高さもあり、シーズン2の結末を待たずして、さらなる続編や劇場版を望む声がファンの間で継続的に上がっている。', tags:['続編','考察'], base:1180}
   ];
 
-  var LS_LIKES = 'vivant_likes_v2';
-  var LS_LIKED = 'vivant_liked_v2';
-  var LS_POSTS = 'vivant_posts_v2';
+  var LS_LIKES = 'vivant_likes_v3';
+  var LS_LIKED = 'vivant_liked_v3';
+  var LS_POSTS = 'vivant_posts_v3';
 
   function loadJSON(key, fallback){
     try{ var v = JSON.parse(localStorage.getItem(key)); return v || fallback; }catch(e){ return fallback; }
@@ -353,68 +254,46 @@ footer{margin-top:18px;text-align:center}
   var likes = loadJSON(LS_LIKES, {});
   var liked = loadJSON(LS_LIKED, {});
   var posts = loadJSON(LS_POSTS, []);
+  var expandedAll = false;
+  var openSet = {};
 
+  // assign stable ids/numbers in seed order
+  SEED.forEach(function(s, i){ s.id = 'seed-' + (i+1); s.no = i+1; });
   SEED.forEach(function(s){ if(!(s.id in likes)) likes[s.id] = s.base; });
   saveJSON(LS_LIKES, likes);
 
   function allTheories(){
-    var userItems = posts.map(function(p){
-      return {id:p.id, type:p.type, ep:p.ep, cat:p.cat, shock:p.shock, title:p.title, body:p.body, author:p.author, ts:p.ts, mine:true};
-    });
     var seedItems = SEED.map(function(s){
-      return {id:s.id, type:s.type, ep:s.ep, cat:s.cat, shock:s.shock, title:s.title, body:s.body, author:'編集部まとめ', ts: Date.now() - s.days*86400000, mine:false};
+      return {id:s.id, no:s.no, flags:s.flags, ep:s.ep, title:s.title, summary:s.summary, detail:s.detail,
+        tags:s.tags, author:'編集部まとめ', ts: Date.now() - (SEED.length - s.no) * 3600000, mine:false};
     });
-    return userItems.concat(seedItems);
+    var userItems = posts.map(function(p, i){
+      return {id:p.id, no: SEED.length + posts.length - i, flags:p.flags, ep:p.ep, title:p.title, summary:p.summary,
+        detail:p.body, tags:p.tags, author:p.author, ts:p.ts, mine:true};
+    });
+    return seedItems.concat(userItems);
   }
 
-  var state = { type:'fact', ep:'すべて', cat:'すべて', sort:'shock', q:'' };
+  var state = { flag:'all', sort:'no', q:'' };
 
-  // tabs
-  var tabFact = document.getElementById('tabFact');
-  var tabMystery = document.getElementById('tabMystery');
-  function setType(t){
-    state.type = t;
-    tabFact.classList.toggle('on', t==='fact');
-    tabMystery.classList.toggle('on', t==='mystery');
-    render();
+  function flagBadge(f){
+    var meta = FLAGS[f];
+    return '<span class="flag ' + f + '">' + meta.icon + meta.label + '</span>';
   }
-  tabFact.onclick = function(){ setType('fact'); };
-  tabMystery.onclick = function(){ setType('mystery'); };
 
-  // episode chips
-  var epRow = document.getElementById('epRow');
-  EPS.forEach(function(e){
-    var b = document.createElement('button');
-    b.className = 'chip' + (e==='すべて' ? ' on' : '');
-    b.textContent = e;
-    b.onclick = function(){
-      epRow.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});
-      b.classList.add('on');
-      state.ep = e;
-      render();
-    };
-    epRow.appendChild(b);
-  });
-
-  // category chips
-  var chipRow = document.getElementById('chipRow');
-  CATS.forEach(function(c){
-    var b = document.createElement('button');
-    b.className = 'chip' + (c==='すべて' ? ' on' : '');
-    b.textContent = c;
-    b.onclick = function(){
-      chipRow.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});
-      b.classList.add('on');
-      state.cat = c;
-      render();
-    };
-    chipRow.appendChild(b);
-  });
-
-  var fCategory = document.getElementById('fCategory');
-  CATS.filter(function(c){return c!=='すべて'}).forEach(function(c){
-    var o = document.createElement('option'); o.value=c; o.textContent=c; fCategory.appendChild(o);
-  });
+  // tab bar
+  var tabbar = document.getElementById('tabbar');
+  function renderTabbar(counts){
+    tabbar.innerHTML = '';
+    FLAG_ORDER.forEach(function(f){
+      var b = document.createElement('button');
+      b.className = 'tabbtn' + (state.flag===f ? ' on' : '');
+      var meta = FLAGS[f];
+      b.textContent = (meta.icon ? meta.icon + ' ' : '') + meta.label + (counts ? ' ' + counts[f] : '');
+      b.onclick = function(){ state.flag = f; render(); };
+      tabbar.appendChild(b);
+    });
+  }
 
   document.querySelectorAll('.sort-btn').forEach(function(b){
     b.onclick = function(){
@@ -430,30 +309,30 @@ footer{margin-top:18px;text-align:center}
     render();
   });
 
+  document.getElementById('expandAll').onclick = function(){
+    expandedAll = !expandedAll;
+    this.textContent = expandedAll ? '▴ 全部閉じる' : '▾ 全部の詳細を開く';
+    openSet = {};
+    render();
+  };
+
   document.getElementById('postToggle').onclick = function(){
     document.getElementById('postForm').classList.toggle('open');
   };
 
-  var formType = 'fact';
-  var fTypeFact = document.getElementById('fTypeFact');
-  var fTypeMystery = document.getElementById('fTypeMystery');
-  fTypeFact.onclick = function(){ formType='fact'; fTypeFact.classList.add('on'); fTypeMystery.classList.remove('on','mystery'); };
-  fTypeMystery.onclick = function(){ formType='mystery'; fTypeMystery.classList.add('on','mystery'); fTypeFact.classList.remove('on'); };
-
-  var formShock = 3;
-  var shockPicker = document.getElementById('shockPicker');
-  [1,2,3,4,5].forEach(function(n){
+  var formFlags = {confirmed:false, unresolved:false, foreshadow:true, alt:false, new:true};
+  var flagPicker = document.getElementById('flagPicker');
+  ['confirmed','unresolved','foreshadow','alt','new'].forEach(function(f){
     var b = document.createElement('button');
     b.type = 'button';
-    b.className = 'type-opt' + (n===3?' on':'');
-    b.textContent = '🔥'.repeat(n);
-    b.style.flex = '1';
+    var meta = FLAGS[f];
+    b.className = 'flag-opt' + (formFlags[f] ? ' on' : '');
+    b.textContent = meta.icon + ' ' + meta.label;
     b.onclick = function(){
-      formShock = n;
-      shockPicker.querySelectorAll('.type-opt').forEach(function(x){x.classList.remove('on')});
-      b.classList.add('on');
+      formFlags[f] = !formFlags[f];
+      b.classList.toggle('on', formFlags[f]);
     };
-    shockPicker.appendChild(b);
+    flagPicker.appendChild(b);
   });
 
   document.getElementById('postForm').addEventListener('submit', function(e){
@@ -461,14 +340,17 @@ footer{margin-top:18px;text-align:center}
     var title = document.getElementById('fTitle').value.trim();
     var body = document.getElementById('fBody').value.trim();
     if(!title || !body) return;
+    var chosenFlags = Object.keys(formFlags).filter(function(f){return formFlags[f]});
+    if(chosenFlags.length===0) chosenFlags = ['alt'];
+    var tagsRaw = document.getElementById('fTags').value.trim();
     var item = {
       id: 'u' + Date.now(),
-      type: formType,
+      flags: chosenFlags,
       ep: document.getElementById('fEp').value.trim() || 'シリーズ全体',
-      cat: fCategory.value,
-      shock: formShock,
       title: title,
+      summary: document.getElementById('fSummary').value.trim() || title,
       body: body,
+      tags: tagsRaw ? tagsRaw.split(/\s+/).slice(0,6) : [],
       author: document.getElementById('fAuthor').value.trim() || '名無しの考察班',
       ts: Date.now()
     };
@@ -477,12 +359,7 @@ footer{margin-top:18px;text-align:center}
     likes[item.id] = 0;
     saveJSON(LS_LIKES, likes);
     e.target.reset();
-    formShock = 3;
-    shockPicker.querySelectorAll('.type-opt').forEach(function(x,i){x.classList.toggle('on', i===2)});
-    formType = 'fact';
-    fTypeFact.classList.add('on'); fTypeMystery.classList.remove('on','mystery');
     document.getElementById('postForm').classList.remove('open');
-    setType(item.type);
     state.sort = 'new';
     document.querySelectorAll('.sort-btn').forEach(function(x){x.classList.toggle('on', x.dataset.sort==='new')});
     render();
@@ -503,26 +380,33 @@ footer{margin-top:18px;text-align:center}
   }
 
   function esc(s){
-    return s.replace(/[&<>"']/g, function(c){
+    return String(s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
 
   function render(){
     var everything = allTheories();
-    var items = everything.filter(function(i){ return i.type === state.type; });
+    var items = state.flag==='all' ? everything.slice() : everything.filter(function(i){return i.flags.indexOf(state.flag)!==-1});
 
-    if(state.ep !== 'すべて') items = items.filter(function(i){return i.ep===state.ep});
-    if(state.cat !== 'すべて') items = items.filter(function(i){return i.cat===state.cat});
-    if(state.q) items = items.filter(function(i){
-      return (i.title+i.body).toLowerCase().indexOf(state.q) !== -1;
-    });
+    if(state.q){
+      items = items.filter(function(i){
+        var hay = (i.title+i.summary+i.detail+i.tags.join(' ')+'no.'+i.no).toLowerCase();
+        return hay.indexOf(state.q) !== -1;
+      });
+    }
 
     items.forEach(function(i){ i._likes = likes[i.id]||0; });
 
-    if(state.sort==='shock') items.sort(function(a,b){ return (b.shock-a.shock) || (b._likes-a._likes); });
-    else if(state.sort==='likes') items.sort(function(a,b){return b._likes - a._likes});
-    else items.sort(function(a,b){return b.ts - a.ts});
+    if(state.sort==='like') items.sort(function(a,b){return b._likes - a._likes});
+    else if(state.sort==='new') items.sort(function(a,b){return b.ts - a.ts});
+    else items.sort(function(a,b){return a.no - b.no});
+
+    var counts = {all: everything.length};
+    ['confirmed','unresolved','foreshadow','alt','new'].forEach(function(f){
+      counts[f] = everything.filter(function(i){return i.flags.indexOf(f)!==-1}).length;
+    });
+    renderTabbar(counts);
 
     var list = document.getElementById('list');
     list.innerHTML = '';
@@ -534,23 +418,19 @@ footer{margin-top:18px;text-align:center}
       list.appendChild(e);
     }
 
-    items.forEach(function(i, idx){
-      var isMystery = i.type === 'mystery';
+    items.forEach(function(i){
+      var isOpen = expandedAll || !!openSet[i.id];
       var card = document.createElement('div');
-      card.className = 'card' + (isMystery ? ' mystery' : '');
+      card.className = 'card';
       var isLiked = !!liked[i.id];
       card.innerHTML =
-        (state.sort==='shock' ? '<span class="card-rank' + (isMystery?' mystery':'') + '">No.' + (idx+1) + '</span>' : '') +
-        '<div class="card-top">' +
-          '<div class="card-tags">' +
-            '<span class="card-tag' + (isMystery?' mystery':'') + '">' + esc(i.cat) + '</span>' +
-            '<span class="card-tag ep">' + esc(i.ep) + '</span>' +
-            (i.mine ? '<span class="card-tag mine">投稿</span>' : '') +
-          '</div>' +
-        '</div>' +
+        '<div class="card-no">考察 No.' + i.no + '</div>' +
+        '<div class="card-flags">' + i.flags.map(flagBadge).join('') + '<span class="flag ep">' + esc(i.ep) + '</span>' + (i.mine?'<span class="flag ep">投稿</span>':'') + '</div>' +
         '<div class="card-title">' + esc(i.title) + '</div>' +
-        '<div class="card-shock">ヤバさ ' + '🔥'.repeat(i.shock || 1) + '</div>' +
-        '<div class="card-body">' + esc(i.body) + '</div>' +
+        '<div class="card-summary">' + esc(i.summary) + '</div>' +
+        '<button class="detail-toggle" data-id="' + i.id + '">' + (isOpen ? '▴ 閉じる' : '▾ 詳細をよむ') + '</button>' +
+        '<div class="card-detail' + (isOpen?' open':'') + '"><div class="card-detail-inner">' + esc(i.detail) + '</div></div>' +
+        '<div class="card-tags">' + i.tags.map(function(t){return '<span class="tagchip">#' + esc(t) + '</span>'}).join('') + '</div>' +
         '<div class="card-meta">' +
           '<span class="card-author">by ' + esc(i.author) + '</span>' +
           '<button class="like-btn' + (isLiked?' liked':'') + '" data-id="' + i.id + '">' +
@@ -559,17 +439,22 @@ footer{margin-top:18px;text-align:center}
           '</button>' +
         '</div>';
       card.querySelector('.like-btn').onclick = function(){ toggleLike(i.id); };
+      card.querySelector('.detail-toggle').onclick = function(){
+        openSet[i.id] = !isOpen;
+        expandedAll = false;
+        document.getElementById('expandAll').textContent = '▾ 全部の詳細を開く';
+        render();
+      };
       list.appendChild(card);
     });
 
-    var factCount = everything.filter(function(i){return i.type==='fact'}).length;
-    var mysteryCount = everything.filter(function(i){return i.type==='mystery'}).length;
-    document.getElementById('tabFactCount').textContent = factCount + '件の確定事項';
-    document.getElementById('tabMysteryCount').textContent = mysteryCount + '件の考察・謎';
-
-    document.getElementById('statCount').textContent = everything.length;
+    var statBar = document.getElementById('statBar');
     var totalLikes = everything.reduce(function(sum,i){return sum + (likes[i.id]||0)}, 0);
-    document.getElementById('statLikes').textContent = totalLikes;
+    statBar.innerHTML =
+      '<div class="stat"><div class="stat-num">' + everything.length + '</div><div class="stat-label">総考察数</div></div>' +
+      '<div class="stat"><div class="stat-num">' + counts.unresolved + '</div><div class="stat-label">未解決</div></div>' +
+      '<div class="stat"><div class="stat-num">' + counts.confirmed + '</div><div class="stat-label">ほぼ確定済</div></div>' +
+      '<div class="stat"><div class="stat-num">' + totalLikes.toLocaleString() + '</div><div class="stat-label">総いいね</div></div>';
   }
 
   render();
