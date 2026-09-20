@@ -1,80 +1,19 @@
-<!DOCTYPE html>
-<html lang="ja">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="さんちゃんゲーム">
-<meta name="theme-color" content="#0a0010">
-<title>さんちゃんゲーム集 👻</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZEC NINJA 888</title>
+<meta name="description" content="888 unique chibi ninjas on Zcash.">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100%;background:#080010;font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Segoe UI',sans-serif;color:#fff}
-body{display:flex;flex-direction:column;align-items:center;padding:max(24px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));gap:12px}
-.hero{text-align:center;padding:20px 0 8px}
-.hero-ghost{font-size:clamp(4rem,16vw,7rem);display:block;animation:gfl 2.5s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(153,69,255,.5))}
-@keyframes gfl{0%,100%{transform:translateY(0)rotate(-2deg)}50%{transform:translateY(-18px)rotate(2deg)}}
-.hero-title{font-size:clamp(1.8rem,7vw,2.8rem);font-weight:900;background:linear-gradient(135deg,#fff 0%,#cc88ff 45%,#14F195 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:8px}
-.hero-sub{font-size:.65rem;letter-spacing:4px;color:rgba(255,255,255,.28);text-transform:uppercase;margin-top:4px}
-.game-card{display:block;width:100%;max-width:440px;padding:18px 20px;border-radius:20px;text-decoration:none;color:#fff;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
-.game-card:active{transform:scale(.97)}
-.gc-emoji{font-size:2.2rem;margin-bottom:6px;display:block}
-.gc-title{font-size:clamp(1.1rem,4.5vw,1.4rem);font-weight:900;margin-bottom:4px}
-.gc-desc{font-size:clamp(.72rem,2.8vw,.85rem);opacity:.7;line-height:1.5}
-.gc-new{position:absolute;top:12px;right:14px;background:rgba(255,60,60,.9);color:#fff;font-size:.6rem;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:1px}
-.gc-pump{background:linear-gradient(135deg,rgba(153,69,255,.2),rgba(20,241,149,.1));border:1.5px solid rgba(153,69,255,.45);box-shadow:0 6px 28px rgba(153,69,255,.3)}
-.gc-drop{background:linear-gradient(135deg,rgba(34,170,255,.15),rgba(119,34,255,.1));border:1.5px solid rgba(80,150,255,.35);box-shadow:0 6px 24px rgba(60,100,255,.25)}
-.gc-heaven{background:linear-gradient(135deg,rgba(119,34,255,.15),rgba(255,34,102,.1));border:1.5px solid rgba(180,80,255,.35);box-shadow:0 6px 24px rgba(150,0,255,.25)}
-.gc-sol{background:linear-gradient(135deg,rgba(153,69,255,.12),rgba(20,241,149,.08));border:1.5px solid rgba(100,200,150,.3);box-shadow:0 6px 20px rgba(20,241,149,.15)}
-.gc-chaos{background:linear-gradient(135deg,rgba(255,105,180,.12),rgba(170,0,255,.08));border:1.5px solid rgba(255,105,180,.3);box-shadow:0 6px 20px rgba(255,105,180,.15)}
-.gc-vivant{background:linear-gradient(135deg,rgba(224,178,86,.16),rgba(43,179,163,.1));border:1.5px solid rgba(224,178,86,.4);box-shadow:0 6px 24px rgba(224,178,86,.22)}
-</style>
-</head>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#08080b;color:#f8f3e8;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 75% 10%,rgba(255,184,49,.11),transparent 30%);z-index:-1}header{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;position:fixed;inset:0 0 auto;background:rgba(8,8,11,.76);backdrop-filter:blur(16px);border-bottom:1px solid #27252b;z-index:10}.brand{font-weight:900;letter-spacing:.12em}.brand b{color:#efbf4f}nav a{color:#aaa7ae;text-decoration:none;margin-left:22px;font-size:12px}.hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden}.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,5,8,.98),rgba(5,5,8,.78) 38%,rgba(5,5,8,.18) 74%),linear-gradient(0deg,rgba(5,5,8,.9),transparent 35%)}.copy{position:relative;z-index:2;padding:100px 8vw 60px;max-width:760px}.kicker{color:#e8b94e;font-size:11px;letter-spacing:.22em;font-weight:800}.copy h1{font-size:78px;line-height:.9;letter-spacing:-.055em;margin:18px 0}.copy h1 span{color:#efbf4f}.copy p{color:#aaa7ae;font-size:18px;line-height:1.7;max-width:530px}.actions{display:flex;gap:12px;margin-top:28px}.btn{display:inline-flex;justify-content:center;align-items:center;border:0;border-radius:10px;padding:13px 19px;font-weight:900;text-decoration:none;cursor:pointer}.primary{background:linear-gradient(135deg,#ffd669,#b97a1f);color:#111}.secondary{background:#111117;border:1px solid #36333b;color:#eee}.stats{display:flex;gap:38px;margin-top:42px}.stats div{display:flex;flex-direction:column}.stats strong{font-size:24px}.stats span{color:#74717a;font-size:10px;letter-spacing:.14em;margin-top:4px}.section{padding:86px 7vw}.section h2{font-size:46px;margin:10px 0 26px}.card{max-width:980px;background:#0f0f14;border:1px solid #2c2931;border-radius:22px;padding:30px}.mint{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}.mint img{width:100%;border-radius:16px}.line{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #28262d}.line span{color:#8c8992}.qty{display:flex;justify-content:center;align-items:center;gap:28px;padding:25px}.qty button{width:40px;height:40px;border-radius:50%;border:1px solid #3a3740;background:#17171d;color:white;font-size:20px}.full{width:100%}.note{color:#706d76;font-size:11px;line-height:1.6;margin-top:14px}.wl{display:grid;grid-template-columns:1fr 1fr;gap:16px}.wl label{display:flex;flex-direction:column;gap:7px;color:#aaa7ae;font-size:13px}.wl input,.wl textarea,.wl select{background:#101016;border:1px solid #302e36;color:#fff;border-radius:10px;padding:13px}.wl textarea{min-height:140px}.wide{grid-column:1/-1}.result{color:#78dfa0;font-weight:800}.faq details{max-width:900px;padding:18px 0;border-top:1px solid #29272e}.faq summary{font-weight:800;cursor:pointer}.faq p{color:#8e8b93;line-height:1.7}footer{padding:30px 7vw;border-top:1px solid #26242a;color:#77747b;font-size:12px;display:flex;justify-content:space-between}#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,90px);background:#18171d;border:1px solid #3b3841;padding:12px 16px;border-radius:10px;transition:.25s;z-index:30}#toast.show{transform:translate(-50%,0)}@media(max-width:820px){nav{display:none}.copy{padding-left:6vw;padding-right:6vw}.copy h1{font-size:52px}.stats{gap:20px;flex-wrap:wrap}.section{padding:64px 5vw}.mint,.wl{grid-template-columns:1fr}.wide{grid-column:1}.section h2{font-size:38px}}
+</style></head>
 <body>
-<div class="hero">
-  <span class="hero-ghost">👻</span>
-  <div class="hero-title">さんちゃんゲーム集</div>
-  <div class="hero-sub">SANCHAN GAME PORTAL</div>
-</div>
-
-<a href="vivant.html" class="game-card gc-vivant">
-  <span class="gc-new">NEW 🔥</span>
-  <span class="gc-emoji">🕵️‍♂️🐫</span>
-  <div class="gc-title">VIVANT考察ラボ</div>
-  <div class="gc-desc">ドラマ『VIVANT』のファン考察まとめサイト。気になる考察にいいね！自分の考察も投稿できる。</div>
-</a>
-
-<a href="sanchan-pump.html" class="game-card gc-pump">
-  <span class="gc-emoji">👻🚀</span>
-  <div class="gc-title">SANCHAN PUMP</div>
-  <div class="gc-desc">$SANCトークンをpump.funでローンチ！ボンディングカーブを駆け上がれ。SOLANAゲーム。</div>
-</a>
-
-<a href="sanchan-drop.html" class="game-card gc-drop">
-  <span class="gc-new">NEW</span>
-  <span class="gc-emoji">👻⬇️</span>
-  <div class="gc-title">さんちゃんドロップ</div>
-  <div class="gc-desc">スイカゲーム風！同じゴーストを合体させて魔王を目指すパズルゲーム。Matter.js物理エンジン搭載。</div>
-</a>
-
-<a href="sanchan.html" class="game-card gc-heaven">
-  <span class="gc-emoji">⚖️👼</span>
-  <div class="gc-title">HEAVEN OR HELL</div>
-  <div class="gc-desc">10個の意味不明な事件を裁け！左=天使、右=悪魔。さんちゃんが進化する。</div>
-</a>
-
-<a href="sanchan-sol.html" class="game-card gc-sol">
-  <span class="gc-emoji">📈👻</span>
-  <div class="gc-title">SOL予言師</div>
-  <div class="gc-desc">リアルタイムSOL価格を予測！上がる？下がる？連続正解でゴーストが天使に進化。</div>
-</a>
-
-<a href="ghost-chaos.html" class="game-card gc-chaos">
-  <span class="gc-emoji">🎭👻</span>
-  <div class="gc-title">神判決ショー</div>
-  <div class="gc-desc">4択のカオスな裁判！10問の意味不明な事件を裁け。Web Audio効果音付き。</div>
-</a>
-
-</body>
-</html>
+<header><div class="brand">ⓩ ZEC NINJA <b>888</b></div><nav><a href="#mint">Mint</a><a href="#wl">Whitelist</a><a href="#faq">FAQ</a></nav></header>
+<section class="hero"><img src="hero.jpg" alt="ZEC NINJA 888"><div class="shade"></div><div class="copy"><div class="kicker">888 UNIQUE CHIBI NINJAS ON ZCASH</div><h1>Hide in the shadows.<br><span>Live on Zcash.</span></h1><p>A cute ninja collection built around privacy, freedom and ZEC culture. Mostly ninjas, with a few rare kunoichi.</p><div class="actions"><a class="btn primary" href="#mint">MINT</a><a class="btn secondary" href="#wl">APPLY WL</a></div><div class="stats"><div><strong>888</strong><span>SUPPLY</span></div><div><strong>0.02 ZEC</strong><span>PUBLIC MINT</span></div><div><strong>2</strong><span>MAX / WALLET</span></div></div></div></section>
+<section id="mint" class="section"><div class="kicker">MINT</div><h2>Enter the clan.</h2><div class="card mint"><img src="hero.jpg" alt="ZEC Ninja"><div><div class="line"><span>Status</span><b>PRE-LAUNCH</b></div><div class="line"><span>Price</span><b>0.02 ZEC</b></div><div class="line"><span>Supply</span><b>888</b></div><div class="line"><span>Max</span><b>2 / wallet</b></div><div class="qty"><button id="minus">−</button><strong id="qty">1</strong><button id="plus">+</button></div><button class="btn primary full" id="mintBtn">PREPARE MINT</button><div class="note">The site prepares the ZRC-721 payload. Final ZEC payment/signature happens in the compatible Zcash inscription flow. Never enter a seed phrase here.</div></div></div></section>
+<section id="wl" class="section"><div class="kicker">WHITELIST</div><h2>Join the hidden list.</h2><form class="card wl" id="wlForm"><label>X / Twitter<input required name="x" placeholder="@yourhandle"></label><label>Zcash mint address<input required name="zec" placeholder="Compatible transparent address"></label><label>Region<select name="region"><option>Japan</option><option>Asia</option><option>Middle East</option><option>Europe</option><option>North America</option><option>Other</option></select></label><label class="wide">Why do you want WL?<textarea required name="reason" maxlength="800" placeholder="Tell us why ZEC NINJA belongs in your wallet..."></textarea></label><button class="btn primary wide" type="submit">SUBMIT WL APPLICATION</button><div id="wlResult" class="result wide"></div></form></section>
+<section id="faq" class="section faq"><div class="kicker">FAQ</div><h2>Before you mint.</h2><details open><summary>What is ZEC NINJA 888?</summary><p>888 cute chibi ninja NFTs designed for the Zcash ecosystem.</p></details><details><summary>Mint price?</summary><p>Current configuration: 0.02 ZEC each, max 2 per wallet.</p></details><details><summary>Does this site ask for my seed phrase?</summary><p>No. It should never ask for or store your seed phrase or private key.</p></details></section>
+<footer><span>ⓩ ZEC NINJA 888</span><span>Privacy builds a kinder world.</span></footer><div id="toast"></div>
+<script>
+let qty=1;const q=document.getElementById('qty');minus.onclick=()=>{qty=Math.max(1,qty-1);q.textContent=qty};plus.onclick=()=>{qty=Math.min(2,qty+1);q.textContent=qty};function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2600)}mintBtn.onclick=async()=>{const next=Number(localStorage.getItem('zn888_next')||0),ids=Array.from({length:qty},(_,i)=>(next+i)%888);localStorage.setItem('zn888_next',String((next+qty)%888));const ps=ids.map(id=>({p:'zrc-721',op:'mint',collection:'NINJAZEC888',id:String(id)})),txt=ps.length===1?JSON.stringify(ps[0]):JSON.stringify(ps,null,2);try{await navigator.clipboard.writeText(txt)}catch(e){}toast('Mint ready: #'+ids.map(i=>String(i+1).padStart(3,'0')).join(', #'));window.open('https://zrunes.io/collections/create','_blank','noopener,noreferrer')};wlForm.onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget).entries()),rows=JSON.parse(localStorage.getItem('zn888_wl')||'[]');rows.push({...d,submitted_at:new Date().toISOString(),status:'pending'});localStorage.setItem('zn888_wl',JSON.stringify(rows));wlResult.textContent='✓ WL application received.';e.currentTarget.reset()};
+</script></body></html>
