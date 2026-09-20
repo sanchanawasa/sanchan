@@ -1,19 +1,148 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ZEC NINJA 888</title>
-<meta name="description" content="888 unique chibi ninjas on Zcash.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZEC NINJA 888 — The Hidden Clan on Zcash</title>
+<meta name="description" content="888 unique chibi ninjas inspired by Zcash culture. Join the whitelist and enter the hidden clan.">
+<meta property="og:title" content="ZEC NINJA 888">
+<meta property="og:description" content="888 unique chibi ninjas inspired by privacy, freedom and Zcash culture.">
+<meta property="og:image" content="https://raw.githubusercontent.com/sanchanawasa/sanchan/gh-pages/hero.jpg">
+<meta name="theme-color" content="#08080b">
 <style>
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#08080b;color:#f8f3e8;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 75% 10%,rgba(255,184,49,.11),transparent 30%);z-index:-1}header{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;position:fixed;inset:0 0 auto;background:rgba(8,8,11,.76);backdrop-filter:blur(16px);border-bottom:1px solid #27252b;z-index:10}.brand{font-weight:900;letter-spacing:.12em}.brand b{color:#efbf4f}nav a{color:#aaa7ae;text-decoration:none;margin-left:22px;font-size:12px}.hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden}.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,5,8,.98),rgba(5,5,8,.78) 38%,rgba(5,5,8,.18) 74%),linear-gradient(0deg,rgba(5,5,8,.9),transparent 35%)}.copy{position:relative;z-index:2;padding:100px 8vw 60px;max-width:760px}.kicker{color:#e8b94e;font-size:11px;letter-spacing:.22em;font-weight:800}.copy h1{font-size:78px;line-height:.9;letter-spacing:-.055em;margin:18px 0}.copy h1 span{color:#efbf4f}.copy p{color:#aaa7ae;font-size:18px;line-height:1.7;max-width:530px}.actions{display:flex;gap:12px;margin-top:28px}.btn{display:inline-flex;justify-content:center;align-items:center;border:0;border-radius:10px;padding:13px 19px;font-weight:900;text-decoration:none;cursor:pointer}.primary{background:linear-gradient(135deg,#ffd669,#b97a1f);color:#111}.secondary{background:#111117;border:1px solid #36333b;color:#eee}.stats{display:flex;gap:38px;margin-top:42px}.stats div{display:flex;flex-direction:column}.stats strong{font-size:24px}.stats span{color:#74717a;font-size:10px;letter-spacing:.14em;margin-top:4px}.section{padding:86px 7vw}.section h2{font-size:46px;margin:10px 0 26px}.card{max-width:980px;background:#0f0f14;border:1px solid #2c2931;border-radius:22px;padding:30px}.mint{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}.mint img{width:100%;border-radius:16px}.line{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #28262d}.line span{color:#8c8992}.qty{display:flex;justify-content:center;align-items:center;gap:28px;padding:25px}.qty button{width:40px;height:40px;border-radius:50%;border:1px solid #3a3740;background:#17171d;color:white;font-size:20px}.full{width:100%}.note{color:#706d76;font-size:11px;line-height:1.6;margin-top:14px}.wl{display:grid;grid-template-columns:1fr 1fr;gap:16px}.wl label{display:flex;flex-direction:column;gap:7px;color:#aaa7ae;font-size:13px}.wl input,.wl textarea,.wl select{background:#101016;border:1px solid #302e36;color:#fff;border-radius:10px;padding:13px}.wl textarea{min-height:140px}.wide{grid-column:1/-1}.result{color:#78dfa0;font-weight:800}.faq details{max-width:900px;padding:18px 0;border-top:1px solid #29272e}.faq summary{font-weight:800;cursor:pointer}.faq p{color:#8e8b93;line-height:1.7}footer{padding:30px 7vw;border-top:1px solid #26242a;color:#77747b;font-size:12px;display:flex;justify-content:space-between}#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,90px);background:#18171d;border:1px solid #3b3841;padding:12px 16px;border-radius:10px;transition:.25s;z-index:30}#toast.show{transform:translate(-50%,0)}@media(max-width:820px){nav{display:none}.copy{padding-left:6vw;padding-right:6vw}.copy h1{font-size:52px}.stats{gap:20px;flex-wrap:wrap}.section{padding:64px 5vw}.mint,.wl{grid-template-columns:1fr}.wide{grid-column:1}.section h2{font-size:38px}}
-</style></head>
+:root{--bg:#08080b;--panel:#101016;--panel2:#15151d;--line:#2c2931;--gold:#efbf4f;--gold2:#ffd76b;--muted:#96939b;--pink:#ff79b0}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:#f8f3e8;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 78% 8%,rgba(239,191,79,.12),transparent 28%),radial-gradient(circle at 14% 55%,rgba(255,121,176,.05),transparent 24%),#08080b}
+a{color:inherit}.wrap{width:min(1180px,90vw);margin:auto}
+header{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;position:fixed;inset:0 0 auto;background:rgba(8,8,11,.72);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07);z-index:20}
+.brand{font-weight:950;letter-spacing:.12em}.brand b{color:var(--gold)}nav{display:flex;gap:24px;align-items:center}nav a{text-decoration:none;color:#aaa7ae;font-size:12px}nav .nav-cta{color:#111;background:linear-gradient(135deg,var(--gold2),#b97a1f);padding:9px 13px;border-radius:9px;font-weight:900}
+.hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden}.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,5,8,.99),rgba(5,5,8,.83) 36%,rgba(5,5,8,.22) 76%),linear-gradient(0deg,#08080b 0%,transparent 28%)}
+.hero-copy{position:relative;z-index:2;width:min(760px,88vw);margin-left:8vw;padding-top:80px}.eyebrow{font-size:11px;letter-spacing:.23em;font-weight:900;color:var(--gold)}.hero h1{font-size:clamp(52px,7.2vw,94px);line-height:.88;letter-spacing:-.06em;margin:18px 0}.hero h1 em{color:var(--gold);font-style:normal}.hero p{max-width:590px;color:#aaa7ae;font-size:18px;line-height:1.7}.hero .subline{color:#d9d2c4;font-weight:800}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{border:0;border-radius:10px;padding:14px 20px;font-weight:950;text-decoration:none;cursor:pointer;font:inherit;display:inline-flex;align-items:center;justify-content:center}.primary{background:linear-gradient(135deg,var(--gold2),#b97a1f);color:#111}.secondary{background:#111117;border:1px solid #37343d;color:#f2ede6}.stats{display:flex;gap:42px;flex-wrap:wrap;margin-top:44px}.stats div{display:flex;flex-direction:column}.stats strong{font-size:26px}.stats span{font-size:10px;color:#77747c;letter-spacing:.13em;margin-top:4px}
+.section{padding:96px 0}.section .head{margin-bottom:36px}.section h2{font-size:clamp(38px,5vw,62px);line-height:1;margin:10px 0}.lead{max-width:760px;color:var(--muted);font-size:17px;line-height:1.8}
+.story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.story-card{background:linear-gradient(180deg,#121218,#0d0d12);border:1px solid var(--line);border-radius:18px;padding:26px}.story-card .icon{font-size:30px}.story-card h3{font-size:22px;margin:14px 0 8px}.story-card p{color:#929099;line-height:1.7;margin:0}
+.fit{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}.fit-copy{padding-right:30px}.fit-list{display:grid;gap:12px}.fit-item{display:grid;grid-template-columns:42px 1fr;gap:13px;align-items:start;background:#0f0f14;border:1px solid #29272e;border-radius:14px;padding:16px}.fit-item b{display:block;margin-bottom:5px}.fit-item span{color:#8e8b94;font-size:14px;line-height:1.55}
+.wall-shell{background:#0d0d12;border:1px solid #29272e;border-radius:22px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.28)}.wall-top{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:10px 4px 18px}.wall-top p{margin:0;color:#817e87;font-size:13px}.wall{display:grid;grid-template-columns:repeat(24,minmax(0,1fr));gap:5px;max-height:720px;overflow:auto;padding-right:5px}.avatar{aspect-ratio:1;border:1px solid rgba(255,255,255,.08);border-radius:8px;position:relative;overflow:hidden;background:var(--c1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}.avatar:before{content:"";position:absolute;left:13%;right:13%;top:14%;bottom:9%;background:var(--c2);clip-path:polygon(10% 25%,25% 3%,75% 3%,90% 25%,86% 100%,14% 100%);border-radius:40% 40% 30% 30%}.avatar:after{content:"";position:absolute;left:22%;right:22%;top:37%;height:26%;background:#f0c9a3;border-radius:45%;box-shadow:0 10px 0 -4px #111}.eyes{position:absolute;z-index:3;left:31%;right:31%;top:45%;height:5px;border-left:5px solid var(--eye);border-right:5px solid var(--eye)}.mask{position:absolute;z-index:4;left:22%;right:22%;top:54%;height:20%;background:#111;border-radius:2px 2px 40% 40%}.mark{position:absolute;z-index:5;left:50%;top:59%;transform:translate(-50%,-50%);font-size:7px;color:var(--gold2);font-weight:950}.avatar.kunoichi:before{clip-path:polygon(3% 22%,18% 5%,34% 17%,66% 17%,82% 5%,97% 22%,84% 100%,16% 100%)}.avatar.legendary{box-shadow:inset 0 0 0 1px #ffe091,0 0 12px rgba(255,215,107,.3)}.avatar:hover{transform:scale(1.6);z-index:5;transition:.15s}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:15px;color:#77747d;font-size:12px}.legend b{color:#ddd7ca}
+.wl-wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:30px;align-items:start}.wl-pitch{position:sticky;top:100px}.benefits{display:grid;gap:10px;margin-top:22px}.benefit{padding:14px 16px;border:1px solid #2a2830;border-radius:12px;background:#0e0e13}.benefit b{color:var(--gold)}.benefit span{color:#98959e;font-size:14px;margin-left:6px}
+.form-card{background:#0f0f14;border:1px solid #2c2931;border-radius:22px;padding:28px}.wl{display:grid;grid-template-columns:1fr 1fr;gap:16px}.wl label{display:flex;flex-direction:column;gap:7px;color:#aaa7ae;font-size:13px}.wl input,.wl textarea,.wl select{background:#0b0b10;border:1px solid #302e36;color:#fff;border-radius:10px;padding:13px 14px;font:inherit}.wl textarea{min-height:140px;resize:vertical}.wide{grid-column:1/-1}.result{color:#78dfa0;font-weight:850}.hint{color:#6f6c74;font-size:11px;line-height:1.6}
+.mint-card{display:grid;grid-template-columns:1fr 1fr;gap:30px;background:#0f0f14;border:1px solid #2c2931;border-radius:22px;padding:28px;align-items:center}.mint-card img{width:100%;border-radius:16px}.line{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid #28262d}.line span{color:#8c8992}.coming{color:var(--gold)}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.faq details{background:#0f0f14;border:1px solid #29272e;border-radius:14px;padding:18px 20px}.faq summary{font-weight:900;cursor:pointer}.faq p{color:#8e8b93;line-height:1.7;font-size:14px}
+footer{padding:34px 5vw;border-top:1px solid #26242a;color:#77747b;display:flex;justify-content:space-between;gap:20px;font-size:12px}
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,100px);background:#18171d;border:1px solid #3b3841;padding:12px 16px;border-radius:10px;transition:.25s;z-index:50}#toast.show{transform:translate(-50%,0)}
+@media(max-width:900px){nav a:not(.nav-cta){display:none}.story-grid,.fit,.wl-wrap,.mint-card,.faq-grid{grid-template-columns:1fr}.wall{grid-template-columns:repeat(12,minmax(0,1fr));max-height:560px}.wl-pitch{position:static}.hero-copy{margin-left:6vw}.section{padding:72px 0}}@media(max-width:560px){.wall{grid-template-columns:repeat(8,minmax(0,1fr))}.wl{grid-template-columns:1fr}.wide{grid-column:1}.hero p{font-size:16px}.stats{gap:22px}}
+</style>
+</head>
 <body>
-<header><div class="brand">ⓩ ZEC NINJA <b>888</b></div><nav><a href="#mint">Mint</a><a href="#wl">Whitelist</a><a href="#faq">FAQ</a></nav></header>
-<section class="hero"><img src="https://raw.githubusercontent.com/sanchanawasa/sanchan/gh-pages/hero.jpg" alt="ZEC NINJA 888"><div class="shade"></div><div class="copy"><div class="kicker">888 UNIQUE CHIBI NINJAS ON ZCASH</div><h1>Hide in the shadows.<br><span>Live on Zcash.</span></h1><p>A cute ninja collection built around privacy, freedom and ZEC culture. Mostly ninjas, with a few rare kunoichi.</p><div class="actions"><a class="btn primary" href="#mint">MINT</a><a class="btn secondary" href="#wl">APPLY WL</a></div><div class="stats"><div><strong>888</strong><span>SUPPLY</span></div><div><strong>0.02 ZEC</strong><span>PUBLIC MINT</span></div><div><strong>2</strong><span>MAX / WALLET</span></div></div></div></section>
-<section id="mint" class="section"><div class="kicker">MINT</div><h2>Enter the clan.</h2><div class="card mint"><img src="https://raw.githubusercontent.com/sanchanawasa/sanchan/gh-pages/hero.jpg" alt="ZEC Ninja"><div><div class="line"><span>Status</span><b>PRE-LAUNCH</b></div><div class="line"><span>Price</span><b>0.02 ZEC</b></div><div class="line"><span>Supply</span><b>888</b></div><div class="line"><span>Max</span><b>2 / wallet</b></div><div class="qty"><button id="minus">−</button><strong id="qty">1</strong><button id="plus">+</button></div><button class="btn primary full" id="mintBtn">PREPARE MINT</button><div class="note">The site prepares the ZRC-721 payload. Final ZEC payment/signature happens in the compatible Zcash inscription flow. Never enter a seed phrase here.</div></div></div></section>
-<section id="wl" class="section"><div class="kicker">WHITELIST</div><h2>Join the hidden list.</h2><form class="card wl" id="wlForm"><label>X / Twitter<input required name="x" placeholder="@yourhandle"></label><label>Zcash Unified Address<input required name="zec" placeholder="u1... で始まるアドレスを入力してください"></label><label>Region<select name="region"><option>Japan</option><option>Asia</option><option>Middle East</option><option>Europe</option><option>North America</option><option>Other</option></select></label><label class="wide">Why do you want WL?<textarea required name="reason" maxlength="800" placeholder="Tell us why ZEC NINJA belongs in your wallet..."></textarea></label><button class="btn primary wide" type="submit">SUBMIT WL APPLICATION</button><div id="wlResult" class="result wide"></div></form></section>
-<section id="faq" class="section faq"><div class="kicker">FAQ</div><h2>Before you mint.</h2><details open><summary>What is ZEC NINJA 888?</summary><p>888 cute chibi ninja NFTs designed for the Zcash ecosystem.</p></details><details><summary>Mint price?</summary><p>Current configuration: 0.02 ZEC each, max 2 per wallet.</p></details><details><summary>Does this site ask for my seed phrase?</summary><p>No. It should never ask for or store your seed phrase or private key.</p></details></section>
-<footer><span>ⓩ ZEC NINJA 888</span><span>Privacy builds a kinder world.</span></footer><div id="toast"></div>
+<header>
+  <div class="brand">ⓩ ZEC NINJA <b>888</b></div>
+  <nav><a href="#story">Story</a><a href="#clan">The 888</a><a href="#why">Why Zcash</a><a href="#faq">FAQ</a><a class="nav-cta" href="#wl">JOIN WL</a></nav>
+</header>
+
+<section class="hero">
+  <img src="https://raw.githubusercontent.com/sanchanawasa/sanchan/gh-pages/hero.jpg" alt="ZEC NINJA 888">
+  <div class="shade"></div>
+  <div class="hero-copy">
+    <div class="eyebrow">THE HIDDEN CLAN OF ZCASH</div>
+    <h1>888 NINJAS.<br><em>ONE SECRET CLAN.</em></h1>
+    <p><span class="subline">Cute enough to collect. Sharp enough to remember.</span><br>ZEC NINJA 888 is a character-first chibi collection inspired by privacy, freedom, stealth and the culture growing around Zcash.</p>
+    <div class="actions"><a class="btn primary" href="#wl">GET ON THE WHITELIST</a><a class="btn secondary" href="#clan">MEET THE 888</a></div>
+    <div class="stats"><div><strong>888</strong><span>TOTAL SUPPLY</span></div><div><strong>TBD</strong><span>MINT PRICE</span></div><div><strong>1 CLAN</strong><span>BUILT FOR ZCASH</span></div></div>
+  </div>
+</section>
+
+<main>
+<section id="story" class="section"><div class="wrap">
+  <div class="head"><div class="eyebrow">NOT ANOTHER RANDOM PFP</div><h2>Built to feel like a world.</h2><p class="lead">The collection begins with one simple idea: if Zcash had its own hidden clan, what would they look like? The answer is 888 small warriors with distinct moods, traits and identities — mostly ninjas, a smaller circle of kunoichi, and a handful of truly rare legends.</p></div>
+  <div class="story-grid">
+    <article class="story-card"><div class="icon">🥷</div><h3>Character first</h3><p>Every member belongs to the same visual universe, but no two should feel interchangeable. Different hoods, masks, eyes, weapons, companions and rare forms create the personality.</p></article>
+    <article class="story-card"><div class="icon">🌸</div><h3>Cute × dangerous</h3><p>Big eyes and chibi proportions meet blades, oni traits, stealth gear and midnight colors. The tension between adorable and lethal is the collection’s signature.</p></article>
+    <article class="story-card"><div class="icon">⚡</div><h3>Made for a cult following</h3><p>Black and gold anchors the clan. Snow, oni, forest, cyber, sakura and legendary variants create the chase — the kind of pieces people actually want to hunt for.</p></article>
+  </div>
+</div></section>
+
+<section id="why" class="section"><div class="wrap fit">
+  <div class="fit-copy"><div class="eyebrow">WHY NINJA × ZCASH?</div><h2>The fit is almost too perfect.</h2><p class="lead">Ninjas are defined by discretion, precision and moving without unnecessary exposure. Zcash is one of crypto’s most recognizable privacy-focused ecosystems. The pairing is not a gimmick — it gives the collection an identity that is instantly understandable.</p></div>
+  <div class="fit-list">
+    <div class="fit-item"><div>🥷</div><div><b>Stealth</b><span>A ninja reveals only what the mission requires. Privacy culture starts from the same instinct: share intentionally, not automatically.</span></div></div>
+    <div class="fit-item"><div>🛡️</div><div><b>Self-sovereignty</b><span>The clan answers to its own code. Zcash culture has long attracted people who care about control over their own financial information.</span></div></div>
+    <div class="fit-item"><div>ⓩ</div><div><b>A native visual language</b><span>Black, gold, masks, shadows and the Z motif give ZEC NINJA a recognizable identity instead of looking like a generic NFT collection with a token logo pasted on top.</span></div></div>
+    <div class="fit-item"><div>🌍</div><div><b>Global by design</b><span>Ninja imagery is understood across Japan, Asia, the Middle East, Europe and the U.S. — a strong bridge for growing Zcash culture beyond one region.</span></div></div>
+  </div>
+</div></section>
+
+<section id="clan" class="section"><div class="wrap">
+  <div class="head"><div class="eyebrow">THE FULL CLAN</div><h2>All 888, in one wall.</h2><p class="lead">A male-dominant ninja clan with a smaller number of kunoichi and rare special forms. Scroll the wall and hunt for the combinations that stand out to you.</p></div>
+  <div class="wall-shell">
+    <div class="wall-top"><div><b>888 CHARACTER WALL</b><p>Deterministic visual preview of the full supply structure and trait mix.</p></div><div class="eyebrow">888 / 888</div></div>
+    <div id="wall" class="wall"></div>
+    <div class="legend"><span><b>Core:</b> black / gold</span><span><b>Rare:</b> snow / red / forest / blue / purple</span><span><b>Kunoichi:</b> intentionally less common</span><span><b>Legendary:</b> 8 ultra-rare slots</span></div>
+  </div>
+</div></section>
+
+<section id="wl" class="section"><div class="wrap wl-wrap">
+  <div class="wl-pitch">
+    <div class="eyebrow">WHITELIST</div><h2>Get inside before the doors open.</h2>
+    <p class="lead">The whitelist is for early members who actually want to be part of the clan — collectors, Zcash believers, community builders and people who understand why this aesthetic belongs here.</p>
+    <div class="benefits">
+      <div class="benefit">⚡ <b>Early access</b><span>Be first in line when mint details go live.</span></div>
+      <div class="benefit">🥷 <b>Founding clan status</b><span>Early supporters become part of the story before public launch.</span></div>
+      <div class="benefit">🌸 <b>Rare drop opportunities</b><span>Special community activations and giveaways may prioritize active early members.</span></div>
+      <div class="benefit">ⓩ <b>Zcash-native culture</b><span>This is being built to grow with the ecosystem, not simply launch and disappear.</span></div>
+    </div>
+  </div>
+  <div class="form-card">
+    <form class="wl" id="wlForm">
+      <label>X / Twitter<input required name="x" placeholder="@yourhandle"></label>
+      <label>Zcash Unified Address<input required name="zec" placeholder="Enter your address beginning with u1..."></label>
+      <label>Region<select name="region"><option>Japan</option><option>Asia</option><option>Middle East</option><option>Europe</option><option>North America</option><option>Other</option></select></label>
+      <label>Collector type<select name="type"><option>Zcash community</option><option>NFT collector</option><option>Crypto builder</option><option>Artist / creator</option><option>Community / KOL</option><option>Just love the ninjas</option></select></label>
+      <label class="wide">Why should you be in the clan?<textarea required name="reason" maxlength="800" placeholder="Tell us what you like about Zcash, the collection, or how you would help the clan grow..."></textarea></label>
+      <button class="btn primary wide" type="submit">APPLY FOR WHITELIST</button>
+      <div id="wlResult" class="result wide"></div>
+      <div class="hint wide">Whitelist approval is not guaranteed. Never submit a seed phrase or private key.</div>
+    </form>
+  </div>
+</div></section>
+
+<section id="mint" class="section"><div class="wrap">
+  <div class="head"><div class="eyebrow">MINT</div><h2>Mint details are coming.</h2></div>
+  <div class="mint-card"><img src="https://raw.githubusercontent.com/sanchanawasa/sanchan/gh-pages/hero.jpg" alt="ZEC NINJA 888"><div><div class="line"><span>Status</span><b class="coming">PRE-LAUNCH</b></div><div class="line"><span>Supply</span><b>888</b></div><div class="line"><span>Mint price</span><b>TBD</b></div><div class="line"><span>Whitelist</span><b>OPEN</b></div><div class="line"><span>Public mint</span><b>TBA</b></div><div style="margin-top:22px"><a class="btn primary" href="#wl">JOIN WHITELIST</a></div></div></div>
+</div></section>
+
+<section id="faq" class="section faq"><div class="wrap">
+  <div class="head"><div class="eyebrow">FAQ</div><h2>Everything you actually want to know.</h2></div>
+  <div class="faq-grid">
+    <details open><summary>What is ZEC NINJA 888?</summary><p>A collection of 888 unique chibi ninja characters inspired by Zcash culture, privacy, freedom and stealth. It is designed as a character universe first, not a logo-first collectible.</p></details>
+    <details><summary>Why Zcash?</summary><p>Because the cultural match is unusually strong: ninja imagery naturally communicates discretion and intentional visibility, while Zcash is widely associated with privacy-focused crypto technology.</p></details>
+    <details><summary>What is the mint price?</summary><p>TBD. We would rather announce the final price when launch mechanics are ready than publish a number too early and change it later.</p></details>
+    <details><summary>How many are there?</summary><p>888 total. The collection is male-ninja dominant, with a smaller number of kunoichi and a limited set of special and legendary variants.</p></details>
+    <details><summary>What Zcash address should I submit?</summary><p>Use your Zcash Unified Address — the address beginning with <b>u1...</b>. Never submit a seed phrase or private key.</p></details>
+    <details><summary>Does joining the WL guarantee a mint?</summary><p>No. Applications may be reviewed and spots can be limited. Strong alignment with Zcash, collecting, community building or the project itself can help.</p></details>
+    <details><summary>Are there rare traits?</summary><p>Yes. The visual system includes core black/gold ninjas plus snow, oni, forest, cyber, sakura, fox, monk, colored variants and a small legendary tier.</p></details>
+    <details><summary>Is the collection already minting?</summary><p>Not yet. The project is currently in pre-launch mode. Whitelist is the best way to get positioned before mint details are announced.</p></details>
+    <details><summary>Is this claiming every NFT transaction is private?</summary><p>No. ZEC NINJA is inspired by Zcash privacy culture. Actual transaction visibility depends on the specific wallet, address type and mint/transfer flow used.</p></details>
+    <details><summary>Why should I care this early?</summary><p>Because the collection is being shaped before public launch. Early members are not arriving after the culture is established — they are the first layer of that culture.</p></details>
+  </div>
+</div></section>
+</main>
+
+<footer><span>ⓩ ZEC NINJA 888</span><span>888 ninjas. One hidden clan.</span></footer>
+<div id="toast"></div>
 <script>
-let qty=1;const q=document.getElementById('qty');minus.onclick=()=>{qty=Math.max(1,qty-1);q.textContent=qty};plus.onclick=()=>{qty=Math.min(2,qty+1);q.textContent=qty};function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2600)}mintBtn.onclick=async()=>{const next=Number(localStorage.getItem('zn888_next')||0),ids=Array.from({length:qty},(_,i)=>(next+i)%888);localStorage.setItem('zn888_next',String((next+qty)%888));const ps=ids.map(id=>({p:'zrc-721',op:'mint',collection:'NINJAZEC888',id:String(id)})),txt=ps.length===1?JSON.stringify(ps[0]):JSON.stringify(ps,null,2);try{await navigator.clipboard.writeText(txt)}catch(e){}toast('Mint ready: #'+ids.map(i=>String(i+1).padStart(3,'0')).join(', #'));window.open('https://zrunes.io/collections/create','_blank','noopener,noreferrer')};wlForm.onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget).entries()),rows=JSON.parse(localStorage.getItem('zn888_wl')||'[]');rows.push({...d,submitted_at:new Date().toISOString(),status:'pending'});localStorage.setItem('zn888_wl',JSON.stringify(rows));wlResult.textContent='✓ WL application received.';e.currentTarget.reset()};
-</script></body></html>
+(function(){
+  const wall=document.getElementById('wall');
+  const core=[['#17151e','#191820','#e9ad45'],['#11131b','#22232e','#ffcc65'],['#171720','#2a2234','#f0b84f'],['#0c1118','#18283b','#7dc7ff'],['#15100f','#401c1a','#ff755e'],['#111713','#20462d','#86e098'],['#17131d','#39234f','#cb86ff'],['#161616','#50401e','#ffe27a']];
+  for(let i=1;i<=888;i++){
+    const kunoichi=(i%6===0)||(i%29===0), legendary=i>880;
+    const p=core[(i*7+i%11)%core.length];
+    const a=document.createElement('div');a.className='avatar'+(kunoichi?' kunoichi':'')+(legendary?' legendary':'');
+    a.style.setProperty('--c1',legendary?'#6d4d0d':p[0]);a.style.setProperty('--c2',legendary?'#e2ad37':p[1]);a.style.setProperty('--eye',legendary?'#fff0a8':p[2]);a.title='ZEC NINJA #'+String(i).padStart(3,'0');
+    a.innerHTML='<span class="eyes"></span><span class="mask"></span><span class="mark">Z</span>';wall.appendChild(a);
+  }
+  const form=document.getElementById('wlForm'),result=document.getElementById('wlResult');
+  form.addEventListener('submit',e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form).entries());const rows=JSON.parse(localStorage.getItem('zn888_wl')||'[]');rows.push({...data,submitted_at:new Date().toISOString(),status:'pending'});localStorage.setItem('zn888_wl',JSON.stringify(rows));result.textContent='✓ Application saved on this device. Central WL submission backend is being finalized.';form.reset();});
+})();
+</script>
+</body></html>
