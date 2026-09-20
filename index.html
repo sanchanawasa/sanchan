@@ -24,7 +24,7 @@ header{height:70px;display:flex;align-items:center;justify-content:space-between
 .story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.story-card{background:linear-gradient(180deg,#121218,#0d0d12);border:1px solid var(--line);border-radius:18px;padding:26px}.story-card .icon{font-size:30px}.story-card h3{font-size:22px;margin:14px 0 8px}.story-card p{color:#929099;line-height:1.7;margin:0}
 .fit{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}.fit-copy{padding-right:30px}.fit-list{display:grid;gap:12px}.fit-item{display:grid;grid-template-columns:42px 1fr;gap:13px;align-items:start;background:#0f0f14;border:1px solid #29272e;border-radius:14px;padding:16px}.fit-item b{display:block;margin-bottom:5px}.fit-item span{color:#8e8b94;font-size:14px;line-height:1.55}
 .wall-shell{background:#0d0d12;border:1px solid #29272e;border-radius:22px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.28)}.wall-top{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:10px 4px 18px}.wall-top p{margin:0;color:#817e87;font-size:13px}.wall{display:grid;grid-template-columns:repeat(24,minmax(0,1fr));gap:5px;max-height:720px;overflow:auto;padding-right:5px}.avatar{aspect-ratio:1;border:1px solid rgba(255,255,255,.08);border-radius:8px;position:relative;overflow:hidden;background:var(--c1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}.avatar:before{content:"";position:absolute;left:13%;right:13%;top:14%;bottom:9%;background:var(--c2);clip-path:polygon(10% 25%,25% 3%,75% 3%,90% 25%,86% 100%,14% 100%);border-radius:40% 40% 30% 30%}.avatar:after{content:"";position:absolute;left:22%;right:22%;top:37%;height:26%;background:#f0c9a3;border-radius:45%;box-shadow:0 10px 0 -4px #111}.eyes{position:absolute;z-index:3;left:31%;right:31%;top:45%;height:5px;border-left:5px solid var(--eye);border-right:5px solid var(--eye)}.mask{position:absolute;z-index:4;left:22%;right:22%;top:54%;height:20%;background:#111;border-radius:2px 2px 40% 40%}.mark{position:absolute;z-index:5;left:50%;top:59%;transform:translate(-50%,-50%);font-size:7px;color:var(--gold2);font-weight:950}.avatar.kunoichi:before{clip-path:polygon(3% 22%,18% 5%,34% 17%,66% 17%,82% 5%,97% 22%,84% 100%,16% 100%)}.avatar.legendary{box-shadow:inset 0 0 0 1px #ffe091,0 0 12px rgba(255,215,107,.3)}.avatar:hover{transform:scale(1.6);z-index:5;transition:.15s}
-.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:15px;color:#77747d;font-size:12px}.legend b{color:#ddd7ca}
+.collection-art{display:block;width:100%;height:auto;border-radius:16px;border:1px solid rgba(255,255,255,.08);box-shadow:0 24px 70px rgba(0,0,0,.35)}.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:15px;color:#77747d;font-size:12px}.legend b{color:#ddd7ca}
 .wl-wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:30px;align-items:start}.wl-pitch{position:sticky;top:100px}.benefits{display:grid;gap:10px;margin-top:22px}.benefit{padding:14px 16px;border:1px solid #2a2830;border-radius:12px;background:#0e0e13}.benefit b{color:var(--gold)}.benefit span{color:#98959e;font-size:14px;margin-left:6px}
 .form-card{background:#0f0f14;border:1px solid #2c2931;border-radius:22px;padding:28px}.wl{display:grid;grid-template-columns:1fr 1fr;gap:16px}.wl label{display:flex;flex-direction:column;gap:7px;color:#aaa7ae;font-size:13px}.wl input,.wl textarea,.wl select{background:#0b0b10;border:1px solid #302e36;color:#fff;border-radius:10px;padding:13px 14px;font:inherit}.wl textarea{min-height:140px;resize:vertical}.wide{grid-column:1/-1}.result{color:#78dfa0;font-weight:850}.hint{color:#6f6c74;font-size:11px;line-height:1.6}
 .mint-card{display:grid;grid-template-columns:1fr 1fr;gap:30px;background:#0f0f14;border:1px solid #2c2931;border-radius:22px;padding:28px;align-items:center}.mint-card img{width:100%;border-radius:16px}.line{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid #28262d}.line span{color:#8c8992}.coming{color:var(--gold)}
@@ -73,11 +73,11 @@ footer{padding:34px 5vw;border-top:1px solid #26242a;color:#77747b;display:flex;
 </div></section>
 
 <section id="clan" class="section"><div class="wrap">
-  <div class="head"><div class="eyebrow">THE FULL CLAN</div><h2>All 888, in one wall.</h2><p class="lead">A male-dominant ninja clan with a smaller number of kunoichi and rare special forms. Scroll the wall and hunt for the combinations that stand out to you.</p></div>
+  <div class="head"><div class="eyebrow">THE CLAN</div><h2>Meet the real ZEC NINJA characters.</h2><p class="lead">No placeholder icons. This is the actual cute chibi collection artwork we are building from — black & gold at the core, with snow, oni, forest, sakura and other rare variants.</p></div>
   <div class="wall-shell">
-    <div class="wall-top"><div><b>888 CHARACTER WALL</b><p>Deterministic visual preview of the full supply structure and trait mix.</p></div><div class="eyebrow">888 / 888</div></div>
-    <div id="wall" class="wall"></div>
-    <div class="legend"><span><b>Core:</b> black / gold</span><span><b>Rare:</b> snow / red / forest / blue / purple</span><span><b>Kunoichi:</b> intentionally less common</span><span><b>Legendary:</b> 8 ultra-rare slots</span></div>
+    <div class="wall-top"><div><b>ZEC NINJA 888 — COLLECTION PREVIEW</b><p>Real character artwork from the current collection direction.</p></div><div class="eyebrow">CHIBI × ZCASH</div></div>
+    <img class="collection-art" src="assets/zec-ninja-888-collection.jpg" alt="ZEC NINJA 888 cute chibi character collection">
+    <div class="legend"><span><b>Core:</b> black / gold</span><span><b>Rare:</b> snow / oni / forest / blue / purple</span><span><b>Kunoichi:</b> intentionally less common</span><span><b>Legendary:</b> ultra-rare gold variants</span></div>
   </div>
 </div></section>
 
@@ -132,15 +132,6 @@ footer{padding:34px 5vw;border-top:1px solid #26242a;color:#77747b;display:flex;
 <div id="toast"></div>
 <script>
 (function(){
-  const wall=document.getElementById('wall');
-  const core=[['#17151e','#191820','#e9ad45'],['#11131b','#22232e','#ffcc65'],['#171720','#2a2234','#f0b84f'],['#0c1118','#18283b','#7dc7ff'],['#15100f','#401c1a','#ff755e'],['#111713','#20462d','#86e098'],['#17131d','#39234f','#cb86ff'],['#161616','#50401e','#ffe27a']];
-  for(let i=1;i<=888;i++){
-    const kunoichi=(i%6===0)||(i%29===0), legendary=i>880;
-    const p=core[(i*7+i%11)%core.length];
-    const a=document.createElement('div');a.className='avatar'+(kunoichi?' kunoichi':'')+(legendary?' legendary':'');
-    a.style.setProperty('--c1',legendary?'#6d4d0d':p[0]);a.style.setProperty('--c2',legendary?'#e2ad37':p[1]);a.style.setProperty('--eye',legendary?'#fff0a8':p[2]);a.title='ZEC NINJA #'+String(i).padStart(3,'0');
-    a.innerHTML='<span class="eyes"></span><span class="mask"></span><span class="mark">Z</span>';wall.appendChild(a);
-  }
   const form=document.getElementById('wlForm'),result=document.getElementById('wlResult');
   form.addEventListener('submit',e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form).entries());const rows=JSON.parse(localStorage.getItem('zn888_wl')||'[]');rows.push({...data,submitted_at:new Date().toISOString(),status:'pending'});localStorage.setItem('zn888_wl',JSON.stringify(rows));result.textContent='✓ Application saved on this device. Central WL submission backend is being finalized.';form.reset();});
 })();
