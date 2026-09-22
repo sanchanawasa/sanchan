@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZEC NINJA 888 — Marketplace</title>
+<meta name="description" content="Chain-native marketplace tools for ZEC NINJA 888 on Zcash.">
+<style>
+:root{--bg:#08080b;--card:#111117;--line:#2b2931;--gold:#ffd76b;--muted:#98959e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f7f2e8;font-family:Inter,system-ui,sans-serif}a{color:inherit}
+.wrap{width:min(1180px,92vw);margin:auto}.top{position:sticky;top:0;z-index:10;background:#08080be8;border-bottom:1px solid #26242a;backdrop-filter:blur(14px)}
+.nav{height:68px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:950;letter-spacing:.09em}.brand b{color:var(--gold)}.nav a{text-decoration:none;color:#aaa7ae;font-size:13px}
+.hero{padding:70px 0 38px}.eyebrow{color:var(--gold);font-weight:900;font-size:11px;letter-spacing:.22em}.hero h1{font-size:clamp(44px,7vw,82px);line-height:.92;margin:12px 0 18px}.hero p{color:var(--muted);max-width:760px;line-height:1.7}
+.badges{display:flex;gap:10px;flex-wrap:wrap}.badge{border:1px solid #34313a;background:#111117;border-radius:999px;padding:8px 12px;font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:26px 0 80px}.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}.panel h2{margin:0 0 8px}.panel p{color:var(--muted);line-height:1.6;font-size:14px}
+label{display:block;font-size:12px;color:#aaa7ae;margin:14px 0 6px}input,select,textarea{width:100%;padding:13px;border-radius:10px;border:1px solid #35323b;background:#0b0b10;color:#fff;font:inherit}
+button,.btn{display:inline-flex;border:0;border-radius:10px;padding:13px 16px;background:linear-gradient(135deg,#ffd76b,#bd7e22);color:#111;font-weight:950;cursor:pointer;text-decoration:none;margin-top:14px}
+.secondary{background:#17161d;color:#eee;border:1px solid #393641}.out{margin-top:14px;background:#09090d;border:1px solid #2c2932;border-radius:12px;padding:14px;min-height:78px;white-space:pre-wrap;word-break:break-all;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.notice{border-left:3px solid var(--gold);padding:12px 14px;background:#111117;color:#c6c0b5;font-size:13px;line-height:1.6;margin:22px 0}
+.catalog{grid-column:1/-1}.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:18px}.nft{aspect-ratio:1;border-radius:12px;border:1px solid #302d35;overflow:hidden;position:relative;background:url('zec-ninja-888-collection-hq.jpg') center/cover}.nft:after{content:attr(data-id);position:absolute;left:7px;bottom:7px;background:#08080bd9;border:1px solid #3b3740;border-radius:7px;padding:4px 6px;font-size:10px;font-weight:900}
+.chain{color:#7ee2a3}.pre{color:var(--gold)}footer{border-top:1px solid #242229;padding:26px 0;color:#77747b;font-size:12px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.cards{grid-template-columns:repeat(3,1fr)}} 
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap nav"><div class="brand">ⓩ ZEC NINJA <b>888</b> / MARKET</div><div><a href="./">← Collection</a></div></div></div>
+<main class="wrap">
+<section class="hero">
+<div class="eyebrow">CHAIN-NATIVE ZRC-721</div>
+<h1>THE HIDDEN<br>MARKET.</h1>
+<p>ZEC NINJA 888 uses ZRC-721 inscriptions on Zcash. Ownership is tied to the inscription UTXO; marketplace listings are public on-chain intents settled in transparent ZEC.</p>
+<div class="badges"><span class="badge">Collection: NINJAZEC888</span><span class="badge">Supply: 888</span><span class="badge">Royalty hint: 1%</span><span class="badge pre">PRE-DEPLOY</span></div>
+</section>
+
+<div class="notice"><b>Important:</b> inscription ownership and trading require the transparent pool. Never enter a seed phrase or private key here. This site only builds protocol payloads; signing and broadcast happen in a compatible Zcash wallet / inscription flow.</div>
+
+<section class="grid">
+<div class="panel">
+<h2>Deploy / Mint</h2>
+<p>Canonical ZRC-721 payload generator for the collection. Deploy requires the final IPFS metadata root CID.</p>
+<label>Metadata root CID</label><input id="cid" placeholder="bafy...">
+<button onclick="makeDeploy()">Build deploy payload</button>
+<label>Token ID</label><input id="mintId" type="number" min="0" max="887" value="0">
+<button class="secondary" onclick="makeMint()">Build mint payload</button>
+<div class="out" id="chainOut">Payload will appear here.</div>
+<a class="btn secondary" href="https://zcash.ink/collections/create" target="_blank" rel="noopener">Open compatible inscription flow ↗</a>
+</div>
+
+<div class="panel">
+<h2>List for sale</h2>
+<p>Create the on-chain listing intent. Price is converted to zatoshis. Seller settlement must use a transparent t-address.</p>
+<label>Inscription ID</label><input id="inscription" placeholder="txid...i0">
+<label>Price (ZEC)</label><input id="price" type="number" min="0" step="0.00000001" placeholder="0.50">
+<label>Seller payout t-address</label><input id="payout" placeholder="t1...">
+<button onclick="makeList()">Build listing payload</button>
+<button class="secondary" onclick="makeDelist()">Build delist payload</button>
+<div class="out" id="marketOut">Listing payload will appear here.</div>
+<a class="btn secondary" href="https://zcash.ink/" target="_blank" rel="noopener">Open chain marketplace / signer ↗</a>
+</div>
+
+<div class="panel catalog">
+<h2>888 Collection</h2>
+<p>Token IDs are fixed at 0–887. After mainnet deploy and indexer confirmation, this page can switch from pre-launch cards to live owners, listings, floor and sale history.</p>
+<div class="cards" id="cards"></div>
+</div>
+</section>
+</main>
+<footer><div class="wrap">ZEC NINJA 888 · self-custodial by design · transparent inscriptions are publicly linkable.</div></footer>
+<script src="protocol.js"></script>
+<script>
+const out=(id,v)=>document.getElementById(id).textContent=JSON.stringify(v,null,2);
+function guard(fn,target){try{out(target,fn())}catch(e){document.getElementById(target).textContent='ERROR: '+e.message}}
+function makeDeploy(){guard(()=>ZecNinjaChain.deploy(document.getElementById('cid').value),'chainOut')}
+function makeMint(){guard(()=>ZecNinjaChain.mint(document.getElementById('mintId').value),'chainOut')}
+function makeList(){guard(()=>ZecNinjaChain.list(document.getElementById('inscription').value,document.getElementById('price').value,document.getElementById('payout').value),'marketOut')}
+function makeDelist(){guard(()=>ZecNinjaChain.delist(document.getElementById('inscription').value),'marketOut')}
+const cards=document.getElementById('cards');
+for(let i=0;i<888;i++){const d=document.createElement('div');d.className='nft';d.dataset.id='#'+String(i+1).padStart(3,'0');d.title='Protocol token id '+i;cards.appendChild(d)}
+</script>
+</body></html>
