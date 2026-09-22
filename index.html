@@ -114,7 +114,7 @@ footer{padding:34px 5vw;border-top:1px solid #26242a;color:#77747b;display:flex;
       <label>Region<select name="region"><option>Japan</option><option>Asia</option><option>Middle East</option><option>Europe</option><option>North America</option><option>Other</option></select></label>
       <label>Collector type<select name="type"><option>Zcash community</option><option>NFT collector</option><option>Crypto builder</option><option>Artist / creator</option><option>Community / KOL</option><option>Just love the ninjas</option></select></label>
       <label class="wide">Why should you be in the clan?<textarea required name="reason" maxlength="800" placeholder="Tell us what you like about Zcash, the collection, or how you would help the clan grow..."></textarea></label>
-      <button class="btn primary wide" type="button" disabled style="opacity:.55;cursor:not-allowed">WL — TBD</button>
+      <button class="btn primary wide" type="submit"  id="wlSubmit" disabled style="opacity:.55;cursor:not-allowed">WL — TBD</button><div id="wlStatus" class="wide" style="margin-top:10px;color:#8f8b95;font-size:13px">Whitelist is not open yet.</div>
       <div id="wlResult" class="result wide"></div>
       <div class="hint wide">Whitelist approval is not guaranteed. Never submit a seed phrase or private key.</div>
     </form>
@@ -146,10 +146,52 @@ footer{padding:34px 5vw;border-top:1px solid #26242a;color:#77747b;display:flex;
 
 <footer><span>ⓩ ZEC NINJA 888</span><span>888 ninjas. One hidden clan.</span></footer>
 <div id="toast"></div>
+
 <script>
-(function(){
-  const form=document.getElementById('wlForm'),result=document.getElementById('wlResult');
-  form.addEventListener('submit',e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form).entries());const rows=JSON.parse(localStorage.getItem('zn888_wl')||'[]');rows.push({...data,submitted_at:new Date().toISOString(),status:'pending'});localStorage.setItem('zn888_wl',JSON.stringify(rows));result.textContent='✓ Application saved on this device. Central WL submission backend is being finalized.';form.reset();});
-})();
+const WL_ENDPOINT = 'REPLACE_WITH_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+const wlForm = document.getElementById('wlForm');
+const wlSubmit = document.getElementById('wlSubmit');
+const wlStatus = document.getElementById('wlStatus');
+
+if (WL_ENDPOINT.startsWith('https://script.google.com/macros/s/')) {
+  wlSubmit.disabled = false;
+  wlSubmit.textContent = 'APPLY FOR WHITELIST';
+  wlStatus.textContent = 'Whitelist is open.';
+}
+
+wlForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!WL_ENDPOINT.startsWith('https://script.google.com/macros/s/')) return;
+
+  const fd = new FormData(wlForm);
+  const data = Object.fromEntries(fd.entries());
+
+  if (!/^https:\/\/(x\.com|twitter\.com)\//i.test(String(data.repost_url || ''))) {
+    wlStatus.textContent = 'Please paste a valid X repost URL.';
+    return;
+  }
+  if (!/^u1/i.test(String(data.zec || ''))) {
+    wlStatus.textContent = 'Please enter a Zcash Unified Address beginning with u1.';
+    return;
+  }
+
+  wlSubmit.disabled = true;
+  wlStatus.textContent = 'Submitting...';
+
+  try {
+    await fetch(WL_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(data)
+    });
+    wlStatus.textContent = 'Application received. Welcome to the hidden clan.';
+    wlForm.reset();
+  } catch (err) {
+    wlStatus.textContent = 'Submission failed. Please try again.';
+  } finally {
+    wlSubmit.disabled = false;
+  }
+});
 </script>
 </body></html>
