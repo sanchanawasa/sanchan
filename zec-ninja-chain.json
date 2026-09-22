@@ -1,0 +1,16 @@
+{
+  "name": "ZEC NINJA 888",
+  "collection": "NINJAZEC888",
+  "protocol": "zrc-721",
+  "network": "Zcash mainnet",
+  "supply": 888,
+  "token_id_range": "0-887",
+  "royalty_bps": 100,
+  "metadata_root_cid": "TBD_AFTER_IPFS_PIN",
+  "image_root_cid": "TBD_AFTER_IPFS_PIN",
+  "mint_price_zec": "TBD",
+  "inscription_pool": "transparent",
+  "marketplace_protocol": "zord",
+  "status": "PRE_DEPLOY",
+  "safety_note": "No private keys or seed phrases are accepted by the site."
+}
