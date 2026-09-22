@@ -46,6 +46,14 @@ window.ZecNinjaChain = (() => {
   function delist(id) {
     return {p:"zord",o:"dl",id:inscriptionId(id)};
   }
+  function buy(id, priceZec, payoutAddress) {
+    return {p:"zord",o:"by",id:inscriptionId(id),pr:zecToZatoshis(priceZec),py:transparentAddress(payoutAddress)};
+  }
+  function batchMint(start=0,end=SUPPLY-1) {
+    const a=Number(start), b=Number(end);
+    assert(Number.isInteger(a)&&Number.isInteger(b)&&a>=0&&b<SUPPLY&&a<=b,"Invalid mint range");
+    return Array.from({length:b-a+1},(_,i)=>mint(a+i));
+  }
 
-  return {COLLECTION,SUPPLY,ROYALTY_BPS,ZATOSHIS_PER_ZEC,deploy,mint,list,delist,zecToZatoshis};
+  return {COLLECTION,SUPPLY,ROYALTY_BPS,ZATOSHIS_PER_ZEC,deploy,mint,list,delist,buy,batchMint,zecToZatoshis};
 })();
