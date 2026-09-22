@@ -57,6 +57,27 @@ button,.btn{display:inline-flex;border:0;border-radius:10px;padding:13px 16px;ba
 <a class="btn secondary" href="https://zcash.ink/" target="_blank" rel="noopener">Open chain marketplace / signer ↗</a>
 </div>
 
+<div class="panel">
+<h2>Buy</h2>
+<p>Build the Zcash on-chain buy intent for a live listing. A valid sale also requires the buyer transaction to pay the full asking price to the seller payout address; the indexer ignores underpayment.</p>
+<label>Inscription ID</label><input id="buyInscription" placeholder="txid...i0">
+<label>Listing price (ZEC)</label><input id="buyPrice" type="number" min="0" step="0.00000001" placeholder="0.50" oninput="quoteBuy()">
+<label>Seller payout t-address</label><input id="buyPayout" placeholder="t1...">
+<div class="out" id="buyQuote">Buyer total: enter a price. Marketplace fee: 2% + Zcash network fee.</div>
+<button onclick="makeBuy()">Build buy payload</button>
+<a class="btn secondary" href="https://zcash.ink/" target="_blank" rel="noopener">Sign & settle on Zcash ↗</a>
+</div>
+
+<div class="panel">
+<h2>Batch mint 888</h2>
+<p>Generate the complete deterministic mint plan for token IDs 0–887. This does not sign or broadcast transactions.</p>
+<button onclick="downloadMints()">Download 888 mint payloads</button>
+<div class="out">Collection: NINJAZEC888
+Token IDs: 0–887
+Count: 888
+Signing: required per compatible inscription flow</div>
+</div>
+
 <div class="panel catalog">
 <h2>888 Collection</h2>
 <p>Token IDs are fixed at 0–887. After mainnet deploy and indexer confirmation, this page can switch from pre-launch cards to live owners, listings, floor and sale history.</p>
@@ -73,6 +94,18 @@ function makeDeploy(){guard(()=>ZecNinjaChain.deploy(document.getElementById('ci
 function makeMint(){guard(()=>ZecNinjaChain.mint(document.getElementById('mintId').value),'chainOut')}
 function makeList(){guard(()=>ZecNinjaChain.list(document.getElementById('inscription').value,document.getElementById('price').value,document.getElementById('payout').value),'marketOut')}
 function makeDelist(){guard(()=>ZecNinjaChain.delist(document.getElementById('inscription').value),'marketOut')}
+function makeBuy(){guard(()=>ZecNinjaChain.buy(document.getElementById('buyInscription').value,document.getElementById('buyPrice').value,document.getElementById('buyPayout').value),'buyQuote')}
+function quoteBuy(){
+  const p=Number(document.getElementById('buyPrice').value||0), fee=p*.02;
+  document.getElementById('buyQuote').textContent=p>0
+    ? 'Ask: '+p.toFixed(8)+' ZEC\nMarketplace fee (2%): '+fee.toFixed(8)+' ZEC\nSubtotal: '+(p+fee).toFixed(8)+' ZEC\n+ Zcash network fee'
+    : 'Buyer total: enter a price. Marketplace fee: 2% + Zcash network fee.';
+}
+function downloadMints(){
+  const rows=ZecNinjaChain.batchMint();
+  const blob=new Blob([JSON.stringify(rows,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ZEC_NINJA_888_mint_payloads.json'; a.click(); URL.revokeObjectURL(a.href);
+}
 const cards=document.getElementById('cards');
 for(let i=0;i<888;i++){const d=document.createElement('div');d.className='nft';d.dataset.id='#'+String(i+1).padStart(3,'0');d.title='Protocol token id '+i;cards.appendChild(d)}
 </script>
