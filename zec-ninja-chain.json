@@ -17,5 +17,16 @@
   "platform_fee_percent": 2,
   "platform_fee_recipient": "TBD_BEFORE_LIVE_TRADING",
   "mint_price_zatoshis": 880000,
-  "platform_fee_recipient_status": "NEEDS_TRANSPARENT_RECEIVER_FROM_UA"
+  "platform_fee_recipient_status": "NEEDS_TRANSPARENT_RECEIVER_FROM_UA",
+  "rarity": {
+    "Common": 600,
+    "Rare": 200,
+    "Epic": 70,
+    "Legendary": 18
+  },
+  "allocation": {
+    "public_wl": 700,
+    "team_marketing": 188
+  },
+  "art_direction_file": "art-direction.json"
 }
