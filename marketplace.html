@@ -82,6 +82,7 @@ Signing: required per compatible inscription flow</div>
 <h2>888 Collection</h2>
 <p>Token IDs are fixed at 0–887. After mainnet deploy and indexer confirmation, this page can switch from pre-launch cards to live owners, listings, floor and sale history.</p>
 <div class="cards" id="cards"></div>
+<div class="notice" id="assetStatus"><b>Asset status:</b> individual 888 image/metadata files are not published yet. Marketplace stays PRE-DEPLOY until the final immutable asset CIDs are configured.</div>
 </div>
 </section>
 </main>
@@ -107,6 +108,18 @@ function downloadMints(){
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ZEC_NINJA_888_mint_payloads.json'; a.click(); URL.revokeObjectURL(a.href);
 }
 const cards=document.getElementById('cards');
-for(let i=0;i<888;i++){const d=document.createElement('div');d.className='nft';d.dataset.id='#'+String(i+1).padStart(3,'0');d.title='Protocol token id '+i;cards.appendChild(d)}
+async function bootCatalog(){
+  let cfg={};
+  try{cfg=await fetch('zec-ninja-chain.json',{cache:'no-store'}).then(r=>r.json())}catch(e){}
+  const imageCid=cfg.image_root_cid||'';
+  const ready=imageCid && !imageCid.startsWith('TBD_') && !imageCid.startsWith('REPLACE_');
+  for(let i=0;i<888;i++){
+    const d=document.createElement('div'); d.className='nft'; d.dataset.id='#'+String(i+1).padStart(3,'0'); d.title='Protocol token id '+i;
+    if(ready) d.style.backgroundImage="url('https://ipfs.io/ipfs/"+imageCid+"/"+i+".jpg')";
+    cards.appendChild(d);
+  }
+  if(ready) document.getElementById('assetStatus').innerHTML='<b>Asset status:</b> immutable individual artwork configured from IPFS CID <span class="chain">'+imageCid+'</span>.';
+}
+bootCatalog();
 </script>
 </body></html>
