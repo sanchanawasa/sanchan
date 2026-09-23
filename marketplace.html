@@ -63,7 +63,7 @@ button,.btn{display:inline-flex;border:0;border-radius:10px;padding:13px 16px;ba
 <label>Inscription ID</label><input id="buyInscription" placeholder="txid...i0">
 <label>Listing price (ZEC)</label><input id="buyPrice" type="number" min="0" step="0.00000001" placeholder="0.50" oninput="quoteBuy()">
 <label>Seller payout t-address</label><input id="buyPayout" placeholder="t1...">
-<div class="out" id="buyQuote">Buyer total: enter a price. Marketplace fee: 2% + Zcash network fee.</div>
+<div class="out" id="buyQuote">Buyer total: enter a price. Platform fee: 2% + Zcash network fee.</div>
 <button onclick="makeBuy()">Build buy payload</button>
 <a class="btn secondary" href="https://zcash.ink/" target="_blank" rel="noopener">Sign & settle on Zcash ↗</a>
 </div>
@@ -99,8 +99,8 @@ function makeBuy(){guard(()=>ZecNinjaChain.buy(document.getElementById('buyInscr
 function quoteBuy(){
   const p=Number(document.getElementById('buyPrice').value||0), fee=p*.02;
   document.getElementById('buyQuote').textContent=p>0
-    ? 'Ask: '+p.toFixed(8)+' ZEC\nMarketplace fee (2%): '+fee.toFixed(8)+' ZEC\nSubtotal: '+(p+fee).toFixed(8)+' ZEC\n+ Zcash network fee'
-    : 'Buyer total: enter a price. Marketplace fee: 2% + Zcash network fee.';
+    ? 'Ask: '+p.toFixed(8)+' ZEC\nPlatform fee (2%): '+fee.toFixed(8)+' ZEC\nSubtotal: '+(p+fee).toFixed(8)+' ZEC\n+ Zcash network fee'
+    : 'Buyer total: enter a price. Platform fee: 2% + Zcash network fee.';
 }
 function downloadMints(){
   const rows=ZecNinjaChain.batchMint();
