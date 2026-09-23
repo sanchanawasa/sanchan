@@ -12,5 +12,8 @@
   "inscription_pool": "transparent",
   "marketplace_protocol": "zord",
   "status": "PRE_DEPLOY",
-  "safety_note": "No private keys or seed phrases are accepted by the site."
+  "safety_note": "No private keys or seed phrases are accepted by the site.",
+  "platform_fee_bps": 200,
+  "platform_fee_percent": 2,
+  "platform_fee_recipient": "TBD_BEFORE_LIVE_TRADING"
 }
