@@ -8,12 +8,14 @@
   "royalty_bps": 100,
   "metadata_root_cid": "TBD_AFTER_IPFS_PIN",
   "image_root_cid": "TBD_AFTER_IPFS_PIN",
-  "mint_price_zec": "TBD",
+  "mint_price_zec": "0.0088",
   "inscription_pool": "transparent",
   "marketplace_protocol": "zord",
-  "status": "PRE_DEPLOY",
+  "status": "PRE_DEPLOY_WAITING_FOR_IPFS_AND_T_RECEIVER",
   "safety_note": "No private keys or seed phrases are accepted by the site.",
   "platform_fee_bps": 200,
   "platform_fee_percent": 2,
-  "platform_fee_recipient": "TBD_BEFORE_LIVE_TRADING"
+  "platform_fee_recipient": "TBD_BEFORE_LIVE_TRADING",
+  "mint_price_zatoshis": 880000,
+  "platform_fee_recipient_status": "NEEDS_TRANSPARENT_RECEIVER_FROM_UA"
 }
