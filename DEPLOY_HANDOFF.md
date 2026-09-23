@@ -34,8 +34,8 @@ Signing/broadcast remains wallet-side. Never place a seed phrase/private key in 
 marketplace.html supports deploy/mint payloads, list, delist, buy intent, price conversion, and the 888-token catalog.
 Once image_root_cid is configured, the catalog automatically renders each token from immutable IPFS assets.
 
-## Blocking items before real deploy
-1. Pin the actual 888 individual images + metadata to immutable storage/IPFS.
+## Local production package verified\nThe production build contains exactly 888 token images and 888 metadata records, normalized to token IDs 0..887. The public marketplace intentionally switches to individual artwork only after the immutable image CID is configured.\n\n## Blocking items before real deploy
+1. Pin the verified 888 individual images + metadata package to immutable storage/IPFS.
 2. Put the resulting CIDs in zec-ninja-chain.json.
 3. Confirm royalty 1%.
 4. Decide mint price.
