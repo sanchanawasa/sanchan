@@ -1,0 +1,10 @@
+{
+  "collection":"ZEC NINJA 888",
+  "supply":888,
+  "art_direction":"high-detail glossy anime/chibi Japanese fantasy; cinematic moonlit temples; ornate ninja armor; consistent character proportions and rendering",
+  "rarity":{"Common":600,"Rare":200,"Epic":70,"Legendary":18},
+  "legendary_rule":"Legendary characters must carry the rainbow/prismatic treatment on clothing, armor, mask, sash and/or weapons. Do not use a rainbow background as the defining Legendary trait.",
+  "epic_rule":"Epic uses the same high-detail anime/chibi rendering as the approved Epic #031 direction, with strong elemental or magical FX but no mandatory rainbow outfit.",
+  "reserve":{"public_wl":700,"team_marketing":188},
+  "mint_price_zec":"0.0088"
+}
