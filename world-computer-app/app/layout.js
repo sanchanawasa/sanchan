@@ -1,0 +1,1 @@
+export const metadata={title:"WORLD Computer",description:"Cryptographic compute prototype"}; export default function RootLayout({children}){return <html lang="en"><body>{children}</body></html>}
